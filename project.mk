@@ -1,6 +1,7 @@
 
 
 PROJECT_MODULES = src/lld_control.c        \
+                  src/lld_wheel_rotate.c        \
 
 PROJECT_TESTS   = tests/test_lld_control.c     \
 
