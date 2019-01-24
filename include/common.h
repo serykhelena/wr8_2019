@@ -11,6 +11,6 @@
 #define     PROGRAM_ROUTINE_TEST_LL_DRIVER              1
 
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_MASTER
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
 
 #endif /* INCLUDE_COMMON_H_ */
