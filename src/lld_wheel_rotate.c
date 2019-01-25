@@ -1,4 +1,6 @@
-#include <lld_serv_pos_sensor.h>
+#include <lld_wheel_rotate.h>
+#include <common.h>
+
 
 /**************************/
 /*** CONFIGURATION ZONE ***/
@@ -46,7 +48,7 @@ static float rightFrontPosAngle            = 0;
 
 void lldServInit (void)
 {
-    AdcInit();
+	AdcInit();
     
     /*wheels position from -100 to 100 */
    leftFrontPosVal    = 100.0f / deltaServMAX;
@@ -71,7 +73,7 @@ int16_t lldGetFrontWheelVal (void)
   if ( !isInitialized )
       return false;
     
-  int16_t RotAngle  = 0;
+  int16_t RotateVal  = 0;
   int16_t lldAdcVal = FindADC1Val();
      
     if (lldAdcVal < servMIN - servLimValue)
@@ -98,7 +100,7 @@ int16_t lldGetFrontWheelAngle (void)
   if ( !isInitialized )
       return false;
     
-  int16_t RotAngle  = 0;
+  int16_t RotateAngle  = 0;
   int16_t lldAdcVal = FindADC1Val();
      
     if (lldAdcVal < servMIN - servLimValue)
