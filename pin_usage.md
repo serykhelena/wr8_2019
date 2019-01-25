@@ -8,4 +8,4 @@ Driver | Pins | Input / Output
 ## Драйвер управления приводом движения 
 Driver | Pins | Input / Output
 -------|------|-------
-
+PWM1 | PE9 | Output (channel 1)

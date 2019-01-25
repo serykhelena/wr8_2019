@@ -10,15 +10,22 @@
 /*
  * @brief   Routine of low level driver control testing
  * @note    The routine has internal infinite loop
+ * @note    Changing raw values of pwm dutycycle
  */
-void testDriverControlRoutine( void );
+void testRawDrivingWheelControlRoutine( void );
+
+/*
+ * @brief   Routine of low level driver control testing
+ * @note    The routine has internal infinite loop
+ */
+void testDrivingWheelsControlRoutines( void );
 
 
 static inline void testsRoutines( void )
 {
 #if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_LL_DRIVER)
 
-    testRawDrivingWheelControlRoutine( );
+    testDrivingWheelsControlRoutines( );
 
 #endif
 }

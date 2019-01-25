@@ -3,7 +3,7 @@
 
 
 #define pwm1Freq        1000000
-#define pwm1Period      10000           // 50 Hz
+#define pwm1Period      20000           // 50 Hz
 
 /***  PWM configuration pins    ***/
 /***  PE9 - Steering            ***/
@@ -44,7 +44,7 @@ static  PWMDriver       *pwmDriver      = &PWMD1;
  */
 
 #define SPEED_K         3.8
-#define SPEED_B         1540
+#define SPEED_B         1500
 
 #define STEER_K         3.8
 #define STEER_B         1540
