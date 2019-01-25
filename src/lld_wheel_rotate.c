@@ -1,5 +1,7 @@
+#include <tests.h>
 #include <lld_wheel_rotate.h>
-#include <common.h>
+
+//#include <common.h>
 
 
 /**************************/
@@ -12,8 +14,10 @@
    delta for right direction:     1090  < ADC_val < 1150
    delta for central direction:   1540  < ADC_val < 1580
 */
-static int32_t  servLimValue        = 60; // permissible error after reading from ADC
-static int32_t  servMAX             = 1815; 
+
+
+static int32_t  servLimValue        = 10; // permissible error after reading from ADC
+static int32_t  servMAX             = 1800;
 static int32_t  servMIN             = 1120; 
 static int32_t  servMID             = 1560;
 
