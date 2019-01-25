@@ -1,18 +1,19 @@
 #include <tests.h>
 #include <lld_control.h>
 
-#define pwm1Freq        500000
+
+#define pwm1Freq        1000000
 #define pwm1Period      10000           // 50 Hz
 
 /***  PWM configuration pins    ***/
 /***  PE9 - Steering            ***/
 #define PE9_ACTIVE      PWM_OUTPUT_ACTIVE_HIGH
 #define PE9_DISABLE     PWM_OUTPUT_DISABLED
-#define steerPWMch      0
+#define drivePWMch      0
 /***  PE11 - Braking            ***/
 #define PE11_ACTIVE     PWM_OUTPUT_ACTIVE_HIGH
 #define PE11_DISABLE    PWM_OUTPUT_DISABLED
-#define brakePWMch      1
+#define steerPWMch      1
 /***  PE13, PE14 - not used     ***/
 #define PE13_ACTIVE     PWM_OUTPUT_ACTIVE_HIGH
 #define PE13_DISABLE    PWM_OUTPUT_DISABLED
@@ -23,6 +24,30 @@ static  PWMDriver       *pwmDriver      = &PWMD1;
 
 #define pwm1LineCh0     PAL_LINE( GPIOE, 9 )
 #define pwm1LineCh1     PAL_LINE( GPIOE, 11 )
+
+
+#define SPEED_MAX_DC    1920
+#define SPEED_MIN_DC    1160
+#define SPEED_NULL_DC   1540
+
+#define STEER_MAX       1920
+#define STEER_MIN       1160
+#define STEER_NULL      1540
+
+#define CONTROL_MAX     100
+#define CONTROL_MIN     (-100)
+
+/*** Koefficient calculation ***/
+/*
+ * k = (SPEED_MAX_DC - SPEED_MIN_DC) / (CONTOL_MAX - CONTROL_MIN)
+ * b = SPEED_MIN_DC - k * CONTROL_MIN
+ */
+
+#define SPEED_K         3.8
+#define SPEED_B         1540
+
+#define STEER_K         3.8
+#define STEER_B         1540
 
 /*** Configuration structures ***/
 
@@ -65,13 +90,41 @@ void lldControlInit( void )
 
 }
 
-/*
- * @brief   Set power for steering motor (via ESC)
- * @param   inputPrc   Motor power value [-100 100]
- * @note    control signal - [1 2] ms => [4000 8000]
- */
-void lldControlSetSteerPower( controlValue_t inputPrc )
-{
 
+/**
+ * @brief   Set power for driving motor
+ * @param   inputPrc   Motor power value [-100 100]
+ */
+void lldControlSetDrMotorPower( controlValue_t inputPrc )
+{
+    inputPrc = CLIP_VALUE(inputPrc, CONTROL_MIN, CONTROL_MAX);
+    rawPwmValue_t drDuty = SPEED_K * inputPrc + SPEED_B;
+    pwmEnableChannel( pwmDriver, drivePWMch, drDuty);
 }
+
+/**
+ * @brief   Set power (in ticks) for driving motor
+ * @param   deltaDuty   incrementing / decrementing value to center-pos dutycycle
+ */
+rawPwmValue_t lldControlSetDrMotorRawPower( rawPwmValue_t deltaDuty )
+{
+    deltaDuty = CLIP_VALUE( deltaDuty, -380, 380 );
+    rawPwmValue_t drDuty = SPEED_NULL_DC + deltaDuty;
+    pwmEnableChannel( pwmDriver, drivePWMch, drDuty);
+    return drDuty;
+}
+
+/**
+ * @brief   Set power for steering motor
+ * @param   inputPrc   Motor power value [-100 100]
+ *                     central position = 0
+ */
+void lldControlSetSteerMotorPower( controlValue_t inputPrc )
+{
+    inputPrc = CLIP_VALUE(inputPrc, CONTROL_MIN, CONTROL_MAX);
+    rawPwmValue_t drDuty = STEER_K * inputPrc + STEER_B;
+    pwmEnableChannel( pwmDriver, steerPWMch, drDuty);
+}
+
+
 
