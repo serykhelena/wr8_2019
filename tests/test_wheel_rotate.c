@@ -30,8 +30,10 @@ void testFrontWheels (void)
    lldServInit();
     while( true )
     {
-        AdcVal = lldGetFrontWheelAdcPos();
+        //AdcVal = lldGetFrontWheelAdcPos_filt();
+        AdcVal = lldGetFrontWheelAdcPos_doublefilt();
         sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );
+        //chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
         chThdSleepMilliseconds( 10 );
     }
 }

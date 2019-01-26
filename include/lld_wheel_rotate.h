@@ -13,8 +13,8 @@ void lldServInit (void);
  * @brief   Get ADC value
  * @return  ADC value from 0 to 4095 equal front wheels position
  */
-int16_t lldGetFrontWheelAdcPos (void);
-
+int16_t lldGetFrontWheelAdcPos_filt (void);
+int16_t lldGetFrontWheelAdcPos_doublefilt (void);
 /*
  * @brief   Get front wheels position  ranging from -100 to 100
  * @return  Value from -100 to 100 equal front wheels position

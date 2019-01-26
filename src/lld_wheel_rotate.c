@@ -35,10 +35,14 @@ static int32_t  deltaServMIN        = 440;
 
 #define servADCchannel       ADC_SEQ1_CH
 
+static uint8_t  filter_cnt                 = 0;
+int32_t ADCfilter[] = {0,0,0,0,0};
+static uint8_t  filter_cnt2                 = 0;
+int32_t ADCfilter2[] = {0,0,0,0,0};
 
 /* ADC value */
 
-static bool     isInitialized               = false;
+static bool     isInitialized              = false;
 
 static float leftFrontPosVal               = 0;
 static float rightFrontPosVal              = 0;
@@ -64,12 +68,76 @@ void lldServInit (void)
    isInitialized = true; 
 }
 
-int16_t lldGetFrontWheelAdcPos (void)
+int16_t lldGetFrontWheelAdcPos_filt (void)
 {
   if ( !isInitialized )
       return false;
-  
-  return FindADC1Val();
+
+  int16_t ADC_val = 0;
+  int16_t Sum = 0;
+  uint8_t i = 0;
+  uint8_t j = 0;
+
+  if (filter_cnt < 5)
+  {
+	  ADCfilter[filter_cnt] = FindADC1Val();
+	  ADC_val = ADCfilter[filter_cnt];
+	  filter_cnt++;
+  }
+  else
+  {
+	  //filter_cnt = 4;
+	  while (i < 5)
+	  {
+		  Sum = Sum + ADCfilter[i];
+		  i++;
+	  }
+
+	  while (j < 4 )
+	  {
+		  ADCfilter[j] = ADCfilter[j + 1];
+		  j++;
+	  }
+	  ADCfilter[4] = FindADC1Val();
+	  ADC_val = Sum / 5;
+  }
+  return ADC_val;
+}
+
+int16_t lldGetFrontWheelAdcPos_doublefilt (void)
+{
+  if ( !isInitialized )
+      return false;
+
+  int16_t ADC_filtered_val = 0;
+  int16_t Sum = 0;
+  uint8_t i = 0;
+  uint8_t j = 0;
+
+  if (filter_cnt2 < 5)
+  {
+	  ADCfilter[filter_cnt2] = lldGetFrontWheelAdcPos_filt();
+	  ADC_filtered_val = ADCfilter2[filter_cnt2];
+	  filter_cnt2++;
+  }
+  else
+  {
+	  //filter_cnt2 = 4;
+	  while (i < 5)
+	  {
+		  Sum = Sum + ADCfilter2[i];
+		  i++;
+	  }
+
+	  while (j < 4 )
+	  {
+		  ADCfilter2[j] = ADCfilter2[j + 1];
+		  j++;
+	  }
+	  ADCfilter2[4] = lldGetFrontWheelAdcPos_filt();
+	  ADC_filtered_val = Sum / 5;
+  }
+  return ADC_filtered_val;
 }
 
 int16_t lldGetFrontWheelVal (void)
