@@ -13,4 +13,7 @@
 
 #define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
 
+#define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
+                                 (x) > (max) ? (max) : (x))
+
 #endif /* INCLUDE_COMMON_H_ */

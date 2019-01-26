@@ -1,13 +1,6 @@
 #include <tests.h>
 #include <lld_control.h>
 
-#include <ch.h>
-#include <hal.h>
-#include <chprintf.h>
-
-#define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
-                                 (x) > (max) ? (max) : (x))
-
 /**************************/
 /*** CONFIGURATION ZONE ***/
 /**************************/
@@ -41,19 +34,17 @@ int steer_dutyB = 1560;
 // * width  |    1240   |   1400 - 1500   |   1600
 // *
 
+
 /******************************/
 /*** CONFIGURATION ZONE END ***/
 /******************************/
 
 
 /*** Hardware configuration     ***/
-
 /***  PWM configuration pins    ***/
-
 // пин G9 - канал №1 таймера №1
 #define GPIOE_TIM1_CH1              9U
 #define GPIOE_TIM1_CH2              11U
-
 /***  PE9 - Speeding            ***/
 #define PE9_ACTIVE      PWM_OUTPUT_ACTIVE_HIGH
 #define PE9_DISABLE     PWM_OUTPUT_DISABLED
@@ -76,15 +67,11 @@ int steer_dutyB = 1560;
 
 static  PWMDriver       *pwmDriver      = &PWMD1;
 
-/***  Serial configuration pins    ***/
-static  SerialDriver    *serialDriver   = &SD7;
+/*** Direction pins configuration          ***/
+/*** F_12 for Driving Wheels Set Direction ***/
+#define lineMotorDir        PAL_LINE( GPIOD, 3 )
 
 /*** Configuration structures ***/
-
-static const SerialConfig sdcfg = {
-    .speed  = 115200,
-    .cr1 = 0, .cr2 = 0, .cr3 = 0
-};
 
 PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
       .frequency = pwm1Freq,
@@ -102,40 +89,27 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
 
 /***********************************************************/
 
-int a = 0;
 
-void SerialInit( void )
-{
-//    if ( isInitialized )
-//        return;
-    /*** serial pins configuration ***/
-    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) ); // TX
-    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) ); // RX
-    sdStart( &SD7, &sdcfg );
-
-    chprintf(((BaseSequentialStream *)serialDriver), "TEST\r");
-
-    /* Set initialization flag */
-//    isInitialized = true;
-}
-
+/**
+ * @brief   Initialize periphery connected to driver control
+ */
 void lldControlInit( void )
 {
-//    if ( isInitialized )
-//        return;
     /*** PWM pins configuration ***/
     palSetLineMode( pwm1LineCh0,  PAL_MODE_ALTERNATE(1) );
     palSetLineMode( pwm1LineCh1,  PAL_MODE_ALTERNATE(1) );
     pwmStart( pwmDriver, &pwm1conf );
-
-    /* Set initialization flag */
-//  isInitialized = true;
 }
 
-void lldControlSetMotor(a)
+/**
+ * @brief   Set power for driving motor
+ * @param [in]  a   Motor power value [-100 100]
+ */
+
+void lldControlSetMotor(controlValue_t inputPrc)
 {
-    a = CLIP_VALUE( a, speed_min, speed_max );
-    if (a >= 0)
+    inputPrc = CLIP_VALUE( inputPrc, speed_min, speed_max );
+    if (inputPrc >= 0)
     {
       speed_dutyK = 0.5;
       speed_dutyB = 1400;
@@ -145,74 +119,43 @@ void lldControlSetMotor(a)
       speed_dutyK = 0.8;
       speed_dutyB = 1320;
     }
-    int speedDuty = a * speed_dutyK + speed_dutyB;
+    int speedDuty = inputPrc * speed_dutyK + speed_dutyB;
 
 
     pwmEnableChannel( pwmDriver, speedPWMch, speedDuty );
-    chprintf(((BaseSequentialStream *)serialDriver), "DUTY(%d)\r", speedDuty );
+
+    //test duty motor
+    //chprintf(((BaseSequentialStream *)serialDriver), "DUTY(%d)\r", speedDuty );
 }
 
-void lldControlSetMotor2(a)
-{
-    pwmEnableChannel( pwmDriver, speedPWMch, 1480+a );
-}
+/**
+ * @brief   TEST set power for driving motor
+ * @param   a   Motor power value [+/- 10]
+ */
+//void lldControlSetMotor2(controlValue_t inputPrc)
+//{
+//    pwmEnableChannel( pwmDriver, speedPWMch, 1480+inputPrc );
+//}
 
-void lldControlSetSteer(a)
+/*
+ * @brief   Set power for steering motor (via ESC)
+ * @param   a   Motor power value [-100 100]
+ * @note    power (0, 100]  -> clockwise
+ * @note    power [-100, 0} -> counterclockwise
+ */
+void lldControlSetSteer(controlValue_t inputPrc)
 {
-    a = CLIP_VALUE( a, steer_min, steer_max );
-    int steerDuty = a * steer_dutyK + steer_dutyB;
+    inputPrc = CLIP_VALUE( inputPrc, steer_min, steer_max );
+    int steerDuty = inputPrc * steer_dutyK + steer_dutyB;
 
     pwmEnableChannel( pwmDriver, steerPWMch, steerDuty );
 }
 
-void lldControlSetSteer2(int v)
-{
-    pwmEnableChannel( pwmDriver, steerPWMch, 1510+v );
-}
-
-int main(void)
-{
-    int speed = 0;          //for serial test
-    int delta_speed = 10;   //
-
-    int steer = 0;
-    int delta_steer = 10;
-
-    chSysInit();
-    halInit();
-
-    lldControlInit();
-    SerialInit();
-
-    while (1)
-    {
-     char rcv_data = sdGet( serialDriver );
-             switch ( rcv_data )
-             {
-                 case 'w':   // Positive speed
-                   speed += delta_speed;
-                     break;
-
-                 case 'z':   // Negative speed
-                   speed -= delta_speed;
-                     break;
-
-                 case 's':   // Right steer
-                   steer += delta_steer;
-                     break;
-
-                 case 'a':   // Left steer
-                   steer -= delta_steer;
-                     break;
-
-                 default:
-                   ;
-             }
-
-     lldControlSetMotor(speed);
-     lldControlSetSteer(steer);
-     chprintf( (BaseSequentialStream *)serialDriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
-     chThdSleepMilliseconds( 100 );
-
-    }
-}
+/**
+ * @brief   TEST Set power for steering motor (via ESC)
+ * @param   a   Motor power value [+/- 10]
+ */
+//void lldControlSetSteer2(controlValue_t inputPrc)
+//{
+//    pwmEnableChannel( pwmDriver, steerPWMch, 1510+inputPrc );
+//}
