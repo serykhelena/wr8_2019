@@ -37,6 +37,7 @@ void testDriverControlRoutine( void )
 
     while( 1 )
     {
+
       char rcv_data = sdGet( serialDriver );
                    switch ( rcv_data )
                    {
@@ -59,8 +60,8 @@ void testDriverControlRoutine( void )
                        default:
                          ;
                    }
-      lldControlSetMotor(speed);
-      lldControlSetSteer(steer);
+      lldControlDrivingWheels(speed);
+      lldControlSteeringWheels(steer);
       chprintf( (BaseSequentialStream *)serialDriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
       chThdSleepMilliseconds(100);
     }

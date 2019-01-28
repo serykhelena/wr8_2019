@@ -1,21 +1,37 @@
 #include <tests.h>
 #include <lld_control.h>
+#include <common.h>
 
 /**************************/
 /*** CONFIGURATION ZONE ***/
 /**************************/
 
-static int    speed_min     = -100;
-static int    speed_max     = 100;
+#define speed_min           -100
+#define speed_max            100
 
-float speed_dutyK = 0;
-int speed_dutyB = 0;
+#define speed_dutyK_max      0.5
+#define speed_dutyB_max      1400
 
-static signed int    steer_min     = -100;
-static signed int    steer_max     = 100;
+#define speed_dutyK_min      0.8
+#define speed_dutyB_min      1320
 
-float steer_dutyK = 4;
-int steer_dutyB = 1560;
+#define steer_min           -100
+#define steer_max            100
+
+#define steer_dutyK          4
+#define steer_dutyB          1560
+
+//#define static int    speed_min     = -100;
+//static int    speed_max     = 100;
+//
+//float speed_dutyK = 0;
+//int speed_dutyB = 0;
+//
+//static signed int    steer_min     = -100;
+//static signed int    steer_max     = 100;
+//
+//float steer_dutyK = 4;
+//int steer_dutyB = 1560;
 
 //*        |  Clockwise  |  Center  | Counterclockwise
 // * -------------------------------------------------
@@ -34,17 +50,12 @@ int steer_dutyB = 1560;
 // * width  |    1240   |   1400 - 1500   |   1600
 // *
 
-
 /******************************/
 /*** CONFIGURATION ZONE END ***/
 /******************************/
 
-
 /*** Hardware configuration     ***/
 /***  PWM configuration pins    ***/
-// пин G9 - канал №1 таймера №1
-#define GPIOE_TIM1_CH1              9U
-#define GPIOE_TIM1_CH2              11U
 /***  PE9 - Speeding            ***/
 #define PE9_ACTIVE      PWM_OUTPUT_ACTIVE_HIGH
 #define PE9_DISABLE     PWM_OUTPUT_DISABLED
@@ -67,10 +78,6 @@ int steer_dutyB = 1560;
 
 static  PWMDriver       *pwmDriver      = &PWMD1;
 
-/*** Direction pins configuration          ***/
-/*** F_12 for Driving Wheels Set Direction ***/
-#define lineMotorDir        PAL_LINE( GPIOD, 3 )
-
 /*** Configuration structures ***/
 
 PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
@@ -89,7 +96,6 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
 
 /***********************************************************/
 
-
 /**
  * @brief   Initialize periphery connected to driver control
  */
@@ -105,37 +111,20 @@ void lldControlInit( void )
  * @brief   Set power for driving motor
  * @param [in]  a   Motor power value [-100 100]
  */
-
-void lldControlSetMotor(controlValue_t inputPrc)
+void lldControlDrivingWheels(controlValue_t inputPrc)
 {
     inputPrc = CLIP_VALUE( inputPrc, speed_min, speed_max );
     if (inputPrc >= 0)
     {
-      speed_dutyK = 0.5;
-      speed_dutyB = 1400;
+      int speedDuty = inputPrc * speed_dutyK_max + speed_dutyB_max;
+      pwmEnableChannel( pwmDriver, speedPWMch, speedDuty );
     }
     else
     {
-      speed_dutyK = 0.8;
-      speed_dutyB = 1320;
+      int speedDuty = inputPrc * speed_dutyK_min + speed_dutyB_min;
+      pwmEnableChannel( pwmDriver, speedPWMch, speedDuty );
     }
-    int speedDuty = inputPrc * speed_dutyK + speed_dutyB;
-
-
-    pwmEnableChannel( pwmDriver, speedPWMch, speedDuty );
-
-    //test duty motor
-    //chprintf(((BaseSequentialStream *)serialDriver), "DUTY(%d)\r", speedDuty );
 }
-
-/**
- * @brief   TEST set power for driving motor
- * @param   a   Motor power value [+/- 10]
- */
-//void lldControlSetMotor2(controlValue_t inputPrc)
-//{
-//    pwmEnableChannel( pwmDriver, speedPWMch, 1480+inputPrc );
-//}
 
 /*
  * @brief   Set power for steering motor (via ESC)
@@ -143,7 +132,7 @@ void lldControlSetMotor(controlValue_t inputPrc)
  * @note    power (0, 100]  -> clockwise
  * @note    power [-100, 0} -> counterclockwise
  */
-void lldControlSetSteer(controlValue_t inputPrc)
+void lldControlSteeringWheels(controlValue_t inputPrc)
 {
     inputPrc = CLIP_VALUE( inputPrc, steer_min, steer_max );
     int steerDuty = inputPrc * steer_dutyK + steer_dutyB;
@@ -151,11 +140,3 @@ void lldControlSetSteer(controlValue_t inputPrc)
     pwmEnableChannel( pwmDriver, steerPWMch, steerDuty );
 }
 
-/**
- * @brief   TEST Set power for steering motor (via ESC)
- * @param   a   Motor power value [+/- 10]
- */
-//void lldControlSetSteer2(controlValue_t inputPrc)
-//{
-//    pwmEnableChannel( pwmDriver, steerPWMch, 1510+inputPrc );
-//}
