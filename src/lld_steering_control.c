@@ -143,7 +143,7 @@ int16_t lldSteeringControGetAdcPos_doublefilt (void)
 
 
 
-int16_t lldSteeringControlGeAngle (void)
+steer_angle_t lldSteeringControlGeAngle (void)
 {
   if ( !isInitialized )
       return false;

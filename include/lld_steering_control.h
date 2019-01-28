@@ -1,6 +1,9 @@
 #ifndef INCLUDE_LLD_STEERING_CONTROL_H_
 #define INCLUDE_LLD_STEERING_CONTROL_H_
 
+typedef int16_t           steer_angle_t;
+
+
 /*
  * @brief   Initialize front wheels control
  */
