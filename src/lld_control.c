@@ -37,14 +37,18 @@ static  PWMDriver       *pwmDriver      = &PWMD1;
 #define CONTROL_MAX     100
 #define CONTROL_MIN     (-100)
 
+
 /*** Koefficient calculation ***/
 /*
  * k = (SPEED_MAX_DC - SPEED_MIN_DC) / (CONTOL_MAX - CONTROL_MIN)
  * b = SPEED_MIN_DC - k * CONTROL_MIN
  */
 
-#define SPEED_K         3.8
-#define SPEED_B         1500
+#define SPEED_FORWARD_K         3.8
+#define SPEED_FORWARD_B         1520
+
+#define SPEED_BACKWARD_K        2.6
+#define SPEED_BACKWARD_B        1420
 
 #define STEER_K         3.8
 #define STEER_B         1540
@@ -67,7 +71,7 @@ PWMConfig pwm1conf = {
 };
 
 static bool         isInitialized       = false;
-
+rawPwmValue_t       drDuty              = 0;
 
 /**
  * @brief   Initialize periphery connected to driver control
@@ -98,7 +102,16 @@ void lldControlInit( void )
 void lldControlSetDrMotorPower( controlValue_t inputPrc )
 {
     inputPrc = CLIP_VALUE(inputPrc, CONTROL_MIN, CONTROL_MAX);
-    rawPwmValue_t drDuty = SPEED_K * inputPrc + SPEED_B;
+
+    if( inputPrc >= 0)
+    {
+        drDuty = SPEED_FORWARD_K * inputPrc + SPEED_FORWARD_B;
+    }
+    else
+    {
+        drDuty = SPEED_BACKWARD_K * inputPrc + SPEED_BACKWARD_B;
+    }
+    drDuty = CLIP_VALUE(drDuty, 1160, 1920);
     pwmEnableChannel( pwmDriver, drivePWMch, drDuty);
 }
 
@@ -125,6 +138,3 @@ void lldControlSetSteerMotorPower( controlValue_t inputPrc )
     rawPwmValue_t drDuty = STEER_K * inputPrc + STEER_B;
     pwmEnableChannel( pwmDriver, steerPWMch, drDuty);
 }
-
-
-

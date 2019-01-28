@@ -9,7 +9,7 @@ static const SerialConfig sdcfg = {
 };
 
 
-void testRawDrivingWheelControlRoutine( void )
+void a( void )
 {
     palSetLine( LINE_LED1 );
     sdStart( &SD7, &sdcfg );
@@ -51,7 +51,7 @@ void testRawDrivingWheelControlRoutine( void )
 
 }
 
-void testDrivingWheelsControlRoutines( )
+void testWheelsControlRoutines( void )
 {
     palSetLine( LINE_LED2 );
     sdStart( &SD7, &sdcfg );
@@ -94,6 +94,7 @@ void testDrivingWheelsControlRoutines( )
         }
         speed_value = CLIP_VALUE( speed_value, -100, 100 );
         steer_value = CLIP_VALUE( steer_value, -100, 100 );
+
         lldControlSetDrMotorPower( speed_value );
         lldControlSetSteerMotorPower( steer_value );
 
