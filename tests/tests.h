@@ -12,15 +12,15 @@
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
-void testFrontWheels (void);
+void testSteeringControl (void);
 
 void testEncoder (void);
 
 static inline void testsRoutines( void )
 {
-#if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER)
+#if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
 
-	testEncoder();
+	testSteeringControl();
 
 #endif
 }

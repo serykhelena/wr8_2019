@@ -86,7 +86,7 @@ static void adccallback ( ADCDriver *adcp, adcsample_t *buffer, size_t n )
 
 static bool     adc_Init      = false;
 
-void AdcInit ( void )
+void InitAdc ( void )
 {
     if ( adc_Init )
     {
