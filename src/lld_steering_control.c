@@ -67,7 +67,7 @@ int16_t lldSteeringControlGetAdcVal (void)
 {
     if ( !isInitialized )
 	    return false;
-	return FindADC1Val();
+	return GetAdcVal();
 }
 
 int16_t lldSteeringControGetAdcPos_filt (void)
@@ -82,7 +82,7 @@ int16_t lldSteeringControGetAdcPos_filt (void)
 
   if (filter_cnt < 5)
   {
-	  ADCfilter[filter_cnt] = FindADC1Val();
+	  ADCfilter[filter_cnt] = GetAdcVal();
 	  ADC_val = ADCfilter[filter_cnt];
 	  filter_cnt++;
   }
@@ -100,7 +100,7 @@ int16_t lldSteeringControGetAdcPos_filt (void)
 		  ADCfilter[j] = ADCfilter[j + 1];
 		  j++;
 	  }
-	  ADCfilter[4] = FindADC1Val();
+	  ADCfilter[4] = GetAdcVal();
 	  ADC_val = Sum / 5;
   }
   return ADC_val;
@@ -149,7 +149,7 @@ int16_t lldSteeringControlGeAngle (void)
       return false;
     
   int16_t RotateAngle  = 0;
-  int16_t lldAdcVal = FindADC1Val();
+  int16_t lldAdcVal = GetAdcVal();
      
     if (lldAdcVal < servMIN - servLimValue)
   {

@@ -106,7 +106,7 @@ void InitAdc ( void )
 }
 
 
-adcsample_t FindADC1Val (void)
+adcsample_t GetAdcVal (void)
 {
     return AdcBuf;
 }

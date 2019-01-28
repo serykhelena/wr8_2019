@@ -32,7 +32,7 @@ void InitAdc ( void );
  * @brief       Get value of ADC channel
  * @return      Value of ADC sampling
 */
-adcsample_t FindADC1Val ( void );
+adcsample_t GetAdcVal ( void );
 
 
 
