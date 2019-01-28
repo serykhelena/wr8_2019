@@ -107,6 +107,13 @@ git commit -am '[frontWheel]: New prototype for: int direction_get_value(dirVal_
 git commit -am '[directionDriver]: Fixed #34'
 
 ```
+* При разрешении issue необходимо присваивать работу над ним себе (если оно ранее уже не было присвоено), тем самым вы обозначите, что вы берётесь зе его исправление. Кроме того, по возможности необходимо классифицировать его с помощью лейбла:
+- enchancement (нововведедние / предложение)
+- bug
+- help wanted 
+- duplicate
+- good first issue
+- invalid
 
 ---
 Просто некоторые заметки:
