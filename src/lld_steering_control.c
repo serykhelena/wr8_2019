@@ -53,21 +53,17 @@ static float leftFrontPosAngle             = 0;
 static float rightFrontPosAngle            = 0;
 
 
-void lldSteerRotateInit (void)
+void lldSteeringControlInit  (void)
 {
 	InitAdc();
-    
-    /*wheels position from -100 to 100 */
-   leftFrontPosVal    = 100.0f / deltaServMAX;
-   rightFrontPosVal   = 100.0f / deltaServMIN;
-    
+
    leftFrontPosAngle    = leftMaxAngle / deltaServMAX;
    rightFrontPosAngle   = rightMaxAngle / deltaServMIN;
     
    isInitialized = true; 
 }
 
-int16_t GetFrontWheelAdcPos_filt (void)
+int16_t lldSteeringControGetAdcPos_filt (void)
 {
   if ( !isInitialized )
       return false;
@@ -103,7 +99,7 @@ int16_t GetFrontWheelAdcPos_filt (void)
   return ADC_val;
 }
 
-int16_t GetFrontWheelAdcPos_doublefilt (void)
+int16_t lldSteeringControGetAdcPos_doublefilt (void)
 {
   if ( !isInitialized )
       return false;
@@ -138,34 +134,9 @@ int16_t GetFrontWheelAdcPos_doublefilt (void)
   return ADC_filtered_val;
 }
 
-int16_t GetFrontWheelVal (void)
-{
-  if ( !isInitialized )
-      return false;
-    
-  int16_t RotateVal  = 0;
-  int16_t lldAdcVal = FindADC1Val();
-     
-    if (lldAdcVal < servMIN - servLimValue)
-  {
-      lldAdcVal = servMIN - servLimValue ;  
-  }
-    else if (lldAdcVal > servMAX + servLimValue)
-  {
-      lldAdcVal = servMAX + servLimValue; 
-  }
-  if (lldAdcVal - servMID > 0)
-  {
-      RotateVal = (lldAdcVal - servMID) * leftFrontPosVal;
-  }
-  else
-  {
-      RotateVal = (lldAdcVal - servMID) * rightFrontPosVal;
-  }
-  return RotateVal;  
-}
 
-int16_t GetFrontWheelAngle (void)
+
+int16_t lldSteeringControlGeAngle (void)
 {
   if ( !isInitialized )
       return false;
