@@ -18,11 +18,7 @@ void testEncoder (void);
 
 static inline void testsRoutines( void )
 {
-#if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_WHEEL_ROTATE)
-
-	testFrontWheels();
-
-#elif  (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER)
+#if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER)
 
 	testEncoder();
 

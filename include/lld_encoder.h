@@ -4,7 +4,7 @@
 #include <chprintf.h>
 
 /*
- * EXT driver uses input PG6
+ * EXT driver uses input PС0 (A1) - channel A and PC3 (A2) - channel B
  * GPT2 used for measure time between encoder ticks
  */
 
