@@ -1,40 +1,5 @@
 #include <common.h>
 
-///////////////////////EXT init///////////////////////////
-
-static bool extDrInit = false;
-
-
-void ExtDriverInit ( void )
-{
-    if ( extDrInit )
-        return;
-    static const EXTConfig extcfg = {
-  .channels =
-  {
-    [0]  = {EXT_CH_MODE_DISABLED, NULL},
-    [1]  = {EXT_CH_MODE_DISABLED, NULL},
-    [2]  = {EXT_CH_MODE_DISABLED, NULL},
-    [3]  = {EXT_CH_MODE_DISABLED, NULL},
-    [4]  = {EXT_CH_MODE_DISABLED, NULL},
-    [5]  = {EXT_CH_MODE_DISABLED, NULL},
-    [6]  = {EXT_CH_MODE_DISABLED, NULL},
-    [7]  = {EXT_CH_MODE_DISABLED, NULL},
-    [8]  = {EXT_CH_MODE_DISABLED, NULL},
-    [9]  = {EXT_CH_MODE_DISABLED, NULL},
-    [10] = {EXT_CH_MODE_DISABLED, NULL},
-    [11] = {EXT_CH_MODE_DISABLED, NULL},
-    [12] = {EXT_CH_MODE_DISABLED, NULL},
-    [13] = {EXT_CH_MODE_DISABLED, NULL},
-    [14] = {EXT_CH_MODE_DISABLED, NULL},
-    [15] = {EXT_CH_MODE_DISABLED, NULL},
-  }
-};
-    extStart( &EXTD1, &extcfg );
-
-    extDrInit = true;
-}
-
 ///////////////////////ADC1 init///////////////////////////
 
 #define ADC_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12)

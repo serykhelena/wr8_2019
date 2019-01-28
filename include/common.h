@@ -14,8 +14,6 @@
 
 #define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_ENCODER
 
-void ExtDriverInit ( void );
-
 
 #define ADC_RES_CONF                ADC_CR1_12B_RESOLUTION
 
