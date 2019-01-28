@@ -9,11 +9,11 @@
 #define speed_min           -100
 #define speed_max            100
 
-#define speed_dutyK_max      2
-#define speed_dutyB_max      1720
+#define speed_dutyK_max      4
+#define speed_dutyB_max      1520
 
-#define speed_dutyK_min      1.3
-#define speed_dutyB_min      1290
+#define speed_dutyK_min      2.6
+#define speed_dutyB_min      1420
 
 #define steer_min           -100
 #define steer_max            100
