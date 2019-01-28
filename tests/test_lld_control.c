@@ -60,7 +60,9 @@ void testDriverControlRoutine( void )
                        default:
                          ;
                    }
+      speed = CLIP_VALUE( speed, -100, 100 );
       lldControlDrivingWheels(speed);
+      steer = CLIP_VALUE( steer, -100, 100 );
       lldControlSteeringWheels(steer);
       chprintf( (BaseSequentialStream *)serialDriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
       chThdSleepMilliseconds(100);
