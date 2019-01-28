@@ -12,7 +12,7 @@
 /*
  * @brief   Initialize EXT, gpt and some extra 
  */
-void EncoderSensInit (void);
+void lldEncoderSensInit (void);
 
 
 /**
@@ -20,7 +20,7 @@ void EncoderSensInit (void);
  * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 100 encoder ticks)
  *           -1                        Sensor is not initialized
  */
-uint16_t GetRevolutions(void);
+uint16_t lldEncoderGetRevolutions(void);
 
 
 /**
@@ -28,7 +28,7 @@ uint16_t GetRevolutions(void);
  * @ return  >=0                       Current total quantity of encoder ticks
  *           -1                        Sensor is not initialized
  */
-uint32_t GetEncTicks(void);
+uint32_t lldEncoderGetEncTicks(void);
 
 
 /**
@@ -37,7 +37,7 @@ uint32_t GetEncTicks(void);
  * @ return  >=0                       Current speed [rpm]
  *           -1                        Sensor is not initialized
  */
-float GetSpeedRPM (void);
+float lldEncoderGetSpeedRPM (void);
 
 
 
@@ -48,20 +48,20 @@ float GetSpeedRPM (void);
  * @ return  >=0                       Current distance [metres]
  *           -1                        Sensor is not initialized
  */
-float GetDistance (void);
+float lldEncoderGetDistance (void);
 
 
 /*
  * @brief   Reset impulse quantity from the beginning of the movement 
  */
-void ResetDistance (void);
+void lldEncoderResetDistance (void);
 
 /**
  * @ brief                             Gets wheels current speed [mps]                          
  * @ return  >=0                       Current speed [mps]
  *           -1                        Sensor is not initialized
  */
-float GetSpeedMPS (void);
+float lldEncoderGetSpeedMPS (void);
 
 
 /**
@@ -69,6 +69,6 @@ float GetSpeedMPS (void);
  * @ return  >=0                       Current speed [kph]
  *           -1                        Sensor is not initialized
  */
-float GetSpeedKPH (void);
+float lldEncoderGetSpeedKPH (void);
 
 #endif /* INCLUDE_LLD_ENCODER_H_ */

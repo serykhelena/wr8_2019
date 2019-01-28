@@ -52,7 +52,7 @@ int8_t ExtBcnt                  = 0;
 
 static float speed1ImpsTicksPerMin = 0;
 
-void EncoderSensInit (void)
+void lldEncoderSensInit (void)
 {
     if ( isInitialized )
         return;
@@ -146,7 +146,7 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     }
 }
 
-uint16_t GetRevolutions(void)
+uint16_t lldEncoderGetRevolutions(void)
 {
     if ( isInitialized == false )
 	{
@@ -157,7 +157,7 @@ uint16_t GetRevolutions(void)
 }
 
 
-uint32_t GetEncTicks(void)
+uint32_t lldEncoderGetEncTicks(void)
 {
 	if ( isInitialized == false )
 	{
@@ -168,7 +168,7 @@ uint32_t GetEncTicks(void)
 }
 
 
-float GetSpeedRPM (void)
+float lldEncoderGetSpeedRPM (void)
 {
   if ( isInitialized == false )
   {
@@ -194,7 +194,7 @@ float GetSpeedRPM (void)
 }
 
 
-float GetDistance (void)
+float lldEncoderGetDistance (void)
 {
     if ( !isInitialized )
     {
@@ -209,12 +209,12 @@ float GetDistance (void)
     return distance;
 }
 
-void ResetDistance (void)
+void lldEncoderResetDistance (void)
 {
     TotalImps = 0;
 }
 
-float GetSpeedMPS (void)
+float lldEncoderGetSpeedMPS (void)
 {
     if ( !isInitialized )
     {
@@ -222,14 +222,14 @@ float GetSpeedMPS (void)
     }
 
     float SpeedMPS = 0;
-    float speedRevPerSec = GetSpeedRPM () / 60.0f ;
+    float speedRevPerSec = lldEncoderGetSpeedRPM () / 60.0f ;
     
     SpeedMPS = 6.28 * WheelRadius * speedRevPerSec;
         
     return SpeedMPS;
 }
 
-float GetSpeedKPH (void)
+float lldEncoderGetSpeedKPH (void)
 {
     if ( !isInitialized )
     {
@@ -237,7 +237,7 @@ float GetSpeedKPH (void)
     }
     float SpeedKPH = 0;
     
-    SpeedKPH = 3.6 * GetSpeedMPS(); 
+    SpeedKPH = 3.6 * lldEncoderGetSpeedMPS();
         
     return SpeedKPH;
 }
