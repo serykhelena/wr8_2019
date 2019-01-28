@@ -21,18 +21,6 @@
 #define steer_dutyK          4
 #define steer_dutyB          1560
 
-//#define static int    speed_min     = -100;
-//static int    speed_max     = 100;
-//
-//float speed_dutyK = 0;
-//int speed_dutyB = 0;
-//
-//static signed int    steer_min     = -100;
-//static signed int    steer_max     = 100;
-//
-//float steer_dutyK = 4;
-//int steer_dutyB = 1560;
-
 //*        |  Clockwise  |  Center  | Counterclockwise
 // * -------------------------------------------------
 // * t, ms  |     1.16    |   1.56   |      1.92
