@@ -1,4 +1,3 @@
-#include <ch.h>
 #include <tests.h>
 #include <lld_steering_control.h>
 
@@ -28,10 +27,11 @@ void testSteeringControl (void)
    lldSteeringControlInit();
     while( true )
     {
-        //AdcVal = GetFrontWheelAdcPos_filt();
-        AdcVal = lldSteeringControGetAdcPos_doublefilt();
+        AdcVal = lldSteeringControlGetAdcVal();
+    	//AdcVal = lldSteeringControGetAdcPos_filt();
         sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );
         //chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
         chThdSleepMilliseconds( 10 );
     }
 }
+

@@ -10,14 +10,14 @@
 
 /*
    delta for left direction:      1780  < ADC_val < 1850
-   delta for right direction:     1090  < ADC_val < 1150
+   delta for right direction:     1060  < ADC_val < 1130
    delta for central direction:   1540  < ADC_val < 1580
 */
 
 
 static int32_t  servLimValue        = 10; // permissible error after reading from ADC
 static int32_t  servMAX             = 1800;
-static int32_t  servMIN             = 1120; 
+static int32_t  servMIN             = 1105;
 static int32_t  servMID             = 1560;
 
 static int32_t  deltaServMAX        = 255; 
@@ -42,9 +42,6 @@ int32_t ADCfilter2[] = {0,0,0,0,0};
 /* ADC value */
 
 static bool     isInitialized              = false;
-
-static float leftFrontPosVal               = 0;
-static float rightFrontPosVal              = 0;
 
 static float leftMaxAngle                  = 34.56;
 static float rightMaxAngle                 = 29.98;
@@ -88,7 +85,6 @@ int16_t lldSteeringControGetAdcPos_filt (void)
   }
   else
   {
-	  //filter_cnt = 4;
 	  while (i < 5)
 	  {
 		  Sum = Sum + ADCfilter[i];
@@ -135,7 +131,7 @@ int16_t lldSteeringControGetAdcPos_doublefilt (void)
 		  ADCfilter2[j] = ADCfilter2[j + 1];
 		  j++;
 	  }
-	  ADCfilter2[4] = lldSteeringControGetAdcPos_filt();
+	  ADCfilter2[14] = lldSteeringControGetAdcPos_filt();
 	  ADC_filtered_val = Sum / 5;
   }
   return ADC_filtered_val;
