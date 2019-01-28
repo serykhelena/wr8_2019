@@ -14,9 +14,21 @@
  */
 void EncoderSensInit (void);
 
-void EncoderTicks (void);
 
-int16_t Ret (void);
+/**
+ * @ brief                             Gets current quantity of revolutions
+ * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 100 encoder ticks)
+ *           -1                        Sensor is not initialized
+ */
+uint16_t GetRevolutions(void);
+
+
+/**
+ * @ brief                             Gets current total quantity of encoder ticks
+ * @ return  >=0                       Current total quantity of encoder ticks
+ *           -1                        Sensor is not initialized
+ */
+uint32_t GetEncTicks(void);
 
 
 /**
@@ -27,8 +39,7 @@ int16_t Ret (void);
  */
 float GetSpeedRPM (void);
 
-uint16_t Revolutions(void);
-uint32_t EncTicks(void);
+
 
 /**
  * @ brief                             Gets current distance [metres]

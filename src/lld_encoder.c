@@ -146,15 +146,27 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     }
 }
 
-uint16_t Revolutions(void)
+uint16_t GetRevolutions(void)
 {
-	return TotalImps / 360;
+    if ( isInitialized == false )
+	{
+	    return -1;
+	}
+
+	return TotalImps / ImpsFor1Rev ;
 }
 
-uint32_t EncTicks(void)
+
+uint32_t GetEncTicks(void)
 {
+	if ( isInitialized == false )
+	{
+	    return -1;
+	}
+
 	return TotalImps ;
 }
+
 
 float GetSpeedRPM (void)
 {

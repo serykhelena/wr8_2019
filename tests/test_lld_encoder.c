@@ -38,8 +38,8 @@ void testEncoder (void)
     	fPartRPM = (SpeedRPM - (int)SpeedRPM) * 100;
 		fPartMPS = (SpeedMPS - (int)SpeedMPS) * 100;
 		fPartKPH = (SpeedKPH - (int)SpeedKPH) * 100;
-        Rev = Revolutions();
-        Ticks = EncTicks();
+        Rev = GetRevolutions();
+        Ticks = GetEncTicks();
 
     	chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
     	chThdSleepMilliseconds(300);
