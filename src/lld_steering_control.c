@@ -63,6 +63,13 @@ void lldSteeringControlInit  (void)
    isInitialized = true; 
 }
 
+int16_t lldSteeringControlGetAdcVal (void)
+{
+    if ( !isInitialized )
+	    return false;
+	return FindADC1Val();
+}
+
 int16_t lldSteeringControGetAdcPos_filt (void)
 {
   if ( !isInitialized )
@@ -111,7 +118,7 @@ int16_t lldSteeringControGetAdcPos_doublefilt (void)
 
   if (filter_cnt2 < 5)
   {
-	  ADCfilter2[filter_cnt2] = GetFrontWheelAdcPos_filt();
+	  ADCfilter2[filter_cnt2] = lldSteeringControGetAdcPos_filt();
 	  ADC_filtered_val = ADCfilter2[filter_cnt2];
 	  filter_cnt2++;
   }
@@ -128,7 +135,7 @@ int16_t lldSteeringControGetAdcPos_doublefilt (void)
 		  ADCfilter2[j] = ADCfilter2[j + 1];
 		  j++;
 	  }
-	  ADCfilter2[4] = GetFrontWheelAdcPos_filt();
+	  ADCfilter2[4] = lldSteeringControGetAdcPos_filt();
 	  ADC_filtered_val = Sum / 5;
   }
   return ADC_filtered_val;

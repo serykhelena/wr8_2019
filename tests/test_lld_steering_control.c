@@ -25,11 +25,11 @@ void sd_set(void)
 void testSteeringControl (void)
 {
    sd_set();
-   lldSteerRotateInit();
+   lldSteeringControlInit();
     while( true )
     {
         //AdcVal = GetFrontWheelAdcPos_filt();
-        AdcVal = GetFrontWheelAdcPos_doublefilt();
+        AdcVal = lldSteeringControGetAdcPos_doublefilt();
         sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );
         //chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
         chThdSleepMilliseconds( 10 );
