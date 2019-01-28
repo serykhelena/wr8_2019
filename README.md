@@ -1,7 +1,7 @@
 # wr8_2019 project
 
 Проект под командной разработкой  
-Некоторые [правила оформления](https://github.com/KaiL4eK/tools_sandbox/blob/master/rules_template.md)
+Некоторые [правила оформления](https://github.com/serykhelena/wr8_2019/blob/development/docs/dev_rules.md)
 
 
 Полезные ссылки:
