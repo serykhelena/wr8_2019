@@ -2,8 +2,6 @@
 #include <tests.h>
 #include <lld_wheel_rotate.h>
 
-//#include <chprintf.h>
-
 
 int16_t AdcVal = 0;
 int16_t PosVal = 0;
@@ -16,22 +14,22 @@ static const SerialConfig sdcfg = {
   .cr3 = 0
 };
 
-void sd_set(void)
+/*void sd_set(void)
 {
     sdStart( &SD7, &sdcfg );
     palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 }
-
+*/
 
 void testFrontWheels (void)
 {
    sd_set();
-   lldServInit();
+   lldSteerRotateInit();
     while( true )
     {
-        //AdcVal = lldGetFrontWheelAdcPos_filt();
-        AdcVal = lldGetFrontWheelAdcPos_doublefilt();
+        //AdcVal = GetFrontWheelAdcPos_filt();
+        AdcVal = GetFrontWheelAdcPos_doublefilt();
         sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );
         //chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
         chThdSleepMilliseconds( 10 );

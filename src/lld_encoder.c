@@ -1,4 +1,5 @@
-﻿#include <lld_encoder.h>
+﻿#include <tests.h>
+#include <lld_encoder.h>
 
 /**************************/
 /*** CONFIGURATION ZONE ***/
@@ -11,9 +12,11 @@ static float OverflowsInTimeDiap      = 1000;
 /*** CONFIGURATION ZONE END ***/
 /******************************/
 
-#define encoderPos       PAL_LINE ( GPIOG, 6 )
+#define encoderChA       PAL_LINE ( GPIOC, 0 )
+#define encoderChB       PAL_LINE ( GPIOC, 3 )
 
-static void extcb ( EXTDriver *extp, expchannel_t channel );
+static void extcbA ( EXTDriver *extp, expchannel_t channel );
+static void extcbB ( EXTDriver *extp, expchannel_t channel );
 
 static void gpt_callback ( GPTDriver *Tim2 );
 static GPTDriver                     *Tim2 = &GPTD2;
@@ -21,29 +24,31 @@ static GPTDriver                     *Tim2 = &GPTD2;
 static const GPTConfig gpt2cfg = { 
   .frequency =  100000,
   .callback  =  gpt_callback,
-  .cr2       =  0,        */
+  .cr2       =  0,
   .dier      =  0U 
 };
 
-#define period_20ms         gpt2cfg1.frequency/50
-#define period_100ms        gpt2cfg1.frequency/10
-#define period_50ms         gpt2cfg1.frequency/20
+#define period_20ms         gpt2cfg.frequency/50
+#define period_100ms        gpt2cfg.frequency/10
+#define period_50ms         gpt2cfg.frequency/20
 
 
 int32_t total_ticks             = 0;
-int32_t max_ticks      = 0;
+int32_t max_ticks               = 0;
 int32_t periodCheckPoint        = 0;
 int32_t last_periodCheckPoint   = 0;
 int32_t FromTickToTickEncoder   = 0;
 int32_t TotalImps               = 0;
 
-static int32_t      maxOverflows    = 0;
+static int32_t   maxOverflows   = 0;
 
 static bool    isInitialized            = false;
 static bool    drivingWheelsMoving      = false;
 
+int8_t ExtAcnt                  = 0;
+int8_t ExtBcnt                  = 0;
 
-#define ImpsFor1Rev         100 
+#define ImpsFor1Rev         360
 
 static float speed1ImpsTicksPerMin = 0;
 
@@ -55,13 +60,13 @@ void EncoderSensInit (void)
     EXTConfig extcfg = {
     .channels =
      {
-      [0]  = {EXT_CH_MODE_DISABLED, NULL},
+      [0]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbA}, // PC0
       [1]  = {EXT_CH_MODE_DISABLED, NULL},
       [2]  = {EXT_CH_MODE_DISABLED, NULL},
-      [3]  = {EXT_CH_MODE_DISABLED, NULL},
+      [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbB}, // PC3
       [4]  = {EXT_CH_MODE_DISABLED, NULL},
       [5]  = {EXT_CH_MODE_DISABLED, NULL},
-      [6]  = {EXT_CH_MODE_BOTH_EDGES | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOG, extcb},// PG6
+      [6]  = {EXT_CH_MODE_DISABLED, NULL},
       [7]  = {EXT_CH_MODE_DISABLED, NULL},
       [8]  = {EXT_CH_MODE_DISABLED, NULL},
       [9]  = {EXT_CH_MODE_DISABLED, NULL},
@@ -75,7 +80,8 @@ void EncoderSensInit (void)
   };
   extStart( &EXTD1, &extcfg );  
 
-  palSetLineMode( encoderPos, PAL_MODE_INPUT_PULLUP );
+  palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
+  palSetLineMode( encoderChB, PAL_MODE_INPUT_PULLUP );
   
   gptStart(Tim2, &gpt2cfg);
   gptStartContinuous(Tim2, period_50ms); 
@@ -107,40 +113,71 @@ static void gpt_callback (GPTDriver *gptd)
 
 
 
-static void extcb(EXTDriver *extp, expchannel_t channel)
+static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
 
-    FromTickToTickEncoder = 0;
-    periodCheckPoint = gptGetCounterX(Tim4);
-    
-    if ( drivingWheelsMoving )
-    {
-        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint; 
-        TotalImps++;
-    }
-    total_ticks = 0;
-    last_periodCheckPoint = periodCheckPoint;
-    
-    drivingWheelsMoving == true;
+    ExtAcnt = 1;
 }
 
+static void extcbB(EXTDriver *extp, expchannel_t channel)
+{
+    extp = extp; channel = channel;
 
-float RevPerMinSpeed (void)
+    ExtBcnt = 1;
+
+    if (ExtAcnt == 1 && ExtBcnt == 1)
+    {
+    	FromTickToTickEncoder = 0;
+    	periodCheckPoint = gptGetCounterX(Tim2);
+
+    	if ( drivingWheelsMoving )
+    	{
+    	    FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+    	    TotalImps++;
+    	}
+    	total_ticks = 0;
+    	last_periodCheckPoint = periodCheckPoint;
+
+    	drivingWheelsMoving = true;
+
+    	ExtAcnt = 0;
+    	ExtBcnt = 0;
+    }
+}
+
+uint16_t Revolutions(void)
+{
+	return TotalImps / 360;
+}
+
+uint32_t EncTicks(void)
+{
+	return TotalImps ;
+}
+
+float GetSpeedRPM (void)
 {
   if ( isInitialized == false )
   {
       return -1;
   }
-    
+
   if ( drivingWheelsMoving == false )
   {
       return 0; 
   }
+
   float RevSpeed = 0;   
  
-  FromTickToTickEncoder == 0 ? RevSpeed  = 0 : RevSpeed  = speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
-     
+  if (FromTickToTickEncoder == 0)
+  {
+	  RevSpeed  = 0 ;
+  }
+  else
+  {
+	  RevSpeed  = speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
+  }
   return RevSpeed;
 }
 
@@ -173,9 +210,9 @@ float GetSpeedMPS (void)
     }
 
     float SpeedMPS = 0;
-    float speedRevPerSec = RevPerMinSpeed () / 60 ;
+    float speedRevPerSec = GetSpeedRPM () / 60.0f ;
     
-    SpeedMPS = 6.28 * WheelRadius * speedRevPerMin; 
+    SpeedMPS = 6.28 * WheelRadius * speedRevPerSec;
         
     return SpeedMPS;
 }

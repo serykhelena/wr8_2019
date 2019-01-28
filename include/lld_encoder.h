@@ -1,7 +1,6 @@
 #ifndef INCLUDE_LLD_ENCODER_H_
 #define INCLUDE_LLD_ENCODER_H_
 
-#include <ext_adc_steering.h>
 #include <chprintf.h>
 
 /*
@@ -15,6 +14,10 @@
  */
 void EncoderSensInit (void);
 
+void EncoderTicks (void);
+
+int16_t Ret (void);
+
 
 /**
  * @ brief                             Gets wheels current speed [rpm]
@@ -22,8 +25,10 @@ void EncoderSensInit (void);
  * @ return  >=0                       Current speed [rpm]
  *           -1                        Sensor is not initialized
  */
-float RevPerMinSpeed (void);
+float GetSpeedRPM (void);
 
+uint16_t Revolutions(void);
+uint32_t EncTicks(void);
 
 /**
  * @ brief                             Gets current distance [metres]

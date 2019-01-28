@@ -1,7 +1,6 @@
 #include <tests.h>
 #include <lld_wheel_rotate.h>
 
-//#include <common.h>
 
 
 /**************************/
@@ -54,7 +53,7 @@ static float leftFrontPosAngle             = 0;
 static float rightFrontPosAngle            = 0;
 
 
-void lldServInit (void)
+void lldSteerRotateInit (void)
 {
 	AdcInit();
     
@@ -68,7 +67,7 @@ void lldServInit (void)
    isInitialized = true; 
 }
 
-int16_t lldGetFrontWheelAdcPos_filt (void)
+int16_t GetFrontWheelAdcPos_filt (void)
 {
   if ( !isInitialized )
       return false;
@@ -104,7 +103,7 @@ int16_t lldGetFrontWheelAdcPos_filt (void)
   return ADC_val;
 }
 
-int16_t lldGetFrontWheelAdcPos_doublefilt (void)
+int16_t GetFrontWheelAdcPos_doublefilt (void)
 {
   if ( !isInitialized )
       return false;
@@ -116,13 +115,12 @@ int16_t lldGetFrontWheelAdcPos_doublefilt (void)
 
   if (filter_cnt2 < 5)
   {
-	  ADCfilter[filter_cnt2] = lldGetFrontWheelAdcPos_filt();
+	  ADCfilter2[filter_cnt2] = GetFrontWheelAdcPos_filt();
 	  ADC_filtered_val = ADCfilter2[filter_cnt2];
 	  filter_cnt2++;
   }
   else
   {
-	  //filter_cnt2 = 4;
 	  while (i < 5)
 	  {
 		  Sum = Sum + ADCfilter2[i];
@@ -134,13 +132,13 @@ int16_t lldGetFrontWheelAdcPos_doublefilt (void)
 		  ADCfilter2[j] = ADCfilter2[j + 1];
 		  j++;
 	  }
-	  ADCfilter2[4] = lldGetFrontWheelAdcPos_filt();
+	  ADCfilter2[4] = GetFrontWheelAdcPos_filt();
 	  ADC_filtered_val = Sum / 5;
   }
   return ADC_filtered_val;
 }
 
-int16_t lldGetFrontWheelVal (void)
+int16_t GetFrontWheelVal (void)
 {
   if ( !isInitialized )
       return false;
@@ -167,7 +165,7 @@ int16_t lldGetFrontWheelVal (void)
   return RotateVal;  
 }
 
-int16_t lldGetFrontWheelAngle (void)
+int16_t GetFrontWheelAngle (void)
 {
   if ( !isInitialized )
       return false;

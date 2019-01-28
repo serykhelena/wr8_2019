@@ -13,9 +13,5 @@ int main(void)
 
         testsRoutines();
 
-    #else
-
-
-
     #endif
 }

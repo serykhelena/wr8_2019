@@ -9,9 +9,10 @@
 
 #define     PROGRAM_ROUTINE_MASTER                      0
 #define     PROGRAM_ROUTINE_TEST_WHEEL_ROTATE           1
+#define     PROGRAM_ROUTINE_TEST_ENCODER                2
 
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_WHEEL_ROTATE
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_ENCODER
 
 void ExtDriverInit ( void );
 
