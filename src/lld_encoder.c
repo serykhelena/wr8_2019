@@ -48,7 +48,7 @@ static bool    drivingWheelsMoving      = false;
 int8_t ExtAcnt                  = 0;
 int8_t ExtBcnt                  = 0;
 
-#define ImpsFor1Rev         360
+#define ImpsFor1Rev         100
 
 static float speed1ImpsTicksPerMin = 0;
 
