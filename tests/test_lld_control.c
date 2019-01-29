@@ -9,7 +9,7 @@ static const SerialConfig sdcfg = {
 };
 
 
-void a( void )
+void testRawDrivingWheelControlRoutine( void )
 {
     palSetLine( LINE_LED1 );
     sdStart( &SD7, &sdcfg );

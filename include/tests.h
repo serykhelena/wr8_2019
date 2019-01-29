@@ -20,12 +20,27 @@ void testRawDrivingWheelControlRoutine( void );
  */
 void testWheelsControlRoutines( void );
 
+/*********************/
+/*** Encoder tests ***/
+/*********************/
+
+
+/*
+ * @brief   Routine of encoder testing
+ * @note    The routine has internal infinite loop
+ */
+void testEncoderRoutine( void );
+
 
 static inline void testsRoutines( void )
 {
 #if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_LL_DRIVER)
 
     testWheelsControlRoutines( );
+
+#elif ( MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER )
+
+    testEncoderRoutine( );
 
 #endif
 }

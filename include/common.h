@@ -9,9 +9,10 @@
 
 #define     PROGRAM_ROUTINE_MASTER                      0
 #define     PROGRAM_ROUTINE_TEST_LL_DRIVER              1
+#define     PROGRAM_ROUTINE_TEST_ENCODER                2
 
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_ENCODER
 
 
 /**************/
