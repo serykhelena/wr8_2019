@@ -12,7 +12,6 @@
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
-void testFrontWheels (void);
 
 void testEncoder (void);
 
