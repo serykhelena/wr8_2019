@@ -7,6 +7,7 @@ static const SerialConfig sdcfg = {
   .cr1 = 0, .cr2 = 0, .cr3 = 0
 };
 
+
 void testEncoderRoutine( void )
 {
     sdStart( &SD7, &sdcfg );
@@ -15,18 +16,28 @@ void testEncoderRoutine( void )
 
     encoderInit( );
 
-    rawEncoderValue_t   ticks   = 0;
-    encoderValue_t      revs    = 0;
+
+    rawEncoderValue_t       enc_ticks           = 0;
+    encoderValue_t          enc_revs            = 0;
+    rawEncoderValue_t       enc_table_value     = 0;
+    rawEncoderValue_t       prev_enc_table_val  = 0;
+    encoderValue_t          enc_rotate_dir      = 0;
 
     chprintf( (BaseSequentialStream *)&SD7, "TEST ENCODER\n\r" );
 
     while( 1 )
     {
-        ticks   = getEncoderRawTickNumber( );
-        revs    = getEncoderRevNumber( );
+        enc_ticks           = getEncoderRawTickNumber( );
+        enc_revs            = getEncoderRevNumber( );
+        enc_table_value     = getEncoderValTable();
+        enc_rotate_dir      = getEncoderDirectionState();
 
-        chprintf( (BaseSequentialStream *)&SD7, "Ticks:(%d)\n\r\t Revs:(%d)\n\r\t", ticks, revs );
-        chThdSleepMilliseconds( 10 );
+        /* Show info only when encoder works */
+        if(prev_enc_table_val != enc_table_value)
+          chprintf( (BaseSequentialStream *)&SD7, "Ticks:(%d)\tRevs:(%d)\tDir:(%c)\n\r\t",
+                    enc_ticks, enc_revs, enc_rotate_dir );
+
+        prev_enc_table_val = enc_table_value;
+        chThdSleepMilliseconds( 100 );
     }
-
 }
