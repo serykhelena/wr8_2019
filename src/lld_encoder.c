@@ -52,32 +52,33 @@ int8_t ExtBcnt                  = 0;
 
 static float speed1ImpsTicksPerMin = 0;
 
+EXTConfig extcfg = {
+.channels =
+    {
+        [0]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbA}, // PC0
+        [1]  = {EXT_CH_MODE_DISABLED, NULL},
+        [2]  = {EXT_CH_MODE_DISABLED, NULL},
+        [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbB}, // PC3
+        [4]  = {EXT_CH_MODE_DISABLED, NULL},
+        [5]  = {EXT_CH_MODE_DISABLED, NULL},
+        [6]  = {EXT_CH_MODE_DISABLED, NULL},
+        [7]  = {EXT_CH_MODE_DISABLED, NULL},
+        [8]  = {EXT_CH_MODE_DISABLED, NULL},
+        [9]  = {EXT_CH_MODE_DISABLED, NULL},
+        [10] = {EXT_CH_MODE_DISABLED, NULL},
+        [11] = {EXT_CH_MODE_DISABLED, NULL},
+        [12] = {EXT_CH_MODE_DISABLED, NULL},
+        [13] = {EXT_CH_MODE_DISABLED, NULL},
+        [14] = {EXT_CH_MODE_DISABLED, NULL},
+        [15] = {EXT_CH_MODE_DISABLED, NULL},
+   }
+};
+
 void lldEncoderSensInit (void)
 {
     if ( isInitialized )
         return;
         
-    EXTConfig extcfg = {
-    .channels =
-     {
-      [0]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbA}, // PC0
-      [1]  = {EXT_CH_MODE_DISABLED, NULL},
-      [2]  = {EXT_CH_MODE_DISABLED, NULL},
-      [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbB}, // PC3
-      [4]  = {EXT_CH_MODE_DISABLED, NULL},
-      [5]  = {EXT_CH_MODE_DISABLED, NULL},
-      [6]  = {EXT_CH_MODE_DISABLED, NULL},
-      [7]  = {EXT_CH_MODE_DISABLED, NULL},
-      [8]  = {EXT_CH_MODE_DISABLED, NULL},
-      [9]  = {EXT_CH_MODE_DISABLED, NULL},
-      [10] = {EXT_CH_MODE_DISABLED, NULL},
-      [11] = {EXT_CH_MODE_DISABLED, NULL},
-      [12] = {EXT_CH_MODE_DISABLED, NULL},
-      [13] = {EXT_CH_MODE_DISABLED, NULL}, 
-      [14] = {EXT_CH_MODE_DISABLED, NULL},
-      [15] = {EXT_CH_MODE_DISABLED, NULL},
-    }
-  };
   extStart( &EXTD1, &extcfg );  
 
   palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
