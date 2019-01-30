@@ -1,4 +1,4 @@
-﻿#include <tests.h>
+#include <tests.h>
 #include <lld_encoder.h>
 
 /**************************/
@@ -74,16 +74,18 @@ EXTConfig extcfg = {
    }
 };
 
+
 void lldEncoderSensInit (void)
 {
     if ( isInitialized )
         return;
-        
+  /* Start working EXT driver */      
   extStart( &EXTD1, &extcfg );  
-
+  /*Set up EXT channels A and B hardware pin mode as digital inputs*/
   palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
   palSetLineMode( encoderChB, PAL_MODE_INPUT_PULLUP );
-  
+    
+  /* Start working GPT driver in asynchronous mode */
   gptStart(Tim2, &gpt2cfg);
   gptStartContinuous(Tim2, period_50ms); 
     
@@ -100,6 +102,7 @@ void lldEncoderSensInit (void)
   isInitialized       = true;
 }
 
+/* Timer 2 callback function */
 static void gpt_callback (GPTDriver *gptd)
 {
     gptd = gptd;
@@ -113,7 +116,7 @@ static void gpt_callback (GPTDriver *gptd)
 }
 
 
-
+/* EXT channel A (input A1) */
 static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
@@ -121,6 +124,7 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     ExtAcnt = 1;
 }
 
+/* EXT channel B (input A2) */
 static void extcbB(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
@@ -129,12 +133,15 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
 
     if (ExtAcnt == 1 && ExtBcnt == 1)
     {
-    	FromTickToTickEncoder = 0;
+    	/*time between ticks*/
+        FromTickToTickEncoder = 0;
+        /* number of ticks from last overflow */
     	periodCheckPoint = gptGetCounterX(Tim2);
 
     	if ( drivingWheelsMoving )
     	{
-    	    FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+    	    
+            FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
     	    TotalImps++;
     	}
     	total_ticks = 0;
@@ -147,13 +154,14 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     }
 }
 
+
 uint16_t lldEncoderGetRevolutions(void)
 {
     if ( isInitialized == false )
 	{
 	    return -1;
 	}
-
+    /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
 	return TotalImps / ImpsFor1Rev ;
 }
 
@@ -164,7 +172,7 @@ uint32_t lldEncoderGetEncTicks(void)
 	{
 	    return -1;
 	}
-
+    /*total ticks of the encoder from begining of movement*/
 	return TotalImps ;
 }
 
@@ -180,7 +188,7 @@ float lldEncoderGetSpeedRPM (void)
   {
       return 0; 
   }
-
+  /* Speed in revolutions per minute */
   float RevSpeed = 0;   
  
   if (FromTickToTickEncoder == 0)
@@ -204,7 +212,10 @@ float lldEncoderGetDistance (void)
     float RevQuantity = 0;
     float distance = 0;
 
-    RevQuantity = TotalImps / ImpsFor1Rev;
+    RevQuantity = lldEncoderGetRevolutions();
+    /* distance for 1 revolution is wheel circumference */
+    /*  total distance is N revolutions( N wheel circumferences ) */
+    /* [S = 2 * pi * (distance for 1 revolution)] */
     distance = 6.28 * RevQuantity * WheelRadius;
 
     return distance;
@@ -212,6 +223,7 @@ float lldEncoderGetDistance (void)
 
 void lldEncoderResetDistance (void)
 {
+    /* Total distance is determined by all encoder ticks */
     TotalImps = 0;
 }
 
@@ -222,9 +234,10 @@ float lldEncoderGetSpeedMPS (void)
       return -1;
     }
 
-    float SpeedMPS = 0;
+    float SpeedMPS = 0
+    /* Get speed in revolutions per second */    
     float speedRevPerSec = lldEncoderGetSpeedRPM () / 60.0f ;
-    
+    /* [V = 2 * pi * (speed in revolutions per second)] */
     SpeedMPS = 6.28 * WheelRadius * speedRevPerSec;
         
     return SpeedMPS;
@@ -237,7 +250,8 @@ float lldEncoderGetSpeedKPH (void)
       return -1;
     }
     float SpeedKPH = 0;
-    
+    /* 1 meter per second = 3.6 kilometres per hour */
+    /* V [kph] = 3.6 * V [mps] */
     SpeedKPH = 3.6 * lldEncoderGetSpeedMPS();
         
     return SpeedKPH;
