@@ -13,5 +13,5 @@ PWM1 | PE9 | Output (channel 1)
 ## Драйвер работы с энкодером
 Driver | Pins | Input / Output
 -------|------|-------
-EXT | D3 | input (channel 3)
-EXT | D4 | input (channel 4)
+EXT | D3 | Input (channel 3)
+EXT | D4 | Input (channel 4)
