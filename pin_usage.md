@@ -9,3 +9,8 @@ Driver | Pins | Input / Output
 Driver | Pins | Input / Output
 -------|------|-------
 
+
+## Модуль датчика энкодера 
+Driver | Pins | Input / Output
+EXT(A) |PC0   | input (A1)
+EXT(B) |PC3   | input (A2)
