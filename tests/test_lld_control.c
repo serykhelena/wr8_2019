@@ -26,8 +26,8 @@ void SerialInit( void )
 
 void testDriverControlRoutine( void )
 {
-    controlValue_t speed = 0;          //for serial test
-    controlValue_t delta_speed = 5;   //
+    controlValue_t speed = 0;
+    controlValue_t delta_speed = 5;
 
     controlValue_t steer = 0;
     controlValue_t delta_steer = 5;

@@ -104,12 +104,12 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
     inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
     if (inputPrc >= 0)
     {
-      int speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
+      int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
     }
     else
     {
-      int speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
+      int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
     }
 }
@@ -123,7 +123,7 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
 void lldControlSteeringWheels(controlValue_t inputPrc)
 {
     inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
-    int steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
+    int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
 
     pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 }
