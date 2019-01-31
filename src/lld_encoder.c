@@ -74,7 +74,9 @@ EXTConfig extcfg = {
    }
 };
 
-
+/*
+ * @brief   Initialize EXT, gpt  
+ */
 void lldEncoderSensInit (void)
 {
     if ( isInitialized )
@@ -154,7 +156,11 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     }
 }
 
-
+/**
+ * @ brief                             Gets current quantity of revolutions
+ * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 100 encoder ticks)
+ *           -1                        Sensor is not initialized
+ */
 uint16_t lldEncoderGetRevolutions(void)
 {
     if ( isInitialized == false )
@@ -165,6 +171,11 @@ uint16_t lldEncoderGetRevolutions(void)
 	return TotalImps / ImpsFor1Rev ;
 }
 
+/**
+ * @ brief                             Gets current total quantity of encoder ticks
+ * @ return  >=0                       Current total quantity of encoder ticks
+ *           -1                        Sensor is not initialized
+ */
 
 uint32_t lldEncoderGetEncTicks(void)
 {
@@ -176,7 +187,11 @@ uint32_t lldEncoderGetEncTicks(void)
 	return TotalImps ;
 }
 
-
+/**
+ * @ brief                             Gets wheels current speed [rpm]                           
+ * @ return  >=0                       Current speed [rpm]
+ *           -1                        Sensor is not initialized
+ */
 float lldEncoderGetSpeedRPM (void)
 {
   if ( isInitialized == false )
@@ -202,7 +217,11 @@ float lldEncoderGetSpeedRPM (void)
   return RevSpeed;
 }
 
-
+/**
+ * @ brief                             Gets current distance [metres]
+ * @ return  >=0                       Current distance [metres]
+ *           -1                        Sensor is not initialized
+ */
 float lldEncoderGetDistance (void)
 {
     if ( !isInitialized )
@@ -221,12 +240,20 @@ float lldEncoderGetDistance (void)
     return distance;
 }
 
+/*
+ * @brief   Reset impulse quantity from the beginning of the movement 
+ */
 void lldEncoderResetDistance (void)
 {
     /* Total distance is determined by all encoder ticks */
     TotalImps = 0;
 }
 
+/**
+ * @ brief                             Gets wheels current speed [mps]                          
+ * @ return  >=0                       Current speed [mps]
+ *           -1                        Sensor is not initialized
+ */
 float lldEncoderGetSpeedMPS (void)
 {
     if ( !isInitialized )
@@ -243,6 +270,11 @@ float lldEncoderGetSpeedMPS (void)
     return SpeedMPS;
 }
 
+/**
+ * @ brief                             Gets wheels current speed [kph]                     
+ * @ return  >=0                       Current speed [kph]
+ *           -1                        Sensor is not initialized
+ */
 float lldEncoderGetSpeedKPH (void)
 {
     if ( !isInitialized )

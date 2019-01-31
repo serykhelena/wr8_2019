@@ -10,7 +10,7 @@
 
 
 /*
- * @brief   Initialize EXT, gpt and some extra 
+ * @brief   Initialize EXT, gpt  
  */
 void lldEncoderSensInit (void);
 
