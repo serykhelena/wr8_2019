@@ -24,5 +24,4 @@ void lldControlDrivingWheels(controlValue_t inputPrc);
 void lldControlSteeringWheels(controlValue_t inputPrc);
 
 
-
 #endif /* INCLUDE_LLD_CONTROL_H_ */

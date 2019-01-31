@@ -3,7 +3,7 @@
 #include <chprintf.h>
 
 /***  Serial configuration pins    ***/
-static  SerialDriver    *serialDriver   = &SD7;
+static  SerialDriver    *SERIALdriver   = &SD7;
 
 /*** Configuration structures ***/
 
@@ -19,9 +19,9 @@ void SerialInit( void )
     /*** serial pins configuration ***/
     palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) ); // TX
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) ); // RX
-    sdStart( serialDriver, &sdcfg );
+    sdStart( SERIALdriver, &sdcfg );
 
-    chprintf(((BaseSequentialStream *)serialDriver), "TEST\r");
+    chprintf(((BaseSequentialStream *)SERIALdriver), "TEST\r");
 }
 
 void testDriverControlRoutine( void )
@@ -38,7 +38,7 @@ void testDriverControlRoutine( void )
     while( 1 )
     {
 
-      char rcv_data = sdGet( serialDriver );
+      char rcv_data = sdGet( SERIALdriver );
                    switch ( rcv_data )
                    {
                        case 'w':   // Positive speed
@@ -64,7 +64,7 @@ void testDriverControlRoutine( void )
       lldControlDrivingWheels(speed);
       steer = CLIP_VALUE( steer, -100, 100 );
       lldControlSteeringWheels(steer);
-      chprintf( (BaseSequentialStream *)serialDriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+      chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
       chThdSleepMilliseconds(100);
     }
 }

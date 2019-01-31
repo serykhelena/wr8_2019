@@ -6,20 +6,20 @@
 /*** CONFIGURATION ZONE ***/
 /**************************/
 
-#define speed_min           -100
-#define speed_max            100
+#define SPEEDmin           -100
+#define SPEEDmax            100
 
-#define speed_dutyK_max      4
-#define speed_dutyB_max      1520
+#define SPEED_DUTY_K_max    4
+#define SPEED_DUTY_B_max    1520
 
-#define speed_dutyK_min      2.6
-#define speed_dutyB_min      1420
+#define SPEED_DUTY_K_min    2.6
+#define SPEED_DUTY_B_min    1420
 
-#define steer_min           -100
-#define steer_max            100
+#define STEERmin           -100
+#define STEERmax            100
 
-#define steer_dutyK          4
-#define steer_dutyB          1560
+#define STEER_DUTY_K        4
+#define STEER_DUTY_B        1560
 
 //*        |  Clockwise  |  Center  | Counterclockwise
 // * -------------------------------------------------
@@ -47,30 +47,30 @@
 /***  PE9 - Speeding            ***/
 #define PE9_ACTIVE      PWM_OUTPUT_ACTIVE_HIGH
 #define PE9_DISABLE     PWM_OUTPUT_DISABLED
-#define speedPWMch      0
+#define SPEED_PWMch      0
 /***  PE11 - Steering           ***/
 #define PE11_ACTIVE     PWM_OUTPUT_ACTIVE_HIGH
 #define PE11_DISABLE    PWM_OUTPUT_DISABLED
-#define steerPWMch      1
+#define STEER_PWMch      1
 /***  PE13, PE14 - not used     ***/
 #define PE13_ACTIVE     PWM_OUTPUT_ACTIVE_HIGH
 #define PE13_DISABLE    PWM_OUTPUT_DISABLED
 #define PE14_ACTIVE     PWM_OUTPUT_ACTIVE_HIGH
 #define PE14_DISABLE    PWM_OUTPUT_DISABLED
 
-#define pwm1LineCh0     PAL_LINE( GPIOE, 9 )
-#define pwm1LineCh1     PAL_LINE( GPIOE, 11 )
+#define PWM1_CH0        PAL_LINE( GPIOE, 9 )
+#define PWM1_CH1        PAL_LINE( GPIOE, 11 )
 
-#define pwm1Freq        1000000
-#define pwm1Period      20000       // 50 Hz
+#define PWM1_FREQ       1000000
+#define PWM1_PERIOD     20000       // 50 Hz
 
-static  PWMDriver       *pwmDriver      = &PWMD1;
+static  PWMDriver       *PWMdriver      = &PWMD1;
 
 /*** Configuration structures ***/
 
 PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
-      .frequency = pwm1Freq,
-      .period    = pwm1Period,
+      .frequency = PWM1_FREQ,
+      .period    = PWM1_PERIOD,
       .callback  = NULL,
       .channels  = {
                     {.mode = PE9_ACTIVE,      .callback = NULL},
@@ -90,9 +90,9 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
 void lldControlInit( void )
 {
     /*** PWM pins configuration ***/
-    palSetLineMode( pwm1LineCh0,  PAL_MODE_ALTERNATE(1) );
-    palSetLineMode( pwm1LineCh1,  PAL_MODE_ALTERNATE(1) );
-    pwmStart( pwmDriver, &pwm1conf );
+    palSetLineMode( PWM1_CH0,  PAL_MODE_ALTERNATE(1) );
+    palSetLineMode( PWM1_CH1,  PAL_MODE_ALTERNATE(1) );
+    pwmStart( PWMdriver, &pwm1conf );
 }
 
 /**
@@ -101,16 +101,16 @@ void lldControlInit( void )
  */
 void lldControlDrivingWheels(controlValue_t inputPrc)
 {
-    inputPrc = CLIP_VALUE( inputPrc, speed_min, speed_max );
+    inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
     if (inputPrc >= 0)
     {
-      int speedDuty = inputPrc * speed_dutyK_max + speed_dutyB_max;
-      pwmEnableChannel( pwmDriver, speedPWMch, speedDuty );
+      int speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
+      pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
     }
     else
     {
-      int speedDuty = inputPrc * speed_dutyK_min + speed_dutyB_min;
-      pwmEnableChannel( pwmDriver, speedPWMch, speedDuty );
+      int speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
+      pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
     }
 }
 
@@ -122,9 +122,9 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
  */
 void lldControlSteeringWheels(controlValue_t inputPrc)
 {
-    inputPrc = CLIP_VALUE( inputPrc, steer_min, steer_max );
-    int steerDuty = inputPrc * steer_dutyK + steer_dutyB;
+    inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
+    int steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
 
-    pwmEnableChannel( pwmDriver, steerPWMch, steerDuty );
+    pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 }
 
