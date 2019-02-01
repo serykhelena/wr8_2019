@@ -45,20 +45,24 @@ static int32_t   maxOverflows   = 0;
 static bool    isInitialized            = false;
 static bool    drivingWheelsMoving      = false;
 
-int8_t ExtAcnt                  = 0;
-int8_t ExtBcnt                  = 0;
+uint8_t ExtAcnt                         = 0;
+uint8_t ExtBcnt                         = 0;
+int8_t InvDrive                         = 0;
+uint8_t ExtAtick                        = 0;
+uint8_t ExtBtick                        = 0;
 
-#define ImpsFor1Rev         100
+
+#define ImpsFor1Rev         360
 
 static float speed1ImpsTicksPerMin = 0;
 
 EXTConfig extcfg = {
 .channels =
     {
-        [0]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbA}, // PC0
+        [0]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbA}, // PC0 green
         [1]  = {EXT_CH_MODE_DISABLED, NULL},
         [2]  = {EXT_CH_MODE_DISABLED, NULL},
-        [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbB}, // PC3
+        [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbB}, // PC3 white
         [4]  = {EXT_CH_MODE_DISABLED, NULL},
         [5]  = {EXT_CH_MODE_DISABLED, NULL},
         [6]  = {EXT_CH_MODE_DISABLED, NULL},
@@ -123,7 +127,8 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
 
-    ExtAcnt = 1;
+    ExtAtick = 1;
+    ExtAcnt = palReadPad(GPIOC, 3);
 }
 
 /* EXT channel B (input A2) */
@@ -131,30 +136,67 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
 
-    ExtBcnt = 1;
-
-    if (ExtAcnt == 1 && ExtBcnt == 1)
+    ExtBtick = 1;
+    ExtBcnt = palReadPad(GPIOC, 0);
+    if (ExtAcnt == 1)
     {
-    	/*time between ticks*/
-        FromTickToTickEncoder = 0;
-        /* number of ticks from last overflow */
-    	periodCheckPoint = gptGetCounterX(Tim2);
-
-    	if ( drivingWheelsMoving )
+    	if (ExtBcnt == 0)
     	{
-    	    
-            FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
-    	    TotalImps++;
+            InvDrive = 1;
     	}
-    	total_ticks = 0;
-    	last_periodCheckPoint = periodCheckPoint;
+    	else
+    	{
+    		InvDrive = -1;
+    	}
+    }
+    else
+    {
+    	if (ExtAcnt == 0)
+    	{
+        	if (ExtBcnt == 1)
+        	{
+                InvDrive = -1;
+        	}
+        	else
+        	{
+        		InvDrive = 1;
+        	}
+    	}
+    }
+    lldEncoderDirection();
+}
 
-    	drivingWheelsMoving = true;
+/**
+ * @ brief                             Definition of current wheel travel direction and time interval between encoder ticks
+ * @ return  -1                        Sensor is not initialized
+ */
+void lldEncoderDirection(void)
+{
+    if (ExtAtick == 1 && ExtBtick == 1)
+    {
+	/*time between ticks*/
+    FromTickToTickEncoder = 0;
+    /* number of ticks from last overflow */
+	periodCheckPoint = gptGetCounterX(Tim2);
 
-    	ExtAcnt = 0;
-    	ExtBcnt = 0;
+	if ( drivingWheelsMoving )
+	{
+        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+	    FromTickToTickEncoder = FromTickToTickEncoder * InvDrive;
+	    TotalImps++;
+	}
+	total_ticks = 0;
+	last_periodCheckPoint = periodCheckPoint;
+
+	drivingWheelsMoving = true;
+
+	ExtAtick = 0;
+	ExtBtick = 0;
     }
 }
+
+
+
 
 /**
  * @ brief                             Gets current quantity of revolutions
@@ -261,7 +303,7 @@ float lldEncoderGetSpeedMPS (void)
       return -1;
     }
 
-    float SpeedMPS = 0
+    float SpeedMPS = 0;
     /* Get speed in revolutions per second */    
     float speedRevPerSec = lldEncoderGetSpeedRPM () / 60.0f ;
     /* [V = 2 * pi * (speed in revolutions per second)] */

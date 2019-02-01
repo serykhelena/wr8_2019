@@ -36,12 +36,44 @@ void testEncoder (void)
     	SpeedMPS = lldEncoderGetSpeedMPS();
     	SpeedKPH = lldEncoderGetSpeedKPH();
     	fPartRPM = (SpeedRPM - (int)SpeedRPM) * 100;
+    	if (SpeedRPM < 0)
+    	{
+    		fPartRPM *= -1;
+    	}
 		fPartMPS = (SpeedMPS - (int)SpeedMPS) * 100;
+    	if (SpeedMPS < 0)
+    	{
+    		fPartMPS *= -1;
+    	}
 		fPartKPH = (SpeedKPH - (int)SpeedKPH) * 100;
+    	if (SpeedKPH < 0)
+    	{
+    		fPartKPH *= -1;
+    	}
         Rev = lldEncoderGetRevolutions();
         Ticks = lldEncoderGetEncTicks();
-
-    	chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
-    	chThdSleepMilliseconds(300);
+        if ((int)SpeedMPS == 0 && SpeedMPS < 0)
+        {
+        	if (SpeedKPH < 0 && (int)SpeedKPH == 0)
+        	{
+        		chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS:-%d.%02d      KPH: -%d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        	}
+        	else
+        	{
+        		if ((int)SpeedKPH == 0 && fPartKPH < 0 )
+        		{
+        			chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS:-%d.%02d      KPH: -%d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        		}
+        		else
+        		{
+        		chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS:-%d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        		}
+        	}
+        }
+        else
+        {
+        	chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        }
+    chThdSleepMilliseconds(300);
     }
 }
