@@ -44,4 +44,11 @@ rawEncoderValue_t getEncoderState( void );
  */
 encoderValue_t getEncoderDirectionState( void );
 
+/**
+ * @brief   Get distance in cm
+ * @return  (int) distance in cm
+ */
+encoderValue_t getEncoderDistanceCm( void );
+
+
 #endif /* INCLUDE_ENCODER_H_ */

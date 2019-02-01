@@ -3,6 +3,10 @@
 
 #define MAX_TICK_NUM        360
 
+/* need checking, maybe should 0.105 / 6 */
+#define GAIN                0.105
+#define WHEEL_RADIUS        4
+
 #define ENCODER_GREEN_LINE  PAL_LINE( GPIOD, 3 )
 #define ENCODER_WHITE_LINE  PAL_LINE( GPIOD, 4 )
 
@@ -11,12 +15,10 @@ encoderValue_t      enc_rev_number      = 0;
 encoderValue_t      enc_dir             = 0;
 
 rawEncoderValue_t   enc_table_val       = 0;
-uint8_t prev_val = 0;
 
-rawEncoderValue_t encoder_decode_table[4] = {0, 1, 3, 2};
+rawEncoderValue_t   encoder_decode_table[4] = {0, 1, 3, 2};
 
-rawEncoderValue_t curr_enc_state = 0;
-rawEncoderValue_t prev_enc_state = 0;
+
 
 /**
  * @brief   Get decimal values depends on 2 channels encoder state
@@ -31,15 +33,18 @@ rawEncoderValue_t getEncoderState( void )
     return res_enc;
 }
 
+rawEncoderValue_t curr_enc_state = 0;
+rawEncoderValue_t prev_enc_state = 0;
 
 static void extcb1(EXTDriver *extp, expchannel_t channel)
 {
     (void)extp;
     (void)channel;
 
-    rawEncoderValue_t encoder_state = getEncoderState( );
 
     uint8_t i = 0;
+
+    rawEncoderValue_t encoder_state = getEncoderState( );
 
     for( i = 0; i < 4; i++ )
     {
@@ -61,7 +66,6 @@ static void extcb1(EXTDriver *extp, expchannel_t channel)
         else    enc_dir = 'F';
     }
 
-    prev_val = prev_enc_state;
     prev_enc_state = curr_enc_state;
 
     enc_trigger_counter += 1;
@@ -164,3 +168,17 @@ rawEncoderValue_t getEncoderValTable( void )
 {
     return enc_table_val;
 }
+
+/**
+ * @brief   Get distance in cm
+ * @return  (int) distance in cm
+ */
+encoderValue_t getEncoderDistanceCm( void )
+{
+    encoderValue_t distance = 0;
+    encoderValue_t revs = 0;
+    revs = getEncoderRevNumber( );
+    distance = revs * 2 * 3.14 * WHEEL_RADIUS * GAIN;
+    return distance;
+}
+
