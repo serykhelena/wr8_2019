@@ -86,27 +86,27 @@ void lldEncoderSensInit (void)
 {
     if ( isInitialized )
         return;
-  /* Start working EXT driver */      
-  extStart( &EXTD1, &extcfg );  
-  /*Set up EXT channels A and B hardware pin mode as digital inputs*/
-  palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
-  palSetLineMode( encoderChB, PAL_MODE_INPUT_PULLUP );
+    /* Start working EXT driver */
+    extStart( &EXTD1, &extcfg );
+    /*Set up EXT channels A and B hardware pin mode as digital inputs*/
+    palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
+    palSetLineMode( encoderChB, PAL_MODE_INPUT_PULLUP );
     
-  /* Start working GPT driver in asynchronous mode */
-  gptStart(Tim2, &gpt2cfg);
-  gptStartContinuous(Tim2, period_50ms); 
+    /* Start working GPT driver in asynchronous mode */
+    gptStart(Tim2, &gpt2cfg);
+    gptStartContinuous(Tim2, period_50ms);
     
-  total_ticks = 0;
+    total_ticks = 0;
     
-  int32_t Period_ticks = 1000.0 * period_50ms / gpt2cfg.frequency;    
+    int32_t Period_ticks = 1000.0 * period_50ms / gpt2cfg.frequency;
   
-  speed1ImpsTicksPerMin = 60 * gpt2cfg.frequency / ImpsFor1Rev;
+    speed1ImpsTicksPerMin = 60 * gpt2cfg.frequency / ImpsFor1Rev;
 
-  maxOverflows = OverflowsInTimeDiap / Period_ticks;
+    maxOverflows = OverflowsInTimeDiap / Period_ticks;
   
-  max_ticks = period_50ms * maxOverflows;
+    max_ticks = period_50ms * maxOverflows;
     
-  isInitialized       = true;
+    isInitialized       = true;
 }
 
 /* Timer 2 callback function */
@@ -119,6 +119,35 @@ static void gpt_callback (GPTDriver *gptd)
     if ( total_ticks >= max_ticks )
     {
         drivingWheelsMoving = false;
+    }
+}
+
+/**
+ * @ brief                             Definition of current wheel travel direction and time interval between encoder ticks
+ * @ return  -1                        Sensor is not initialized
+ */
+void lldEncoderDirection(void)
+{
+    if (ExtAtick == 1 && ExtBtick == 1)
+    {
+    /*time between ticks*/
+    FromTickToTickEncoder = 0;
+    /* number of ticks from last overflow */
+    periodCheckPoint = gptGetCounterX(Tim2);
+
+    if ( drivingWheelsMoving )
+    {
+        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+	    FromTickToTickEncoder = FromTickToTickEncoder * InvDrive;
+	    TotalImps++;
+    }
+    total_ticks = 0;
+    last_periodCheckPoint = periodCheckPoint;
+
+    drivingWheelsMoving = true;
+
+    ExtAtick = 0;
+    ExtBtick = 0;
     }
 }
 
@@ -141,62 +170,31 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     ExtBcnt = palReadPad(GPIOC, 0);
     if (ExtAcnt == 1)
     {
-    	if (ExtBcnt == 0)
-    	{
+        if (ExtBcnt == 0)
+        {
             InvDrive = 1;
-    	}
-    	else
-    	{
-    		InvDrive = -1;
-    	}
+        }
+        else
+        {
+    	    InvDrive = -1;
+        }
     }
     else
     {
-    	if (ExtAcnt == 0)
-    	{
-        	if (ExtBcnt == 1)
-        	{
+        if (ExtAcnt == 0)
+        {
+            if (ExtBcnt == 1)
+            {
                 InvDrive = -1;
-        	}
-        	else
-        	{
-        		InvDrive = 1;
-        	}
-    	}
+            }
+            else
+            {
+        	    InvDrive = 1;
+            }
+        }
     }
     lldEncoderDirection();
 }
-
-/**
- * @ brief                             Definition of current wheel travel direction and time interval between encoder ticks
- * @ return  -1                        Sensor is not initialized
- */
-void lldEncoderDirection(void)
-{
-    if (ExtAtick == 1 && ExtBtick == 1)
-    {
-	/*time between ticks*/
-    FromTickToTickEncoder = 0;
-    /* number of ticks from last overflow */
-	periodCheckPoint = gptGetCounterX(Tim2);
-
-	if ( drivingWheelsMoving )
-	{
-        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
-	    FromTickToTickEncoder = FromTickToTickEncoder * InvDrive;
-	    TotalImps++;
-	}
-	total_ticks = 0;
-	last_periodCheckPoint = periodCheckPoint;
-
-	drivingWheelsMoving = true;
-
-	ExtAtick = 0;
-	ExtBtick = 0;
-    }
-}
-
-
 
 
 /**
@@ -207,11 +205,11 @@ void lldEncoderDirection(void)
 uint16_t lldEncoderGetRevolutions(void)
 {
     if ( isInitialized == false )
-	{
+    {
 	    return -1;
-	}
+    }
     /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
-	return TotalImps / ImpsFor1Rev ;
+    return TotalImps / ImpsFor1Rev ;
 }
 
 /**
@@ -219,15 +217,14 @@ uint16_t lldEncoderGetRevolutions(void)
  * @ return  >=0                       Current total quantity of encoder ticks
  *           -1                        Sensor is not initialized
  */
-
 uint32_t lldEncoderGetEncTicks(void)
 {
-	if ( isInitialized == false )
-	{
+    if ( isInitialized == false )
+    {
 	    return -1;
-	}
+    }
     /*total ticks of the encoder from begining of movement*/
-	return TotalImps ;
+    return TotalImps ;
 }
 
 /**
@@ -237,28 +234,29 @@ uint32_t lldEncoderGetEncTicks(void)
  */
 float lldEncoderGetSpeedRPM (void)
 {
-  if ( isInitialized == false )
-  {
-      return -1;
-  }
+    if ( isInitialized == false )
+    {
+        return -1;
+    }
 
-  if ( drivingWheelsMoving == false )
-  {
-      return 0; 
-  }
-  /* Speed in revolutions per minute */
-  float RevSpeed = 0;   
+    if ( drivingWheelsMoving == false )
+    {
+        return 0;
+    }
+    /* Speed in revolutions per minute */
+    float RevSpeed = 0;
  
-  if (FromTickToTickEncoder == 0)
-  {
-	  RevSpeed  = 0 ;
-  }
-  else
-  {
-	  RevSpeed  = speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
-  }
-  return RevSpeed;
+    if (FromTickToTickEncoder == 0)
+    {
+	    RevSpeed  = 0 ;
+    }
+    else
+    {
+	    RevSpeed  = speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
+    }
+    return RevSpeed;
 }
+
 
 /**
  * @ brief                             Gets current distance [metres]
@@ -269,7 +267,7 @@ float lldEncoderGetDistance (void)
 {
     if ( !isInitialized )
     {
-      return -1;
+        return -1;
     }
     float RevQuantity = 0;
     float distance = 0;
@@ -301,7 +299,7 @@ float lldEncoderGetSpeedMPS (void)
 {
     if ( !isInitialized )
     {
-      return -1;
+        return -1;
     }
 
     float SpeedMPS = 0;
@@ -322,7 +320,7 @@ float lldEncoderGetSpeedKPH (void)
 {
     if ( !isInitialized )
     {
-      return -1;
+        return -1;
     }
     float SpeedKPH = 0;
     /* 1 meter per second = 3.6 kilometres per hour */
