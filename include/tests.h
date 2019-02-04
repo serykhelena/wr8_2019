@@ -13,13 +13,15 @@
  * @note    SD7 is used for testing (PE7, PE8)
  */
 
-void testEncoder (void);
+void TestRMControl (void);
+
 
 static inline void testsRoutines( void )
 {
-#if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER)
+#if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_RM_CONTROL)
 
-	testEncoder();
+  TestRMControl();
+
 
 #endif
 }
