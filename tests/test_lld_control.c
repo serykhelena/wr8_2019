@@ -42,7 +42,7 @@ void testRawDrivingWheelControlRoutine( void )
         }
 
         speed_value = CLIP_VALUE( speed_value, -380, 380 );
-        speed_duty = lldControlSetDrMotorRawPower( speed_value );
+        speed_duty = lldControlSetDrMotorRawDeltaPower( speed_value );
 
         chprintf( (BaseSequentialStream *)&SD7, "Powers:\n\r\tDelta(%d)\n\r\tDuty(%d)\n\r\t",
                      speed_value, speed_duty );

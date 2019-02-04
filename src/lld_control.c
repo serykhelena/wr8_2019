@@ -119,12 +119,32 @@ void lldControlSetDrMotorPower( controlValue_t inputPrc )
  * @brief   Set power (in ticks) for driving motor
  * @param   deltaDuty   incrementing / decrementing value to center-pos dutycycle
  */
-rawPwmValue_t lldControlSetDrMotorRawPower( rawPwmValue_t deltaDuty )
+rawPwmValue_t lldControlSetDrMotorRawDeltaPower( rawPwmValue_t deltaDuty )
 {
     deltaDuty = CLIP_VALUE( deltaDuty, -380, 380 );
     rawPwmValue_t drDuty = SPEED_NULL_DC + deltaDuty;
     pwmEnableChannel( pwmDriver, drivePWMch, drDuty);
     return drDuty;
+}
+
+/**
+ * @brief   Set power (in ticks) for driving motor
+ * @param   drDuty   dutycycle for speed control
+ */
+void lldControlSetDrMotorRawPower( rawPwmValue_t dutyCycleSpeed)
+{
+    rawPwmValue_t drDuty = CLIP_VALUE( drDuty, SPEED_MIN_DC, SPEED_MAX_DC );
+    pwmEnableChannel( pwmDriver, drivePWMch, drDuty);
+}
+
+/**
+ * @brief   Set power (in ticks) for steering motor
+ * @param   steerDuty   dutycycle for steering control
+ */
+void lldControlSetSteerMotorRawPower( rawPwmValue_t dutyCycleSteer)
+{
+    rawPwmValue_t steerDuty = CLIP_VALUE( steerDuty, STEER_MIN, STEER_MAX );
+    pwmEnableChannel( pwmDriver, steerPWMch, steerDuty);
 }
 
 /**

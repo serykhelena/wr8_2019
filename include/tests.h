@@ -24,12 +24,21 @@ void testWheelsControlRoutines( void );
 /*** Encoder tests ***/
 /*********************/
 
-
 /*
  * @brief   Routine of encoder testing
  * @note    The routine has internal infinite loop
  */
 void testEncoderRoutine( void );
+/****************************/
+/*** Remote Control tests ***/
+/****************************/
+/*
+ * @brief   Routine of remote control testing
+ * @note    The routine has internal infinite loop
+ *          and strictly depended on time
+ */
+void testRemoteControlRoutine( void );
+
 
 
 static inline void testsRoutines( void )
@@ -41,6 +50,10 @@ static inline void testsRoutines( void )
 #elif ( MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER )
 
     testEncoderRoutine( );
+
+#elif ( MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_RC )
+
+    testRemoteControlRoutine( );
 
 #endif
 }

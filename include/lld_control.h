@@ -22,7 +22,7 @@ void lldControlSetDrMotorPower( controlValue_t inputPrc );
  * @brief   Set power (in ticks) for driving motor
  * @param   deltaDuty   incrementing / decrementing value to center-pos dutycycle
  */
-rawPwmValue_t lldControlSetDrMotorRawPower( rawPwmValue_t deltaDuty );
+rawPwmValue_t lldControlSetDrMotorRawDeltaPower( rawPwmValue_t deltaDuty );
 
 /**
  * @brief   Set power for steering motor
@@ -31,7 +31,16 @@ rawPwmValue_t lldControlSetDrMotorRawPower( rawPwmValue_t deltaDuty );
  */
 void lldControlSetSteerMotorPower( controlValue_t inputPrc );
 
+/**
+ * @brief   Set power (in ticks) for driving motor
+ * @param   drDuty   dutycycle for speed control
+ */
+void lldControlSetDrMotorRawPower( rawPwmValue_t dutyCycleSpeed);
 
-
+/**
+ * @brief   Set power (in ticks) for steering motor
+ * @param   steerDuty   dutycycle for steering control
+ */
+void lldControlSetSteerMotorRawPower( rawPwmValue_t dutyCycleSteer);
 
 #endif /* INCLUDE_LLD_CONTROL_H_ */
