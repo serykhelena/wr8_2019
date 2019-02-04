@@ -306,7 +306,7 @@ float lldEncoderGetSpeedMPS (void)
     /* Get speed in revolutions per second */    
     float speedRevPerSec = lldEncoderGetSpeedRPM () / 60.0f ;
     /* [V = 2 * pi * (speed in revolutions per second)] */
-    SpeedMPS = 6.28 * WheelRadius * speedRevPerSec;
+    SpeedMPS = 2 * pi * WheelRadius * speedRevPerSec;
         
     return SpeedMPS;
 }
