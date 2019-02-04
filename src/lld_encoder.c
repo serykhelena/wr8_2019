@@ -1,5 +1,6 @@
 #include <tests.h>
 #include <lld_encoder.h>
+#include <math.h>
 
 /**************************/
 /*** CONFIGURATION ZONE ***/
@@ -277,7 +278,7 @@ float lldEncoderGetDistance (void)
     /* distance for 1 revolution is wheel circumference */
     /*  total distance is N revolutions( N wheel circumferences ) */
     /* [S = 2 * pi * (distance for 1 revolution)] */
-    distance = 6.28 * RevQuantity * WheelRadius;
+    distance = 2 * pi * RevQuantity * WheelRadius;
 
     return distance;
 }
