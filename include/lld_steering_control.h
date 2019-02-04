@@ -45,6 +45,12 @@ int16_t lldSteeringControlGetAdcVal (void);
  * @brief   Get ADC filtered value
  * @return  ADC value from 0 to 4095 equal front wheels position
  */
+int16_t lldSteeringControlGetAdcVal_Kalman (void);
+
+/*
+ * @brief   Get ADC filtered value
+ * @return  ADC value from 0 to 4095 equal front wheels position
+ */
 int16_t lldSteeringControlGetAdcVal_filt (void);
 
 /*

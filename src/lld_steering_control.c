@@ -9,19 +9,19 @@
 
 
 /*
-   delta for left direction:      1780  < ADC_val < 1850
-   delta for right direction:     1060  < ADC_val < 1130
-   delta for central direction:   1540  < ADC_val < 1580
+   delta for left direction:      1780  < ADC_val < 1850 ( 1790 < ADC_val < 1860)
+   delta for right direction:      970  < ADC_val < 1135 ( 905  < ADC_val < 960 )
+   delta for central direction:   1475  < ADC_val < 1540 ( 1510 < ADC_val < 1570)
 */
 
 
 static int32_t  servLimValue        = 10; // permissible error after reading from ADC
-static int32_t  servMAX             = 1800;
-static int32_t  servMIN             = 1105;
-static int32_t  servMID             = 1560;
+static int32_t  servMAX             = 1820;
+static int32_t  servMIN             = 1000;
+static int32_t  servMID             = 1520;
 
-static int32_t  deltaServMAX        = 255; 
-static int32_t  deltaServMIN        = 440;
+static int32_t  deltaServMAX        = 300;
+static int32_t  deltaServMIN        = 520;
 
 
 
@@ -36,8 +36,13 @@ static int32_t  deltaServMIN        = 440;
 
 static uint8_t  filter_cnt                 = 0;
 int32_t ADCfilter[] = {0,0,0,0,0};
+
 static uint8_t  filter_cnt2                 = 0;
 int32_t ADCfilter2[] = {0,0,0,0,0};
+
+static bool     firstKalmVal                   = false;
+int16_t KalmAdcVal        = 0;
+int16_t lastKalmAdcVal    = 0;
 
 /* ADC value */
 
@@ -142,6 +147,29 @@ int16_t lldSteeringControlGetAdcVal (void)
 	    return false;
 	return GetAdcVal();
 }
+
+
+int16_t lldSteeringControlGetAdcVal_Kalman (void)
+{
+    if ( !isInitialized )
+	    return false;
+
+    int16_t KalmCoef          = 0.05;
+
+    if (firstKalmVal == false)
+    {
+    	KalmAdcVal = GetAdcVal();
+    	firstKalmVal = true;
+    }
+    else
+    {
+    	KalmAdcVal = KalmCoef * KalmAdcVal + lastKalmAdcVal * (1 - KalmCoef);
+    }
+    lastKalmAdcVal = KalmAdcVal;
+
+	return KalmAdcVal;
+}
+
 
 int16_t lldSteeringControGetAdcPos_filt (void)
 {
