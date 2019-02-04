@@ -18,7 +18,7 @@ void sd_set(void)
 
 void testEncoder (void)
 {
-	sd_set();
+    sd_set();
     lldEncoderSensInit();
 
     float SpeedRPM = 0 ;
@@ -72,7 +72,7 @@ void testEncoder (void)
         }
         else
         {
-        	chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+            chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         }
     chThdSleepMilliseconds(300);
     }
