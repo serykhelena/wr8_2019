@@ -9,7 +9,7 @@ static const SerialConfig sdcfg = {
 };
 
 
-void testRawDrivingWheelControlRoutine( void )
+void testRawWheelsControlRoutine( void )
 {
     palSetLine( LINE_LED1 );
     sdStart( &SD7, &sdcfg );
@@ -18,9 +18,12 @@ void testRawDrivingWheelControlRoutine( void )
 
     lldControlInit();
 
-    controlValue_t  speed_values_delta  = 5;
-    controlValue_t  speed_value         = 0;
-    controlValue_t  speed_duty          = 0;
+    controlValue_t  speed_values_delta  = 20;
+    controlValue_t  speed_value         = 1520;
+
+    controlValue_t  steer_values_delta  = 20;
+    controlValue_t  steer_value         = 1620;
+
 
     chprintf( (BaseSequentialStream *)&SD7, "TEST RAW\n\r" );
 
@@ -37,15 +40,27 @@ void testRawDrivingWheelControlRoutine( void )
             speed_value -= speed_values_delta;
             break;
 
+            case 'q':   // On the left
+            steer_value += steer_values_delta;
+            break;
+
+            case 'w':   // On the right
+            steer_value -= steer_values_delta;
+            break;
+
+
             default:
                 ;
         }
 
-        speed_value = CLIP_VALUE( speed_value, -380, 380 );
-        speed_duty = lldControlSetDrMotorRawDeltaPower( speed_value );
+        speed_value = CLIP_VALUE( speed_value, 1160, 1920 );
+        lldControlSetDrMotorRawPower( speed_value );
 
-        chprintf( (BaseSequentialStream *)&SD7, "Powers:\n\r\tDelta(%d)\n\r\tDuty(%d)\n\r\t",
-                     speed_value, speed_duty );
+        steer_value = CLIP_VALUE( steer_value, 1200, 2040 );
+        lldControlSetSteerMotorRawPower( steer_value );
+
+        chprintf( (BaseSequentialStream *)&SD7, "Powers:\n\r\tSteer:(%d)\tSpeed:(%d)\n\r\t", steer_value, speed_value );
+
         chThdSleepMilliseconds( 100 );
     }
 
@@ -82,11 +97,11 @@ void testWheelsControlRoutines( void )
             speed_value -= speed_values_delta;
             break;
 
-            case 'q':   //
+            case 'q':   // On the left
             steer_value += steer_values_delta;
             break;
 
-            case 'w':
+            case 'w':   // On the right
             steer_value -= steer_values_delta;
 
             default:
@@ -98,7 +113,7 @@ void testWheelsControlRoutines( void )
         lldControlSetDrMotorPower( speed_value );
         lldControlSetSteerMotorPower( steer_value );
 
-        chprintf( (BaseSequentialStream *)&SD7, "Powers:\n\r\tSpeed(%d)\n\r\tSteer(%d)\n\r\t",
+        chprintf( (BaseSequentialStream *)&SD7, "Powers:\n\r\tSpeed(%d)\tSteer(%d)\n\r\t",
                          speed_value, steer_value );
         chThdSleepMilliseconds( 100 );
     }

@@ -14,14 +14,6 @@ typedef int32_t icuValue_t;
 void remoteControlInit( int32_t prio );
 
 /**
- * @brief   Make RC Mode enable
- * @note    IMPORTANT!
- *          Need to be called through constant period of time
- *          strictly!
- */
-void remoteModeControl( void );
-
-/**
  * @brief   Return speed control signal (width) in ticks
  */
 icuValue_t rcSpeedControlSignalShow( void );
@@ -30,5 +22,13 @@ icuValue_t rcSpeedControlSignalShow( void );
  * @brief   Return steering control signal (width) in ticks
  */
 icuValue_t rcSteerControlSignalShow( void );
+
+
+/**
+ * @brief   Return steering control signal (width) in ticks
+ * @return  true    = RC mode enable
+ *          false   = RC mode disable
+ */
+bool rcReturnMode( void );
 
 #endif /* INCLUDE_REMOTE_CONTROL_H_ */

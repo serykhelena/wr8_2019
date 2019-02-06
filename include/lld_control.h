@@ -2,8 +2,8 @@
 #define INCLUDE_LLD_CONTROL_H_
 
 /*** Variables ***/
-typedef int32_t controlValue_t;
-typedef int32_t rawPwmValue_t;
+typedef int32_t     controlValue_t;
+typedef uint32_t    rawPwmValue_t;
 
 
 /**
@@ -22,7 +22,7 @@ void lldControlSetDrMotorPower( controlValue_t inputPrc );
  * @brief   Set power (in ticks) for driving motor
  * @param   deltaDuty   incrementing / decrementing value to center-pos dutycycle
  */
-rawPwmValue_t lldControlSetDrMotorRawDeltaPower( rawPwmValue_t deltaDuty );
+//rawPwmValue_t lldControlSetDrMotorRawDeltaPower( rawPwmValue_t deltaDuty );
 
 /**
  * @brief   Set power for steering motor

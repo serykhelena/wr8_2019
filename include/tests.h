@@ -12,7 +12,7 @@
  * @note    The routine has internal infinite loop
  * @note    Changing raw values of pwm dutycycle
  */
-void testRawDrivingWheelControlRoutine( void );
+void testRawWheelsControlRoutine( void );
 
 /*
  * @brief   Routine of low level driver control testing
@@ -46,6 +46,10 @@ static inline void testsRoutines( void )
 #if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_LL_DRIVER)
 
     testWheelsControlRoutines( );
+
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_RAW_LL_DRIVE)
+
+    testRawWheelsControlRoutine( );
 
 #elif ( MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER )
 

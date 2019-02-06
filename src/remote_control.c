@@ -1,6 +1,11 @@
 #include <tests.h>
 #include <remote_control.h>
-#include <lld_control.h>
+
+
+#define NULL_SPEED      1500
+#define NULL_STEER      1620
+
+
 
 #define icuSteering         PAL_LINE( GPIOE, 5 )
 #define icuSpeed            PAL_LINE( GPIOC, 6 )
@@ -120,34 +125,32 @@ void remoteControlInit( int32_t prio )
     isInitialized = true;
 }
 
-
-/**
- * @brief   Make RC Mode enable
- * @note    IMPORTANT!
- *          Need to be called through constant period of time
- *          strictly!
- */
-void remoteModeControl( void )
-{
-    if( rc_mode )
-    {
-        lldControlSetDrMotorRawPower( speed_rc );
-        lldControlSetSteerMotorPower( steer_rc );
-    }
-}
-
 /**
  * @brief   Return speed control signal (width) in ticks
+ * @return  width for speed
  */
 icuValue_t rcSpeedControlSignalShow( void )
 {
     if( rc_mode ) return speed_rc;
+    else return NULL_SPEED;
 }
 
 /**
  * @brief   Return steering control signal (width) in ticks
+ * @return  width for steering
  */
 icuValue_t rcSteerControlSignalShow( void )
 {
     if( rc_mode ) return steer_rc;
+    else return NULL_STEER;
+}
+
+/**
+ * @brief   Detect working mode
+ * @return  true    - RC mode enable
+ *          false   - RC mode disable
+ */
+bool rcReturnMode( void )
+{
+    return rc_mode;
 }

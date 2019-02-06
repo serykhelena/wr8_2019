@@ -21,12 +21,12 @@ rawEncoderValue_t   prev_enc_state      = 0;
 rawEncoderValue_t   encoder_decode_table[4] = {0, 1, 3, 2};
 
 
-GPTConfig gpt3conf = {
-    .frequency    = 10000,
-    .callback     = NULL,
-    .cr2          = 0,
-    .dier         = 0
-};
+//GPTConfig gpt3conf = {
+//    .frequency    = 10000,
+//    .callback     = NULL,
+//    .cr2          = 0,
+//    .dier         = 0
+//};
 
 
 /**
