@@ -37,34 +37,34 @@ void testDriverControlRoutine( void )
 
     while( 1 )
     {
+       char rcv_data = sdGet( SERIALdriver );
+       switch ( rcv_data )
+       {
+           case 'w':   // Positive speed
+             speed += delta_speed;
+               break;
 
-      char rcv_data = sdGet( SERIALdriver );
-                   switch ( rcv_data )
-                   {
-                       case 'w':   // Positive speed
-                         speed += delta_speed;
-                           break;
+           case 'z':   // Negative speed
+             speed -= delta_speed;
+               break;
 
-                       case 'z':   // Negative speed
-                         speed -= delta_speed;
-                           break;
+           case 's':   // Right steer
+             steer += delta_steer;
+               break;
 
-                       case 's':   // Right steer
-                         steer += delta_steer;
-                           break;
+           case 'a':   // Left steer
+             steer -= delta_steer;
+               break;
 
-                       case 'a':   // Left steer
-                         steer -= delta_steer;
-                           break;
+           default: ;
+       }
+    speed = CLIP_VALUE( speed, -100, 100 );
+    lldControlDrivingWheels(speed);
 
-                       default:
-                         ;
-                   }
-      speed = CLIP_VALUE( speed, -100, 100 );
-      lldControlDrivingWheels(speed);
-      steer = CLIP_VALUE( steer, -100, 100 );
-      lldControlSteeringWheels(steer);
-      chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
-      chThdSleepMilliseconds(100);
+    steer = CLIP_VALUE( steer, -100, 100 );
+    lldControlSteeringWheels(steer);
+
+    chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+    chThdSleepMilliseconds(100);
     }
 }
