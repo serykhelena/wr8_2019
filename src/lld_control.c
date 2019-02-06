@@ -101,7 +101,7 @@ void lldControlInit( void )
  * @note    power (0, 100]  -> forward
  * @note    power [-100, 0} -> backward
  */
-void lldControlDrivingWheels(controlValue_t inputPrc)
+void lldControlSetMotorPower(controlValue_t inputPrc)
 {
   inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
   if (inputPrc >= 0)
@@ -122,7 +122,7 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
  * @note    power (0, 100]  -> clockwise
  * @note    power [-100, 0} -> counterclockwise
  */
-void lldControlSteeringWheels(controlValue_t inputPrc)
+void lldControlSetSteerPower(controlValue_t inputPrc)
 {
   inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
   int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
