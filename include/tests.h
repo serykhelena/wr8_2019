@@ -38,9 +38,13 @@ void testDriverControlRoutine (void);
 static inline void testsRoutines( void )
 {
   #if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ENCODER)
+
     testEncoder();
+
   #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_LL_DRIVER)
+
     testDriverControlRoutine();
+
   #endif
 }
 
