@@ -89,10 +89,10 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
  */
 void lldControlInit( void )
 {
-    /*** PWM pins configuration ***/
-    palSetLineMode( PWM1_CH0,  PAL_MODE_ALTERNATE(1) );
-    palSetLineMode( PWM1_CH1,  PAL_MODE_ALTERNATE(1) );
-    pwmStart( PWMdriver, &pwm1conf );
+  /*** PWM pins configuration ***/
+  palSetLineMode( PWM1_CH0,  PAL_MODE_ALTERNATE(1) );
+  palSetLineMode( PWM1_CH1,  PAL_MODE_ALTERNATE(1) );
+  pwmStart( PWMdriver, &pwm1conf );
 }
 
 /**
@@ -101,17 +101,17 @@ void lldControlInit( void )
  */
 void lldControlDrivingWheels(controlValue_t inputPrc)
 {
-    inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
-    if (inputPrc >= 0)
-    {
-      int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
-      pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
-    }
-    else
-    {
-      int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
-      pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
-    }
+  inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
+  if (inputPrc >= 0)
+  {
+    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
+    pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+  }
+  else
+  {
+    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
+    pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+  }
 }
 
 /*
@@ -122,9 +122,9 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
  */
 void lldControlSteeringWheels(controlValue_t inputPrc)
 {
-    inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
-    int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
+  inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
+  int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
 
-    pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
+  pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 }
 
