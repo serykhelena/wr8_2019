@@ -14,11 +14,6 @@
  */
 void lldEncoderSensInit (void);
 
-/**
- * @ brief                             Definition of current wheel travel direction and time interval between encoder ticks
- * @ return  -1                        Sensor is not initialized
- */
-void lldEncoderDirection( void );
 
 /**
  * @ brief                             Gets current quantity of revolutions
