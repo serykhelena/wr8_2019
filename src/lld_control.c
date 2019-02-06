@@ -98,6 +98,8 @@ void lldControlInit( void )
 /**
  * @brief   Set power for driving motor
  * @param [in]  a   Motor power value [-100 100]
+ * @note    power (0, 100]  -> forward
+ * @note    power [-100, 0} -> backward
  */
 void lldControlDrivingWheels(controlValue_t inputPrc)
 {
@@ -115,7 +117,7 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
 }
 
 /*
- * @brief   Set power for steering motor (via ESC)
+ * @brief   Set power for steering motor
  * @param   a   Motor power value [-100 100]
  * @note    power (0, 100]  -> clockwise
  * @note    power [-100, 0} -> counterclockwise
