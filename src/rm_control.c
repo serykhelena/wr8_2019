@@ -8,17 +8,28 @@
 #define MAILBOX_SIZE 50
 
 static mailbox_t steer_mb;
-//static msg_t b_steer[MAILBOX_SIZE];
+static msg_t b_steer[MAILBOX_SIZE];
 
 static mailbox_t speed_mb;
-//static msg_t b_speed[MAILBOX_SIZE];
+static msg_t b_speed[MAILBOX_SIZE];
 
+msg_t msg1;
+msg_t msg2;
+
+int speed;
+int steer;
+
+void MailboxInit( void )
+{
+  chMBObjectInit(&steer_mb, b_steer, MAILBOX_SIZE);
+  chMBObjectInit(&speed_mb, b_speed, MAILBOX_SIZE);
+}
 
 /*===========================================================================*/
 /* ICU driver related.                                                       */
 /*===========================================================================*/
 
-static void icuwidthcb_steer(ICUDriver *icup)
+void icuwidthcb_steer(ICUDriver *icup)
 {
   icucnt_t last_width = icuGetWidthX(icup);
 
@@ -27,7 +38,7 @@ static void icuwidthcb_steer(ICUDriver *icup)
   chSysUnlockFromISR();
 }
 
-static void icuwidthcb_speed(ICUDriver *icup)
+void icuwidthcb_speed(ICUDriver *icup)
 {
   icucnt_t last_width = icuGetWidthX(icup);
 
@@ -36,9 +47,9 @@ static void icuwidthcb_speed(ICUDriver *icup)
   chSysUnlockFromISR();
 }
 
-static const ICUConfig icucfg_steer = {
+ICUConfig icucfg_steer = {
   .mode         = ICU_INPUT_ACTIVE_HIGH,
-  .frequency    = 100000,
+  .frequency    = 1000000,
   .width_cb     = icuwidthcb_steer,
   .period_cb    = NULL,
   .overflow_cb  = NULL,
@@ -46,9 +57,9 @@ static const ICUConfig icucfg_steer = {
   .dier         = 0
 };
 
-static const ICUConfig icucfg_speed = {
+ICUConfig icucfg_speed = {
   .mode         = ICU_INPUT_ACTIVE_HIGH,
-  .frequency    = 100000,
+  .frequency    = 1000000,
   .width_cb     = icuwidthcb_speed,
   .period_cb    = NULL,
   .overflow_cb  = NULL,
@@ -67,4 +78,25 @@ void ICUInit(void)
   palSetPadMode( GPIOC, 6, PAL_MODE_ALTERNATE(3) );
   icuStartCapture(&ICUD8);
   icuEnableNotifications(&ICUD8);
+
+  MailboxInit();
+}
+
+int FetchSteer (void)
+{
+  if ( chMBFetch(&steer_mb, &msg1, TIME_IMMEDIATE) == MSG_OK )
+  steer = msg1;
+
+  return steer;
+}
+
+int FetchSpeed (void)
+{
+  if ( chMBFetch(&speed_mb, &msg2, TIME_IMMEDIATE) == MSG_OK )
+  {
+    speed = msg2;
+    palToggleLine(LINE_LED1);
+  }
+
+  return speed;
 }

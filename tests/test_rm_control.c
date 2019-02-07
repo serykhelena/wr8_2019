@@ -2,16 +2,32 @@
 #include <rm_control.h>
 #include <chprintf.h>
 
-/*===========================================================================*/
-/* Mailbox code.                                                             */
-/*===========================================================================*/
-#define MAILBOX_SIZE 50
+/***  PWM configuration pins    ***/
 
-static mailbox_t steer_mb;
-static msg_t b_steer[MAILBOX_SIZE];
+PWMConfig pwm5conf = { //PWM_period [s] = period / frequency
+      .frequency = 1000000,
+      .period    = 20000,
+      .callback  = NULL,
+      .channels  = {
+                       {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL}, // Channel 1 is working CH1 = PE9
+                       {.mode = PWM_OUTPUT_DISABLED,    .callback = NULL},
+                       {.mode = PWM_OUTPUT_DISABLED,    .callback = NULL},
+                       {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL}
+                    },
+      .cr2        = 0,
+      .dier       = 0
+  };
 
-static mailbox_t speed_mb;
-static msg_t b_speed[MAILBOX_SIZE];
+void testPWMInit( void )
+{
+    /*** PWM pins configuration ***/
+    palSetLineMode( PAL_LINE( GPIOA, 0 ),  PAL_MODE_ALTERNATE(2) );
+    palSetLineMode( PAL_LINE( GPIOA, 3 ),  PAL_MODE_ALTERNATE(2) );
+    pwmStart( &PWMD5, &pwm5conf );
+
+    pwmEnableChannel( &PWMD5, 0, 5000 );
+    pwmEnableChannel( &PWMD5, 3, 10000 );
+}
 
 /*===========================================================================*/
 /* Serial driver related.                                                    */
@@ -23,43 +39,42 @@ static const SerialConfig sdcfg = {
   .cr3 = 0
 };
 
-//void SerialInit( void )
-//{
-//    sdStart( &SD7, &sdcfg );
-//    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
-//    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
-//
-//    chprintf(((BaseSequentialStream *)&SD7), "TEST\r");
-//}
-
-void MailboxInit( void )
+void SerialInit2( void )
 {
-  chMBObjectInit(&steer_mb, b_steer, MAILBOX_SIZE);
-  chMBObjectInit(&speed_mb, b_speed, MAILBOX_SIZE);
-}
-
-void TestRMControl(void)
-{
-    ICUInit();
-//    SerialInit();
     sdStart( &SD7, &sdcfg );
     palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 
     chprintf(((BaseSequentialStream *)&SD7), "TEST\r");
+}
 
-    MailboxInit();
+void TestRMControl(void)
+{
+  int test_speed = 0;
+  int test_steer = 0;
+  int count = 0;
+  testPWMInit();
+  ICUInit();
+  SerialInit2();
+//  MailboxInit();
 
-    msg_t msg;
+  while (true)
+  {
 
-    while (true)
+
+    test_steer = FetchSteer();
+    test_speed = FetchSpeed();
+
+    if (count == 100)
     {
-      if ( chMBFetch(&steer_mb, &msg, TIME_IMMEDIATE) == MSG_OK )
-        chprintf(((BaseSequentialStream *)&SD7), "Steer: %d\n", msg);
-
-      if ( chMBFetch(&speed_mb, &msg, TIME_IMMEDIATE) == MSG_OK )
-        chprintf(((BaseSequentialStream *)&SD7), "Speed: %d\n", msg);
-
-      chThdSleepMilliseconds( 1 );
+      count = 0;
+      chprintf( (BaseSequentialStream *)&SD7, "\t Speed(%d) Steer(%d)\n\r ", test_speed, test_steer);
     }
+    else
+    count++;
+
+
+
+    chThdSleepMilliseconds( 1 );
+  }
 }
