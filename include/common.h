@@ -25,4 +25,24 @@
                                  (x) > (max) ? (max) : (x))
 
 
+
+/******************/
+/*** LLD LIMITS ***/
+/******************/
+
+#define SPEED_MAX           1920
+#define SPEED_NULL_FORWARD  1520
+#define SPEED_NULL_BACK     1480
+#define SPEED_MIN           1160
+
+
+#define STEER_MAX           2080
+#define STEER_NULL          1620
+#define STEER_MIN           1160
+
+
+#define CONTROL_MAX         100
+#define CONTROL_NULL        0
+#define CONTROL_MIN         (-100)
+
 #endif /* INCLUDE_COMMON_H_ */

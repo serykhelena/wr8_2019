@@ -2,11 +2,6 @@
 #include <remote_control.h>
 
 
-#define NULL_SPEED      1500
-#define NULL_STEER      1620
-
-
-
 #define icuSteering         PAL_LINE( GPIOE, 5 )
 #define icuSpeed            PAL_LINE( GPIOC, 6 )
 
@@ -17,29 +12,36 @@ static ICUDriver *icuSteerDriver      = &ICUD9;
 static ICUDriver *icuSpeedDriver      = &ICUD8;
 
 /***    width in ticks from RC for steering wheels  ***/
-icuValue_t  steer_rc    =   0;
+pwmValue_t  steer_rc    =   0;
 /***    width in ticks from RC for driving wheels   ***/
-icuValue_t  speed_rc    =   0;
+pwmValue_t  speed_rc    =   0;
 /***    flag for RC mode                            ***/
 bool        rc_mode     = false;
 
 static thread_reference_t trp_rcmode = NULL;
 
-// callback for steering pulses
 static void icuWidthcb_steer(ICUDriver *icup)
 {
-  steer_rc = icuGetWidthX(icup);                // ...X - can work anywhere
-                                                // return width in ticks
-  chSysLockFromISR();
-  chThdResumeI(&trp_rcmode, MSG_OK);            /* Resuming the thread with message.*/
-  chSysUnlockFromISR();
+    steer_rc = icuGetWidthX(icup);                // ...X - can work anywhere
+                                                  // return width in ticks
+
+  if( steer_rc < STEER_MAX && steer_rc > STEER_MIN ) // Protection from electrical noise
+  {
+      chSysLockFromISR();
+      chThdResumeI(&trp_rcmode, MSG_OK);            /* Resuming the thread with message.*/
+      chSysUnlockFromISR();
+  }
 }
 
-// callback for speed pulses
 static void icuWidthcb_speed(ICUDriver *icup)
 {
-  speed_rc  = icuGetWidthX(icup);               // ...X - can work anywhere
-                                                // return width in ticks
+    uint32_t    speed_temp = 0;
+    speed_temp  = icuGetWidthX(icup);               // ...X - can work anywhere
+                                                    // return width in ticks
+    /*** Protection from electrical noise ***/
+    if( speed_temp < SPEED_MAX && speed_temp > SPEED_MIN ) speed_rc = speed_temp;
+
+
 }
 
 
@@ -97,6 +99,13 @@ static THD_FUNCTION(RCModeDetect, arg)
 
 static bool         isInitialized       = false;
 
+float               icu_steer_k         = 0;
+float               icu_steer_b         = 0;
+
+float               icu_speed_k         = 0;
+float               icu_speed_b         = 0;
+
+
 /**
  * @brief   Initialize periphery connected to remote control
  * @note    Stable for repeated calls
@@ -107,6 +116,12 @@ void remoteControlInit( int32_t prio )
 {
     if ( isInitialized )
             return;
+
+    icu_steer_k = (float)( CONTROL_MAX - CONTROL_MIN )/( STEER_MAX - STEER_MIN );
+    icu_steer_b = -( icu_steer_k * STEER_NULL - CONTROL_NULL );
+
+    icu_speed_k = (float)( CONTROL_MAX - CONTROL_MIN )/( SPEED_MAX - SPEED_MIN );
+    icu_speed_b = -( icu_speed_k * SPEED_NULL_FORWARD - CONTROL_NULL );
 
     icuStart( icuSteerDriver, &icucfg_steer );
     palSetLineMode( icuSteering, PAL_MODE_ALTERNATE(3) );
@@ -126,31 +141,67 @@ void remoteControlInit( int32_t prio )
 }
 
 /**
+ * @brief   Detect working mode
+ * @return  true    - RC mode enable
+ *          false   - RC mode disable
+ * @note    this function should be called before
+ *          getting width value
+ */
+bool rcModeIsEnabled( void )
+{
+    return rc_mode;
+}
+
+
+/**
  * @brief   Return speed control signal (width) in ticks
  * @return  width for speed
+ * @note    Before this function
+ *          rcModeIsEnabled must be checked
  */
-icuValue_t rcSpeedControlSignalShow( void )
+pwmValue_t rcGetSpeedDutyCycleValue( void )
 {
-    if( rc_mode ) return speed_rc;
-    else return NULL_SPEED;
+
+    return speed_rc;
+
 }
 
 /**
  * @brief   Return steering control signal (width) in ticks
  * @return  width for steering
+ * @note    Before this function
+ *          rcModeIsEnabled must be checked
  */
-icuValue_t rcSteerControlSignalShow( void )
+pwmValue_t rcGetSteerDutyCycleValue( void )
 {
-    if( rc_mode ) return steer_rc;
-    else return NULL_STEER;
+
+    return steer_rc;
+
 }
 
 /**
- * @brief   Detect working mode
- * @return  true    - RC mode enable
- *          false   - RC mode disable
+ * @brief   Get control values for driving wheels
+ * @return  control signal [-100; 100]
+ * @note    Before this function
+ *          rcModeIsEnabled must be called
  */
-bool rcReturnMode( void )
+icuControlValue_t rcGetSpeedControlValue( void )
 {
-    return rc_mode;
+    icuControlValue_t speed_prt_cntr = speed_rc * icu_speed_k + icu_speed_b;
+    speed_prt_cntr = CLIP_VALUE( speed_prt_cntr, CONTROL_MIN, CONTROL_MAX);
+    return speed_prt_cntr;
 }
+
+/**
+ * @brief   Get control values for steering wheels
+ * @return  control signal [-100; 100]
+ * @note    Before this function
+ *          rcModeIsEnabled must be checked
+ */
+icuControlValue_t rcGetSteerControlValue( void )
+{
+    icuControlValue_t steer_prt_cntr = steer_rc * icu_steer_k + icu_steer_b;
+    steer_prt_cntr = CLIP_VALUE( steer_prt_cntr, CONTROL_MIN, CONTROL_MAX);
+    return steer_prt_cntr;
+}
+

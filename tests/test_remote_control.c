@@ -18,8 +18,10 @@ void testRemoteControlRoutine( void )
     lldControlInit( );
     remoteControlInit( 0 );
 
-    icuValue_t  rc_speed    =   0;
-    icuValue_t  rc_steer    =   0;
+    pwmValue_t          rc_speed        =   0;
+    pwmValue_t          rc_steer        =   0;
+    icuControlValue_t   rc_steer_prt    =   0;
+    icuControlValue_t   rc_speed_prt    =   0;
     bool        mode        =   false;
 
     uint32_t    show_counter = 0;
@@ -32,13 +34,20 @@ void testRemoteControlRoutine( void )
     {
         time += MS2ST(20); // Next deadline
         show_counter += 1;
-        mode = rcReturnMode();
+        mode = rcModeIsEnabled();
         if( mode == true )
         {
-            rc_speed = rcSpeedControlSignalShow( );
-            rc_steer = rcSteerControlSignalShow( );
-            lldControlSetSteerMotorRawPower( rc_steer );
-            lldControlSetDrMotorRawPower( rc_speed );
+            rc_speed        = rcGetSpeedDutyCycleValue( );
+            rc_steer        = rcGetSteerDutyCycleValue( );
+            rc_steer_prt    = rcGetSteerControlValue( );
+            rc_speed_prt    = rcGetSpeedControlValue( );
+
+//            lldControlSetSteerMotorRawPower( rc_steer );
+//            lldControlSetDrMotorRawPower( rc_speed );
+
+            lldControlSetDrMotorPower( rc_speed_prt );
+            lldControlSetSteerMotorPower( rc_steer_prt );
+
         }
         else
         {
@@ -46,9 +55,10 @@ void testRemoteControlRoutine( void )
             lldControlSetDrMotorRawPower( 1500 );
         }
 
-        if( show_counter == 5)
+        if( show_counter == 4)
         {
-            chprintf( (BaseSequentialStream *)&SD7, "Steer:(%d)\tSpeed:(%d)\n\r\t", rc_steer, rc_speed );
+            chprintf( (BaseSequentialStream *)&SD7, "Steer:(%d)\tSpeed:(%d)\tSTEER_PNT:(%d)\tSPEED_PNT:(%d)\n\r\t",
+                      rc_steer, rc_speed, rc_steer_prt, rc_speed_prt );
             show_counter = 0;
         }
 

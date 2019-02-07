@@ -19,12 +19,6 @@ void lldControlInit ( void );
 void lldControlSetDrMotorPower( controlValue_t inputPrc );
 
 /**
- * @brief   Set power (in ticks) for driving motor
- * @param   deltaDuty   incrementing / decrementing value to center-pos dutycycle
- */
-//rawPwmValue_t lldControlSetDrMotorRawDeltaPower( rawPwmValue_t deltaDuty );
-
-/**
  * @brief   Set power for steering motor
  * @param   inputPrc   Motor power value [-100 100]
  *                     central position = 0
