@@ -8,6 +8,11 @@
 #define ADC_SEQ1_LINE               PAL_LINE( GPIOC, 0 )
 #define ADC_SEQ1_CH                 0
 
+/*Charge level */
+#define ADC_SEQ2_NUM                ADC_CHANNEL_IN10
+#define ADC_SEQ2_LINE               PAL_LINE( GPIOC, 3 )
+#define ADC_SEQ2_CH                 1
+
 /**
  * @brief       Preparing to start ADC operations
 */

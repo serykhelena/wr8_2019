@@ -59,8 +59,8 @@ static float rightFrontPosAngle            = 0;
 #define ADC_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12)
 #define ADC_MODE_MANUAL                 ADC_CR2_SWSTART
 
-#define ADC1_NUM_CHANNELS 1
-#define ADC1_BUF_DEPTH    1
+#define ADC1_NUM_CHANNELS 2
+#define ADC1_BUF_DEPTH    2
 
 int16_t AdcBuf        = 0;
 
@@ -75,11 +75,13 @@ static const ADCConversionGroup cfg_grp1 = {
   .error_cb     = 0,
   .cr1          = ADC_RES_CONF,
   .cr2          = ADC_MODE_TRIGGER,
-  .smpr1        = ADC_SMPR1_SMP_AN10(ADC_SAMPLE_144),
+  .smpr1        = ADC_SMPR1_SMP_AN10(ADC_SAMPLE_144) |
+                  ADC_SMPR1_SMP_AN13(ADC_SAMPLE_144),
   .smpr2        = 0,
   .sqr1         = ADC_SQR1_NUM_CH(ADC1_NUM_CHANNELS),
   .sqr2         = 0,
-  .sqr3         = ADC_SQR3_SQ1_N(ADC_SEQ1_NUM)
+  .sqr3         = ADC_SQR3_SQ1_N(ADC_SEQ1_NUM) |
+                  ADC_SQR3_SQ2_N(ADC_SEQ2_NUM)
 };
 
 static const GPTConfig gpt_loop = {
