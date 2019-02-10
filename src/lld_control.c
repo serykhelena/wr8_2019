@@ -1,6 +1,7 @@
 #include <tests.h>
 #include <lld_control.h>
 #include <common.h>
+#include <math.h>
 
 /*** Hardware configuration     ***/
 /***  PWM configuration pins    ***/
@@ -63,15 +64,19 @@ void lldControlInit( void )
  */
 void lldControlSetMotorPower(controlValue_t inputPrc)
 {
-  inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
+  inputPrc = CLIP_VALUE( inputPrc, SPEED_MIN, SPEED_MAX );
   if (inputPrc >= 0)
   {
-    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
+    int32_t Speed_k_max = (SPEED_WIDTH_FORW_MAX - SPEED_WIDTH_FORW_MIN)/(SPEED_O + abs(SPEED_MIN));
+    int32_t Speed_b_max = SPEED_WIDTH_FORW_MAX + SPEED_O * Speed_k_max;
+    int32_t speedDuty = inputPrc * Speed_k_max + Speed_b_max;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
   }
   else
   {
-    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
+    int32_t Speed_k_min = (SPEED_WIDTH_BACKW_MAX - SPEED_WIDTH_BACKW_MIN)/(SPEED_O + SPEED_MAX);
+    int32_t Speed_b_min = SPEED_WIDTH_BACKW_MIN + SPEED_O * Speed_k_min;
+    int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
   }
 }
@@ -84,9 +89,10 @@ void lldControlSetMotorPower(controlValue_t inputPrc)
  */
 void lldControlSetSteerPower(controlValue_t inputPrc)
 {
-  inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
-  int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
-
+  inputPrc = CLIP_VALUE( inputPrc, STEER_MIN, STEER_MAX );
+  int Steer_k = (STEER_WIDTH_MAX - STEER_WIDTH_MIN)/(abs(STEER_MIN) + STEER_MAX);
+  int Steer_b = STEER_WIDTH_MIN + abs(STEER_MIN) * Steer_k;
+  int32_t steerDuty = inputPrc * Steer_k + Steer_b;
   pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 }
 
