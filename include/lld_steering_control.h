@@ -1,37 +1,8 @@
 #ifndef INCLUDE_LLD_STEERING_CONTROL_H_
 #define INCLUDE_LLD_STEERING_CONTROL_H_
 
-#define ADC_RES_CONF                ADC_CR1_12B_RESOLUTION
-
-/*Steer sensor position input */
-#define ADC_SEQ1_NUM                ADC_CHANNEL_IN10
-#define ADC_SEQ1_LINE               PAL_LINE( GPIOC, 0 )
-#define ADC_SEQ1_CH                 0
-
-/*Charge level */
-#define ADC_SEQ2_NUM                ADC_CHANNEL_IN10
-#define ADC_SEQ2_LINE               PAL_LINE( GPIOC, 3 )
-#define ADC_SEQ2_CH                 1
-
-/**
- * @brief       Preparing to start ADC operations
-*/
-void InitAdc ( void );
-
-/**
- * @brief       Get value of ADC channel
- * @return      Value of ADC sampling
-*/
-adcsample_t GetAdcVal ( void );
-
-
-
-/* Additional ADC constants */
-#define ADC_CR1_12B_RESOLUTION      (0)
-#define ADC_CR1_10B_RESOLUTION      (ADC_CR1_RES_0)
-#define ADC_CR1_8B_RESOLUTION       (ADC_CR1_RES_1)
-#define ADC_CR1_6B_RESOLUTION       (ADC_CR1_RES_0 | ADC_CR1_RES_1)
-
+#include <common.h>
+#include <chprintf.h>
 
 typedef int16_t           steer_angle_t;
 

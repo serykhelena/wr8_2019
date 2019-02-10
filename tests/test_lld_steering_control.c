@@ -6,12 +6,6 @@ int32_t AdcVal = 0;
 int16_t PosVal = 0;
 int16_t Angle  = 0;
 
-static const SerialConfig sdcfg = {
-  .speed = 115200,
-  .cr1 = 0,
-  .cr2 = 0,
-  .cr3 = 0
-};
 
 /////////////////////////////////////////////////////////////////////
 static void gpt_callback ( GPTDriver *Tim5 );
@@ -41,16 +35,9 @@ static void gpt_callback (GPTDriver *gptd)
 
 /////////////////////////////////////////////////////////////////////
 
-void sd_set(void)
-{
-    sdStart( &SD7, &sdcfg );
-    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
-    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
-}
 
 void testSteeringControl (void)
 {
-   sd_set();
    lldSteeringControlInit();
    /* Start working GPT driver in asynchronous mode */
    gptStart(Tim5, &gpt5cfg);
