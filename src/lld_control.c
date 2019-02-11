@@ -1,6 +1,5 @@
 #include <tests.h>
 #include <lld_control.h>
-//#include <common.h>
 #include <math.h>
 
 /*** Hardware configuration     ***/
