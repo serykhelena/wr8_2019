@@ -85,23 +85,15 @@ void lldControlInit( void )
  */
 void lldControlSetDrivePower(controlValue_t inputPrc)
 {
-  inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
+  inputPrc = CLIP_VALUE( inputPrc, SPEED_MIN, SPEED_MAX );
   if (inputPrc >= 0)
   {
-<<<<<<< HEAD
     int32_t speedDuty = inputPrc * Speed_k_max + Speed_b_max;
-=======
-    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
->>>>>>> ed87bdeacda3aa89c6954fbf65c6288514ad4730
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
   }
   else
   {
-<<<<<<< HEAD
     int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
-=======
-    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
->>>>>>> ed87bdeacda3aa89c6954fbf65c6288514ad4730
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
   }
 }
@@ -114,14 +106,8 @@ void lldControlSetDrivePower(controlValue_t inputPrc)
  */
 void lldControlSetSteerPower(controlValue_t inputPrc)
 {
-<<<<<<< HEAD
   inputPrc = CLIP_VALUE( inputPrc, STEER_MIN, STEER_MAX );
   int32_t steerDuty = inputPrc * Steer_k + Steer_b;
-=======
-  inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
-  int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
-
->>>>>>> ed87bdeacda3aa89c6954fbf65c6288514ad4730
   pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 }
 

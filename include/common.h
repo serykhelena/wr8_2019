@@ -36,14 +36,14 @@
 #define STEER_MAX                100
 
 #define STEER_WIDTH_MINimum      1200
-#define STEER_WIDTH_MAX          2000
+#define STEER_WIDTH_MAX          2080
 
 
 // *        |  Clockwise  |  Center  | Counterclockwise
 // * -------------------------------------------------
 // * t, ms  |     1.16    |   1.56   |      1.92
 // * -------------------------------------------------
-// * width  |     1160    |   1560   |      1920
+// * width  |     1160    |   1620   |      2080
 // * -------------------------------------------------
 // *        |on the right |  Center  |   On the left
 // *
