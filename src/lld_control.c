@@ -1,6 +1,6 @@
 #include <tests.h>
 #include <lld_control.h>
-#include <common.h>
+//#include <common.h>
 #include <math.h>
 
 /*** Hardware configuration     ***/
@@ -45,6 +45,18 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
 
 /***********************************************************/
 
+/*** Coefficients declaration K & B ***/
+  //For Speed (width: 1500 - 1600)
+  controlValue_t Speed_k_max;
+  controlValue_t Speed_b_max;
+  //For Speed (width: 1240 - 1400)
+  controlValue_t Speed_k_min;
+  controlValue_t Speed_b_min;
+  //For Steer
+  controlValue_t Steer_k;
+  controlValue_t Steer_b;
+
+
 /**
  * @brief   Initialize periphery connected to driver control
  */
@@ -54,6 +66,16 @@ void lldControlInit( void )
   palSetLineMode( PWM1_CH0,  PAL_MODE_ALTERNATE(1) );
   palSetLineMode( PWM1_CH1,  PAL_MODE_ALTERNATE(1) );
   pwmStart( PWMdriver, &pwm1conf );
+
+  //For Speed (width: 1500 - 1600)
+  Speed_k_max = (SPEED_WIDTH_FORW_MAX - SPEED_WIDTH_FORW_MIN)/(SPEED_O + abs(SPEED_MIN));
+  Speed_b_max = SPEED_WIDTH_FORW_MAX + (SPEED_O * Speed_k_max);
+  //For Speed (width: 1240 - 1400)
+  Speed_k_min = (SPEED_WIDTH_BACKW_MAX - SPEED_WIDTH_BACKW_MIN)/(SPEED_O + SPEED_MAX);
+  Speed_b_min = SPEED_WIDTH_BACKW_MIN + (SPEED_O * Speed_k_min);
+  //For Steer
+  Steer_k = (STEER_WIDTH_MAX - STEER_WIDTH_MINimum)/(abs(STEER_MIN) + STEER_MAX);
+  Steer_b = STEER_WIDTH_MINimum + (abs(STEER_MIN) * Steer_k);
 }
 
 /**
@@ -62,20 +84,16 @@ void lldControlInit( void )
  * @note    power (0, 100]  -> forward
  * @note    power [-100, 0} -> backward
  */
-void lldControlSetMotorPower(controlValue_t inputPrc)
+void lldControlSetDrivePower(controlValue_t inputPrc)
 {
   inputPrc = CLIP_VALUE( inputPrc, SPEED_MIN, SPEED_MAX );
   if (inputPrc >= 0)
   {
-    int32_t Speed_k_max = (SPEED_WIDTH_FORW_MAX - SPEED_WIDTH_FORW_MIN)/(SPEED_O + abs(SPEED_MIN));
-    int32_t Speed_b_max = SPEED_WIDTH_FORW_MAX + SPEED_O * Speed_k_max;
     int32_t speedDuty = inputPrc * Speed_k_max + Speed_b_max;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
   }
   else
   {
-    int32_t Speed_k_min = (SPEED_WIDTH_BACKW_MAX - SPEED_WIDTH_BACKW_MIN)/(SPEED_O + SPEED_MAX);
-    int32_t Speed_b_min = SPEED_WIDTH_BACKW_MIN + SPEED_O * Speed_k_min;
     int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
   }
@@ -90,8 +108,6 @@ void lldControlSetMotorPower(controlValue_t inputPrc)
 void lldControlSetSteerPower(controlValue_t inputPrc)
 {
   inputPrc = CLIP_VALUE( inputPrc, STEER_MIN, STEER_MAX );
-  int Steer_k = (STEER_WIDTH_MAX - STEER_WIDTH_MIN)/(abs(STEER_MIN) + STEER_MAX);
-  int Steer_b = STEER_WIDTH_MIN + abs(STEER_MIN) * Steer_k;
   int32_t steerDuty = inputPrc * Steer_k + Steer_b;
   pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 }

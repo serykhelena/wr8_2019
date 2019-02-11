@@ -25,25 +25,18 @@
 #define SPEED_O                  0
 #define SPEED_MAX                100
 
-//#define SPEED_DUTY_K_max         4
-//#define SPEED_DUTY_B_max         1520
-
-//#define SPEED_DUTY_K_min         2.6
-//#define SPEED_DUTY_B_min         1420
-
 #define SPEED_WIDTH_BACKW_MIN    1240
 #define SPEED_WIDTH_BACKW_MAX    1400
+
 #define SPEED_WIDTH_FORW_MIN     1500
 #define SPEED_WIDTH_FORW_MAX     1600
+
 
 #define STEER_MIN               -100
 #define STEER_MAX                100
 
-//#define STEER_DUTY_K             4
-//#define STEER_DUTY_B             1560
-
-#define STEER_WIDTH_MIN          1160
-#define STEER_WIDTH_MAX          1920
+#define STEER_WIDTH_MINimum      1200
+#define STEER_WIDTH_MAX          2000
 
 
 // *        |  Clockwise  |  Center  | Counterclockwise
@@ -66,5 +59,6 @@
 /******************************/
 /*** CONFIGURATION ZONE END ***/
 /******************************/
+
 
 #endif /* INCLUDE_COMMON_H_ */

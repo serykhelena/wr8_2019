@@ -13,7 +13,7 @@ void lldControlInit ( void );
  * @brief   Set power for driving motor
  * @param [in]  a   Motor power value [-100 100]
  */
-void lldControlSetMotorPower(controlValue_t inputPrc);
+void lldControlSetDrivePower(controlValue_t inputPrc);
 
 /*
  * @brief   Set power for steering motor (via ESC)
