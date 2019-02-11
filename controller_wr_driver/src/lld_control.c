@@ -1,5 +1,4 @@
 #include <tests.h>
-//#include <common.h>
 #include <lld_control.h>
 
 
@@ -26,33 +25,6 @@ static  PWMDriver       *pwmDriver      = &PWMD1;
 #define pwm1LineCh0     PAL_LINE( GPIOE, 9 )
 #define pwm1LineCh1     PAL_LINE( GPIOE, 11 )
 
-
-//#define SPEED_MAX_DC    1920
-//#define SPEED_MIN_DC    1160
-//#define SPEED_NULL_DC   1540
-//
-//#define STEER_MAX       2040
-//#define STEER_MIN       1200
-//#define STEER_NULL      1620
-//
-//#define CONTROL_MAX     100
-//#define CONTROL_MIN     (-100)
-
-
-/*** Koefficient calculation ***/
-/*
- * k = (SPEED_MAX_DC - SPEED_MIN_DC) / (CONTOL_MAX - CONTROL_MIN)
- * b = SPEED_MIN_DC - k * CONTROL_MIN
- */
-
-//#define SPEED_FORWARD_K         3.8
-//#define SPEED_FORWARD_B         1520
-//
-//#define SPEED_BACKWARD_K        2.6
-//#define SPEED_BACKWARD_B        1420
-
-//#define STEER_K         4.2
-//#define STEER_B         1620
 
 /*** Configuration structures ***/
 
@@ -110,6 +82,7 @@ void lldControlInit( void )
 
     lld_steer_k = (float)( STEER_MAX - STEER_MIN )/( CONTROL_MAX - CONTROL_MIN );
     lld_steer_b = ( STEER_MIN - lld_steer_k * CONTROL_MIN );
+
     /* Set initialization flag */
 
     isInitialized = true;
