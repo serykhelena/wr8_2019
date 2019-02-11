@@ -11,8 +11,6 @@ Driver | Pins | Input / Output
 -------|------|-------
   PWM1 | PE_9 |output (channel 0)
 
-       
-
 
 ## Модуль датчика энкодера 
 Driver | Pins | Input / Output
