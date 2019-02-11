@@ -29,6 +29,7 @@ void testWheelsControlRoutines( void );
  * @note    The routine has internal infinite loop
  */
 void testEncoderRoutine( void );
+
 /****************************/
 /*** Remote Control tests ***/
 /****************************/

@@ -22,14 +22,14 @@ void testRemoteControlRoutine( void )
     pwmValue_t          rc_steer        =   0;
     icuControlValue_t   rc_steer_prt    =   0;
     icuControlValue_t   rc_speed_prt    =   0;
-    bool        mode        =   false;
+    bool                mode            =   false;
 
     uint32_t    show_counter = 0;
 
     chprintf( (BaseSequentialStream *)&SD7, "RC TEST\n\r" );
 
     systime_t time = chVTGetSystemTimeX();
-
+    chprintf( (BaseSequentialStream *)&SD7, "Start_time:(%d)\n\r", time );
     while( 1 )
     {
         time += MS2ST(20); // Next deadline
@@ -41,9 +41,6 @@ void testRemoteControlRoutine( void )
             rc_steer        = rcGetSteerDutyCycleValue( );
             rc_steer_prt    = rcGetSteerControlValue( );
             rc_speed_prt    = rcGetSpeedControlValue( );
-
-//            lldControlSetSteerMotorRawPower( rc_steer );
-//            lldControlSetDrMotorRawPower( rc_speed );
 
             lldControlSetDrMotorPower( rc_speed_prt );
             lldControlSetSteerMotorPower( rc_steer_prt );
