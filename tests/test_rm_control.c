@@ -56,12 +56,11 @@ void TestRMControl(void)
   testPWMInit();
   ICUInit();
   SerialInit2();
-//  MailboxInit();
 
   while (true)
   {
-
-
+    //test_steer = FetchSteer();
+    //test_speed = FetchSpeed();
     test_steer = FetchSteer();
     test_speed = FetchSpeed();
 
@@ -72,8 +71,6 @@ void TestRMControl(void)
     }
     else
     count++;
-
-
 
     chThdSleepMilliseconds( 1 );
   }
