@@ -90,11 +90,15 @@ void lldControlSetDrivePower(controlValue_t inputPrc)
   {
     int32_t speedDuty = inputPrc * Speed_k_max + Speed_b_max;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+
+    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
   else
   {
     int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+
+    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
 }
 
@@ -109,5 +113,7 @@ void lldControlSetSteerPower(controlValue_t inputPrc)
   inputPrc = CLIP_VALUE( inputPrc, STEER_MIN, STEER_MAX );
   int32_t steerDuty = inputPrc * Steer_k + Steer_b;
   pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
+
+  chprintf( (BaseSequentialStream *)&SD7, "\t steerDuty(%d)\n\r ", steerDuty);
 }
 
