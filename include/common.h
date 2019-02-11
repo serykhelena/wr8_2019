@@ -17,7 +17,6 @@
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
                                  (x) > (max) ? (max) : (x))
 
-<<<<<<< HEAD
 /**************************/
 /*** CONFIGURATION ZONE ***/
 /**************************/
@@ -60,8 +59,7 @@
 /******************************/
 /*** CONFIGURATION ZONE END ***/
 /******************************/
-=======
->>>>>>> ed87bdeacda3aa89c6954fbf65c6288514ad4730
+
 
 
 #endif /* INCLUDE_COMMON_H_ */
