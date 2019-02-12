@@ -6,7 +6,8 @@
 /*** CONFIGURATION ZONE ***/
 /**************************/
 
-static float WheelRadius              = 0.08;
+#define WheelRadius     0.04;
+
 static float OverflowsInTimeDiap      = 1000;
 
 /******************************/
