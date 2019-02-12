@@ -1,46 +1,6 @@
 #include <tests.h>
 #include <lld_control.h>
-#include <common.h>
-
-/**************************/
-/*** CONFIGURATION ZONE ***/
-/**************************/
-
-#define SPEEDmin           -100
-#define SPEEDmax            100
-
-#define SPEED_DUTY_K_max    4
-#define SPEED_DUTY_B_max    1520
-
-#define SPEED_DUTY_K_min    2.6
-#define SPEED_DUTY_B_min    1420
-
-#define STEERmin           -100
-#define STEERmax            100
-
-#define STEER_DUTY_K        4
-#define STEER_DUTY_B        1560
-
-//*        |  Clockwise  |  Center  | Counterclockwise
-// * -------------------------------------------------
-// * t, ms  |     1.16    |   1.56   |      1.92
-// * -------------------------------------------------
-// * width  |     1160    |   1560   |      1920
-// * -------------------------------------------------
-// *        |on the right |  Center  |   On the left
-// *
-// * PD_15 => Driving wheels (Channel 2)
-// *
-// *        | Backward  |     Center      | Forward
-// *-------------------------------------------
-// * t, ms  |    1.24   |    1.4 - 1.5    |   1.6
-// * ------------------------------------------
-// * width  |    1240   |   1400 - 1500   |   1600
-// *
-
-/******************************/
-/*** CONFIGURATION ZONE END ***/
-/******************************/
+#include <math.h>
 
 /*** Hardware configuration     ***/
 /***  PWM configuration pins    ***/
@@ -84,6 +44,18 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
 
 /***********************************************************/
 
+/*** Coefficients declaration K & B ***/
+  //For Speed (width: 1500 - 1600)
+  controlValue_t Speed_k_max;
+  controlValue_t Speed_b_max;
+  //For Speed (width: 1240 - 1400)
+  controlValue_t Speed_k_min;
+  controlValue_t Speed_b_min;
+  //For Steer
+  controlValue_t Steer_k;
+  controlValue_t Steer_b;
+
+
 /**
  * @brief   Initialize periphery connected to driver control
  */
@@ -93,6 +65,16 @@ void lldControlInit( void )
   palSetLineMode( PWM1_CH0,  PAL_MODE_ALTERNATE(1) );
   palSetLineMode( PWM1_CH1,  PAL_MODE_ALTERNATE(1) );
   pwmStart( PWMdriver, &pwm1conf );
+
+  //For Speed (width: 1500 - 1600)
+  Speed_k_max = (SPEED_WIDTH_FORW_MAX - SPEED_WIDTH_FORW_MIN)/(SPEED_O + abs(SPEED_MIN));
+  Speed_b_max = SPEED_WIDTH_FORW_MAX + (SPEED_O * Speed_k_max);
+  //For Speed (width: 1240 - 1400)
+  Speed_k_min = (SPEED_WIDTH_BACKW_MAX - SPEED_WIDTH_BACKW_MIN)/(SPEED_O + SPEED_MAX);
+  Speed_b_min = SPEED_WIDTH_BACKW_MIN + (SPEED_O * Speed_k_min);
+  //For Steer
+  Steer_k = (STEER_WIDTH_MAX - STEER_WIDTH_MINimum)/(abs(STEER_MIN) + STEER_MAX);
+  Steer_b = STEER_WIDTH_MINimum + (abs(STEER_MIN) * Steer_k);
 }
 
 /**
@@ -101,18 +83,22 @@ void lldControlInit( void )
  * @note    power (0, 100]  -> forward
  * @note    power [-100, 0} -> backward
  */
-void lldControlSetMotorPower(controlValue_t inputPrc)
+void lldControlSetDrivePower(controlValue_t inputPrc)
 {
-  inputPrc = CLIP_VALUE( inputPrc, SPEEDmin, SPEEDmax );
+  inputPrc = CLIP_VALUE( inputPrc, SPEED_MIN, SPEED_MAX );
   if (inputPrc >= 0)
   {
-    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
+    int32_t speedDuty = inputPrc * Speed_k_max + Speed_b_max;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+
+    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
   else
   {
-    int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
+    int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+
+    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
 }
 
@@ -124,9 +110,10 @@ void lldControlSetMotorPower(controlValue_t inputPrc)
  */
 void lldControlSetSteerPower(controlValue_t inputPrc)
 {
-  inputPrc = CLIP_VALUE( inputPrc, STEERmin, STEERmax );
-  int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
-
+  inputPrc = CLIP_VALUE( inputPrc, STEER_MIN, STEER_MAX );
+  int32_t steerDuty = inputPrc * Steer_k + Steer_b;
   pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
+
+  chprintf( (BaseSequentialStream *)&SD7, "\t steerDuty(%d)\n\r ", steerDuty);
 }
 

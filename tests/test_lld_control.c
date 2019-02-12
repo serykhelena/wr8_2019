@@ -59,7 +59,7 @@ void testDriverControlRoutine( void )
            default: ;
        }
     speed = CLIP_VALUE( speed, -100, 100 );
-    lldControlSetMotorPower(speed);
+    lldControlSetDrivePower(speed);
 
     steer = CLIP_VALUE( steer, -100, 100 );
     lldControlSetSteerPower(steer);

@@ -1,6 +1,6 @@
 #include <tests.h>
 #include <lld_encoder.h>
-//#include <math.h>
+#include <math.h>
 
 /**************************/
 /*** CONFIGURATION ZONE ***/

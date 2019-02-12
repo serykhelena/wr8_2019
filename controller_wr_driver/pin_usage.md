@@ -11,9 +11,15 @@ Driver | Pins | Input / Output
 -------|------|-------
   PWM1 | PE_9 |output (channel 0)
 
-
-## Модуль датчика энкодера 
+## Драйвер работы с энкодером
 Driver | Pins | Input / Output
 -------|------|-------
-EXT(A) |PC0   | input (A1)
-EXT(B) |PC3   | input (A2)
+EXT | PD3 | Input (channel 3)
+EXT | PD4 | Input (channel 4)
+
+## Драйвер ручного управления
+Driver | Pins | Input / Output
+-------|------|-------
+ICU9 | E5 | input (Timer 9)
+ICU8 | C6 | input (Timer 8)
+
