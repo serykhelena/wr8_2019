@@ -3,6 +3,8 @@
 
 #include <chprintf.h>
 
+typedef float encValue_t;
+
 /*
  * EXT driver uses input PС0 (A1) - channel A and PC3 (A2) - channel B
  * GPT2 used for measure time between encoder ticks
@@ -37,7 +39,7 @@ uint32_t lldEncoderGetEncTicks(void);
  * @ return  >=0                       Current speed [rpm]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedRPM (void);
+encValue_t lldEncoderGetSpeedRPM (void);
 
 
 
@@ -48,7 +50,7 @@ float lldEncoderGetSpeedRPM (void);
  * @ return  >=0                       Current distance [metres]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetDistance (void);
+encValue_t lldEncoderGetDistance (void);
 
 
 /*
@@ -69,6 +71,6 @@ float lldEncoderGetSpeedMPS (void);
  * @ return  >=0                       Current speed [kph]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedKPH (void);
+encValue_t lldEncoderGetSpeedKPH (void);
 
 #endif /* INCLUDE_LLD_ENCODER_H_ */

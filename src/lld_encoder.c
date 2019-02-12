@@ -6,7 +6,7 @@
 /*** CONFIGURATION ZONE ***/
 /**************************/
 
-#define WheelRadius     0.04;
+#define WheelRadius     0.04
 
 static float OverflowsInTimeDiap      = 1000;
 
@@ -233,7 +233,7 @@ uint32_t lldEncoderGetEncTicks(void)
  * @ return  >=0                       Current speed [rpm]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedRPM (void)
+encValue_t lldEncoderGetSpeedRPM (void)
 {
     if ( isInitialized == false )
     {
@@ -245,7 +245,7 @@ float lldEncoderGetSpeedRPM (void)
         return 0;
     }
     /* Speed in revolutions per minute */
-    float RevSpeed = 0;
+    encValue_t RevSpeed = 0;
  
     if (FromTickToTickEncoder == 0)
     {
@@ -264,7 +264,7 @@ float lldEncoderGetSpeedRPM (void)
  * @ return  >=0                       Current distance [metres]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetDistance (void)
+encValue_t lldEncoderGetDistance (void)
 {
     if ( !isInitialized )
     {
@@ -296,7 +296,7 @@ void lldEncoderResetDistance (void)
  * @ return  >=0                       Current speed [mps]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedMPS (void)
+encValue_t lldEncoderGetSpeedMPS (void)
 {
     if ( !isInitialized )
     {
@@ -317,7 +317,7 @@ float lldEncoderGetSpeedMPS (void)
  * @ return  >=0                       Current speed [kph]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedKPH (void)
+encValue_t lldEncoderGetSpeedKPH (void)
 {
     if ( !isInitialized )
     {
