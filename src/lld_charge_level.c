@@ -9,13 +9,17 @@ static bool     isInitialized       = false;
 
 //static float    highLvlVoltage      = 3000;// 3 B
 //static float    lowLvlVoltage       = 0;   // 0 B
-static float    maxLvl              = 2800;// 6 B
-static float    minLvl              = 2000;// 8.4 B
+static float    maxLvl              = 3500;// 6 B
+static float    minLvl              = 2500;// 8.4 B
 
-static uint16_t     VoltDiap        = 0;
+static float     VoltDiap        = 0;
 
 static float        chargePart      = 0;
 static float        displayPart     = 0;
+
+//static bool     firstKalmVal_c                   = false;
+//int16_t KalmAdcVal_c        = 0;
+//int16_t lastKalmAdcVal_c    = 0;
 
 void lldChargeLevelInit (void)
 {
@@ -35,6 +39,27 @@ int16_t lldChargeLevelGetAdcVal (void)
         
 	return GetAdcValVoltage();
 }
+
+/*int16_t lldChargeLevelGetAdcVal_Kalman (void)
+{
+
+    int16_t KalmCoef          = 0.05;
+
+    if (firstKalmVal_c == false)
+    {
+    	KalmAdcVal_c = lldChargeLevelGetAdcVal();
+    	firstKalmVal_c = true;
+    }
+    else
+    {
+
+    	KalmAdcVal_c = KalmCoef * lldChargeLevelGetAdcVal() + lastKalmAdcVal_c * (1 - KalmCoef);
+    }
+    lastKalmAdcVal_c = KalmAdcVal_c;
+
+	return KalmAdcVal_c;
+    //return lldChargeLevelGetAdcVal();
+}*/
 
 
 int16_t lldChargeLevelGetCharge (void)

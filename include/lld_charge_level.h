@@ -8,6 +8,8 @@ void lldChargeLevelInit (void);
 
 int16_t lldChargeLevelGetAdcVal (void);
 
+//int16_t lldChargeLevelGetAdcVal_Kalman (void);
+
 int16_t lldChargeLevelGetCharge (void);
 
 int8_t lldChargeLevelDiodsQuantity (void);
