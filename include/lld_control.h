@@ -2,6 +2,7 @@
 #define INCLUDE_LLD_CONTROL_H_
 
 typedef int32_t controlValue_t;
+//typedef float ControlValue_t;
 
 /**
  * @brief   Initialize periphery connected to driver control
@@ -22,6 +23,9 @@ void lldControlSetDrivePower(controlValue_t inputPrc);
  * @note    power [-100, 0} -> counterclockwise
  */
 void lldControlSetSteerPower(controlValue_t inputPrc);
+
+void PrintKBsteer(void);
+void PrintKBspeed(void);
 
 
 #endif /* INCLUDE_LLD_CONTROL_H_ */

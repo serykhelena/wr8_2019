@@ -11,7 +11,7 @@
 #define     PROGRAM_ROUTINE_TEST_ENCODER                1
 #define     PROGRAM_ROUTINE_TEST_LL_DRIVER              2
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_ENCODER
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
@@ -21,22 +21,21 @@
 /*** CONFIGURATION ZONE ***/
 /**************************/
 
-#define SPEED_MIN               -100
-#define SPEED_O                  0
-#define SPEED_MAX                100
+#define SPEED_MIN               (float)-100
+#define SPEED_O                  (float)0
+#define SPEED_MAX                (float)100
 
-#define SPEED_WIDTH_BACKW_MIN    1240
-#define SPEED_WIDTH_BACKW_MAX    1400
+#define SPEED_WIDTH_BACKW_MIN    (float)1240
+#define SPEED_WIDTH_BACKW_MAX    (float)1400
 
-#define SPEED_WIDTH_FORW_MIN     1500
-#define SPEED_WIDTH_FORW_MAX     1600
+#define SPEED_WIDTH_FORW_MIN     (float)1500
+#define SPEED_WIDTH_FORW_MAX     (float)1600
 
+#define STEER_MIN               (float)-100
+#define STEER_MAX                (float)100
 
-#define STEER_MIN               -100
-#define STEER_MAX                100
-
-#define STEER_WIDTH_MINimum      1200
-#define STEER_WIDTH_MAX          2080
+#define STEER_WIDTH_MIN          (float)1200
+#define STEER_WIDTH_MAX          (float)2080
 
 
 // *        |  Clockwise  |  Center  | Counterclockwise

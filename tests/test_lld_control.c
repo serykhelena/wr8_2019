@@ -35,6 +35,9 @@ void testDriverControlRoutine( void )
     lldControlInit( );
     SerialInit();
 
+//    PrintKBsteer();
+//    PrintKBspeed();
+
     while( 1 )
     {
        char rcv_data = sdGet( SERIALdriver );
@@ -58,6 +61,7 @@ void testDriverControlRoutine( void )
 
            default: ;
        }
+
     speed = CLIP_VALUE( speed, -100, 100 );
     lldControlSetDrivePower(speed);
 
@@ -65,6 +69,7 @@ void testDriverControlRoutine( void )
     lldControlSetSteerPower(steer);
 
     chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+
     chThdSleepMilliseconds(100);
     }
 }
