@@ -6,7 +6,8 @@
 /*** CONFIGURATION ZONE ***/
 /**************************/
 
-static float WheelRadius              = 0.08;
+#define WheelRadius     0.04
+
 static float OverflowsInTimeDiap      = 1000;
 
 /******************************/
@@ -48,7 +49,6 @@ static bool    drivingWheelsMoving      = false;
 
 uint8_t ExtAcnt                         = 0;
 uint8_t ExtBcnt                         = 0;
-int8_t InvDrive                         = 0;
 uint8_t ExtAtick                        = 0;
 uint8_t ExtBtick                        = 0;
 
@@ -126,49 +126,11 @@ static void gpt_callback (GPTDriver *gptd)
  * @ brief                             Definition of current wheel travel direction and time interval between encoder ticks
  * @ return  -1                        Sensor is not initialized
  */
-void lldEncoderDirection(void)
+int8_t lldEncoderDirection(void)
 {
-    if (ExtAtick == 1 && ExtBtick == 1)
-    {
-    /*time between ticks*/
-    FromTickToTickEncoder = 0;
-    /* number of ticks from last overflow */
-    periodCheckPoint = gptGetCounterX(Tim2);
+	int8_t InvDrive = 0;
 
-    if ( drivingWheelsMoving )
-    {
-        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
-	    FromTickToTickEncoder = FromTickToTickEncoder * InvDrive;
-	    TotalImps++;
-    }
-    total_ticks = 0;
-    last_periodCheckPoint = periodCheckPoint;
-
-    drivingWheelsMoving = true;
-
-    ExtAtick = 0;
-    ExtBtick = 0;
-    }
-}
-
-
-/* EXT channel A (input A1) */
-static void extcbA(EXTDriver *extp, expchannel_t channel)
-{
-    extp = extp; channel = channel;
-
-    ExtAtick = 1;
-    ExtAcnt = palReadPad(GPIOC, 3);
-}
-
-/* EXT channel B (input A2) */
-static void extcbB(EXTDriver *extp, expchannel_t channel)
-{
-    extp = extp; channel = channel;
-
-    ExtBtick = 1;
-    ExtBcnt = palReadPad(GPIOC, 0);
-    if (ExtAcnt == 1)
+	if (ExtAcnt == 1)
     {
         if (ExtBcnt == 0)
         {
@@ -193,7 +155,49 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
             }
         }
     }
-    lldEncoderDirection();
+    return InvDrive;
+}
+
+
+/* EXT channel A (input A1) */
+static void extcbA(EXTDriver *extp, expchannel_t channel)
+{
+    extp = extp; channel = channel;
+
+    ExtAtick = 1;
+    ExtAcnt = palReadPad(GPIOC, 3);
+}
+
+/* EXT channel B (input A2) */
+static void extcbB(EXTDriver *extp, expchannel_t channel)
+{
+    extp = extp; channel = channel;
+
+    ExtBtick = 1;
+    ExtBcnt = palReadPad(GPIOC, 0);
+
+    int8_t Direction = lldEncoderDirection();
+    if (ExtAtick == 1 && ExtBtick == 1)
+    {
+    /*time between ticks*/
+    FromTickToTickEncoder = 0;
+    /* number of ticks from last overflow */
+    periodCheckPoint = gptGetCounterX(Tim2);
+
+    if ( drivingWheelsMoving )
+    {
+        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+	    FromTickToTickEncoder = FromTickToTickEncoder * Direction;
+	    TotalImps++;
+    }
+    total_ticks = 0;
+    last_periodCheckPoint = periodCheckPoint;
+
+    drivingWheelsMoving = true;
+
+    ExtAtick = 0;
+    ExtBtick = 0;
+    }
 }
 
 
@@ -232,7 +236,7 @@ uint32_t lldEncoderGetEncTicks(void)
  * @ return  >=0                       Current speed [rpm]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedRPM (void)
+encValue_t lldEncoderGetSpeedRPM (void)
 {
     if ( isInitialized == false )
     {
@@ -244,7 +248,7 @@ float lldEncoderGetSpeedRPM (void)
         return 0;
     }
     /* Speed in revolutions per minute */
-    float RevSpeed = 0;
+    encValue_t RevSpeed = 0;
  
     if (FromTickToTickEncoder == 0)
     {
@@ -263,7 +267,7 @@ float lldEncoderGetSpeedRPM (void)
  * @ return  >=0                       Current distance [metres]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetDistance (void)
+encValue_t lldEncoderGetDistance (void)
 {
     if ( !isInitialized )
     {
@@ -295,7 +299,7 @@ void lldEncoderResetDistance (void)
  * @ return  >=0                       Current speed [mps]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedMPS (void)
+encValue_t lldEncoderGetSpeedMPS (void)
 {
     if ( !isInitialized )
     {
@@ -316,7 +320,7 @@ float lldEncoderGetSpeedMPS (void)
  * @ return  >=0                       Current speed [kph]
  *           -1                        Sensor is not initialized
  */
-float lldEncoderGetSpeedKPH (void)
+encValue_t lldEncoderGetSpeedKPH (void)
 {
     if ( !isInitialized )
     {
