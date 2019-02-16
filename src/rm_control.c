@@ -2,40 +2,17 @@
 #include <rm_control.h>
 #include <common.h>
 
-/*=====================================*/
-/*           MAILBOX CONFIG            */
-/*=====================================*/
-//#define MAILBOX_SIZE 50
-//
-//static mailbox_t steer_mb;
-//static msg_t b_steer[MAILBOX_SIZE];
-//
-//static mailbox_t speed_mb;
-//static msg_t b_speed[MAILBOX_SIZE];
-
-//msg_t msg1;
-//msg_t msg2;
-
-bool        rc_mode     = false;
+bool         rc_mode  = false;
 icucnt_t     speed_rc = 0;
 icucnt_t     steer_rc = 0;
 
-//static thread_reference_t trp_rcmode = NULL;
-
-//void MailboxInit( void )
-//{
-//  chMBObjectInit(&steer_mb, b_steer, MAILBOX_SIZE);
-//  chMBObjectInit(&speed_mb, b_speed, MAILBOX_SIZE);
-//}
-
 void icuwidthcb_speed(ICUDriver *icup)
 {
+  palSetLine( LINE_LED2 );
+
   speed_rc = icuGetWidthX(icup);
-  // icucnt_t last_width = icuGetWidthX(icup);
 
   chSysLockFromISR();
-  //chMBPostI(&speed_mb, MSG_OK);
-  //chMBPostI(&trp_rcmode, MSG_OK);
   chMBPostI(speed_rc, MSG_OK);
   chSysUnlockFromISR();
 }
@@ -43,12 +20,11 @@ void icuwidthcb_speed(ICUDriver *icup)
 void icuwidthcb_steer(ICUDriver *icup)
 {
   steer_rc = icuGetWidthX(icup);
-  // icucnt_t last_width = icuGetWidthX(icup);
-
+                 // icucnt_t last_width = icuGetWidthX(icup);
   chSysLockFromISR();
+                //chMBPostI(&trp_rcmode, MSG_OK);
+                //chMBPostI(&steer_mb, MSG_OK);
   chMBPostI(steer_rc, MSG_OK);
-  //chMBPostI(&trp_rcmode, MSG_OK);
-  //chMBPostI(&steer_mb, MSG_OK);
   chSysUnlockFromISR();
 }
 
@@ -88,7 +64,7 @@ static THD_FUNCTION(RCModeDetectSpeed, arg)
     if(msg == MSG_OK)
     {
       rc_mode = true;
-      palSetLine( LINE_LED2 );
+      palSetLine( LINE_LED1 );
     }
     else if(msg == MSG_TIMEOUT)
     {
@@ -128,46 +104,26 @@ static THD_FUNCTION(RCModeDetectSteer, arg)
 
 void ICUInit(void)
 {
-  icuStart(&ICUD9, &icucfg_steer);
-  palSetPadMode( GPIOE, 5, PAL_MODE_ALTERNATE(3) );
-  icuStartCapture(&ICUD9);
-  icuEnableNotifications(&ICUD9);
-
   icuStart(&ICUD8, &icucfg_speed);
   palSetPadMode( GPIOC, 6, PAL_MODE_ALTERNATE(3) );
   icuStartCapture(&ICUD8);
   icuEnableNotifications(&ICUD8);
 
-  // MailboxInit();
-}
+  icuStart(&ICUD9, &icucfg_steer);
+  palSetPadMode( GPIOE, 5, PAL_MODE_ALTERNATE(3) );
+  icuStartCapture(&ICUD9);
+  icuEnableNotifications(&ICUD9);
 
-int FetchSteer (void)
-{
+  chThdCreateStatic( waRCModeDetectSpeed, sizeof(waRCModeDetectSpeed), NORMALPRIO, RCModeDetectSpeed, NULL );
   chThdCreateStatic( waRCModeDetectSteer, sizeof(waRCModeDetectSteer), NORMALPRIO, RCModeDetectSteer, NULL );
-  return steer_rc;
 }
 
 int FetchSpeed (void)
 {
-  chThdCreateStatic( waRCModeDetectSpeed, sizeof(waRCModeDetectSpeed), NORMALPRIO, RCModeDetectSpeed, NULL );
   return speed_rc;
 }
 
-//int FetchSteer (void)
-//{
-//  if ( chMBFetch(&steer_mb, &msg1, TIME_IMMEDIATE) == MSG_OK )
-//  steer_rc = msg1;
-//
-//  return steer_mb;
-//}
-//
-//int FetchSpeed (void)
-//{
-//  if ( chMBFetch(&speed_mb, &msg2, TIME_IMMEDIATE) == MSG_OK )
-//  {
-//    speed_rc = msg2;
-//    palToggleLine(LINE_LED1);
-//  }
-//
-//  return speed_mb;
-//}
+int FetchSteer (void)
+{
+  return steer_rc;
+}

@@ -26,7 +26,7 @@ void testPWMInit( void )
     pwmStart( &PWMD5, &pwm5conf );
 
     pwmEnableChannel( &PWMD5, 0, 5000 );
-    pwmEnableChannel( &PWMD5, 3, 10000 );
+    pwmEnableChannel( &PWMD5, 3, 3000 );
 }
 
 /*===========================================================================*/
@@ -35,17 +35,17 @@ void testPWMInit( void )
 static const SerialConfig sdcfg = {
   .speed = 115200,
   .cr1 = 0,
-  .cr2 = USART_CR2_LINEN,
+  .cr2 = 0,
   .cr3 = 0
 };
 
 void SerialInit2( void )
 {
-    sdStart( &SD7, &sdcfg );
-    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
-    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+  sdStart( &SD7, &sdcfg );
+  palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+  palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 
-    chprintf(((BaseSequentialStream *)&SD7), "TEST\r");
+  chprintf(((BaseSequentialStream *)&SD7), "TEST\r");
 }
 
 void TestRMControl(void)
@@ -59,15 +59,13 @@ void TestRMControl(void)
 
   while (true)
   {
-    //test_steer = FetchSteer();
-    //test_speed = FetchSpeed();
     test_steer = FetchSteer();
     test_speed = FetchSpeed();
 
     if (count == 100)
     {
+      chprintf( (BaseSequentialStream *)&SD7, " Speed(%d)\t Steer(%d)\n\r ", test_speed, test_steer);
       count = 0;
-      chprintf( (BaseSequentialStream *)&SD7, "\t Speed(%d) Steer(%d)\n\r ", test_speed, test_steer);
     }
     else
     count++;

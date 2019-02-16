@@ -3,7 +3,9 @@
 ## Драйвер управления приводом руля 
 Driver | Pins | Input / Output
 -------|------|-------
-  PWM1 | PE_11 |output (channel 1)
+  PWM1 | PE_11|output (channel 1)
+  PWM1 | PE_  |
+
 
 
 ## Драйвер управления приводом движения 

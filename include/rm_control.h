@@ -1,7 +1,7 @@
 #ifndef INCLUDE_RM_CONTROL_H_
 #define INCLUDE_RM_CONTROL_H_
 
-//typedef int32_t controlValue_t;
+typedef uint32_t icucnt_t;
 
 /**
  * @brief
