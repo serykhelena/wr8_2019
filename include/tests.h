@@ -43,6 +43,7 @@ void TestRMControl (void);
 /*** Tests application ***/
 /*************************/
 
+void TestRMControl2 (void);
 /**
  * @brief   Routines of tests
  */

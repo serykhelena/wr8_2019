@@ -4,7 +4,7 @@
 Driver | Pins | Input / Output
 -------|------|-------
   PWM1 | PE_11|output (channel 1)
-  PWM1 | PE_  |
+  PWM5 | PA_0 |output (channel 0)
 
 
 
@@ -12,7 +12,7 @@ Driver | Pins | Input / Output
 Driver | Pins | Input / Output
 -------|------|-------
   PWM1 | PE_9 |output (channel 0)
-
+  PWM5 | PA_3 |output (channel 3)
        
 
 

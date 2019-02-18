@@ -6,7 +6,7 @@ PROJECT_MODULES = src/lld_encoder.c           \
 
 PROJECT_TESTS   = tests/test_lld_encoder.c    \
 				  tests/test_lld_control.c	  \
-				  tests/test_rm_control.c
+				  tests/test_rm_control.c	  \
                        
 PROJECT_CSRC    = src/main.c src/common.c \
     				$(PROJECT_MODULES) $(PROJECT_TESTS)

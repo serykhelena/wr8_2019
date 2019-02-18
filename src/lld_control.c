@@ -28,7 +28,7 @@
 // * width  |     1160    |   1560   |      1920
 // * -------------------------------------------------
 // *        |on the right |  Center  |   On the left
-// *
+// *                          1640
 // * PD_15 => Driving wheels (Channel 2)
 // *
 // *        | Backward  |     Center      | Forward
@@ -106,11 +106,15 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
     {
       int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+
+      chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
     }
     else
     {
       int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+
+      chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
     }
 }
 
@@ -126,5 +130,7 @@ void lldControlSteeringWheels(controlValue_t inputPrc)
     int32_t steerDuty = inputPrc * STEER_DUTY_K + STEER_DUTY_B;
 
     pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
+
+    chprintf( (BaseSequentialStream *)&SD7, "\t steerDuty(%d)\n\r ", steerDuty);
 }
 

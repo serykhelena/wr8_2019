@@ -4,7 +4,7 @@
 
 bool         rc_mode  = false;
 icucnt_t     speed_rc = 0;
-icucnt_t     steer_rc = 0;
+controlValue_t     steer_rc = 0;
 
 void icuwidthcb_speed(ICUDriver *icup)
 {
@@ -20,10 +20,8 @@ void icuwidthcb_speed(ICUDriver *icup)
 void icuwidthcb_steer(ICUDriver *icup)
 {
   steer_rc = icuGetWidthX(icup);
-                 // icucnt_t last_width = icuGetWidthX(icup);
+
   chSysLockFromISR();
-                //chMBPostI(&trp_rcmode, MSG_OK);
-                //chMBPostI(&steer_mb, MSG_OK);
   chMBPostI(steer_rc, MSG_OK);
   chSysUnlockFromISR();
 }
@@ -123,7 +121,8 @@ int FetchSpeed (void)
   return speed_rc;
 }
 
-int FetchSteer (void)
+int32_t FetchSteer (void)
 {
-  return steer_rc;
+  controlValue_t outputPrc = (steer_rc - 1640)/4.4 ;
+  return outputPrc;
 }
