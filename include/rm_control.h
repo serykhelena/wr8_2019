@@ -11,6 +11,7 @@ typedef int32_t controlValue_t;
 void ICUInit ( void );
 
 int32_t FetchSteer (void);
+int32_t FetchSpeed (void);
 
 
 #endif /* INCLUDE_LLD_CONTROL_H_ */

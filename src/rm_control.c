@@ -3,7 +3,7 @@
 #include <common.h>
 
 bool         rc_mode  = false;
-icucnt_t     speed_rc = 0;
+controlValue_t     speed_rc = 0;
 controlValue_t     steer_rc = 0;
 
 void icuwidthcb_speed(ICUDriver *icup)
@@ -116,9 +116,19 @@ void ICUInit(void)
   chThdCreateStatic( waRCModeDetectSteer, sizeof(waRCModeDetectSteer), NORMALPRIO, RCModeDetectSteer, NULL );
 }
 
-int FetchSpeed (void)
+int32_t FetchSpeed (void)
 {
-  return speed_rc;
+  controlValue_t outputPrc = 0;
+  if (speed_rc > 1499)
+  {
+    outputPrc = speed_rc - 1500;
+  }
+  else
+  {
+    outputPrc= (speed_rc - 1400)/1.6;
+  }
+
+  return outputPrc;
 }
 
 int32_t FetchSteer (void)

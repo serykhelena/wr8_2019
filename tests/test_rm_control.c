@@ -25,7 +25,6 @@ void testPWMInit( void )
     palSetLineMode( PAL_LINE( GPIOA, 3 ),  PAL_MODE_ALTERNATE(2) );
     pwmStart( &PWMD5, &pwm5conf );
 
-    pwmEnableChannel( &PWMD5, 3, 3000 );
 }
 
 /*===========================================================================*/
@@ -49,8 +48,14 @@ void SerialInit2( void )
 
 void TestRMControl(void)
 {
-  int test_speed = 0;
-  int test_steer = 1640;
+  int test_speed = 1520;
+  int test_steer = 1600;
+  int tt_steer = 0;
+  int tt_speed = 0;
+
+  controlValue_t delta_spd = 10;
+  controlValue_t delta_str = 10;
+
   int count = 0;
   testPWMInit();
   ICUInit();
@@ -58,14 +63,38 @@ void TestRMControl(void)
 
   while (true)
   {
-    pwmEnableChannel( &PWMD5, 0, test_steer );
+//  char rcv_data = sdGet( &SD7 );
+//  switch ( rcv_data )
+//        {
+//           case 'w':   // Positive speed
+//             test_speed += delta_spd;
+//               break;
+//
+//           case 'z':   // Negative speed
+//             test_speed -= delta_spd;
+//               break;
+//
+//           case 's':   // Right steer
+//             test_steer += delta_str;
+//               break;
+//
+//           case 'a':   // Left steer
+//             test_steer -= delta_str;
+//               break;
+//
+//           default:
+//             ;
+//       }
 
-    int tt_steer = FetchSteer();
-    test_speed = FetchSpeed();
+    pwmEnableChannel( &PWMD5, 0, test_steer );
+    pwmEnableChannel( &PWMD5, 3, test_speed );
+
+    tt_steer = FetchSteer();
+    tt_speed = FetchSpeed();
 
     if (count == 100)
     {
-      chprintf( (BaseSequentialStream *)&SD7, " Speed(%d)\t Steer(%d)\n\r ", test_speed, tt_steer);
+      chprintf( (BaseSequentialStream *)&SD7, " Speed(%d)\t Steer(%d)\n\r ", tt_speed, tt_steer);
       count = 0;
     }
     else
