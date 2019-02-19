@@ -58,7 +58,7 @@ static float rightFrontPosAngle            = 0;
 
 void lldSteeringControlInit  (void)
 {
-	InitAdc();
+	InitAdc1();
 
    leftFrontPosAngle    = leftMaxAngle / deltaServMAX;
    rightFrontPosAngle   = rightMaxAngle / deltaServMIN;

@@ -7,133 +7,69 @@
 
 static bool     isInitialized       = false;
 
-//static float    highLvlVoltage      = 3000;// 3 B
-//static float    lowLvlVoltage       = 0;   // 0 B
-static float    maxLvl              = 3500;// 6 B
-static float    minLvl              = 2500;// 8.4 B
+static float    maxLvl_STMPower     = 3500;// 6 B -> change on 6.4 V
+static float    minLvl_STMPower     = 2500;// 8.4 B
 
-static float     VoltDiap        = 0;
+static float    maxLvl_Battery      = 3500;// 12.8 B define adc val
+static float    minLvl_Battery      = 2500;// 16.8 B define adc val
 
-static float        chargePart      = 0;
-static float        displayPart     = 0;
+static float    VoltDiap_STMPower   = 0;
+static float    VoltDiap_Battery    = 0;
 
-//static bool     firstKalmVal_c                   = false;
-//int16_t KalmAdcVal_c        = 0;
-//int16_t lastKalmAdcVal_c    = 0;
+static float    chargePart9V        = 0;
+static float    chargePart18V       = 0;
+
+
 
 void lldChargeLevelInit (void)
 {
-    InitAdc();
+    InitAdc3();
     
-    VoltDiap = maxLvl - minLvl;
-    chargePart = 100 / VoltDiap;
-    displayPart = 10 / VoltDiap;
-    
+    VoltDiap_STMPower = maxLvl_STMPower - minLvl_STMPower;
+    VoltDiap_Battery  = maxLvl_Battery  - minLvl_Battery;
+    chargePart9V =  100 / VoltDiap_STMPower;
+    chargePart18V = 100 / VoltDiap_Battery;
+
     isInitialized = true;
 }
 
-int16_t lldChargeLevelGetAdcVal (void)
+int16_t lldChargeLevelGetAdcVal_STMPower (void)
 {
     if ( !isInitialized )
 	    return false;
         
-	return GetAdcValVoltage();
+	return GetAdcVal_STMPower();
 }
 
-/*int16_t lldChargeLevelGetAdcVal_Kalman (void)
+int16_t lldChargeLevelGetAdcVal_Battery (void)
 {
+    if ( !isInitialized )
+	    return false;
 
-    int16_t KalmCoef          = 0.05;
+	return GetAdcVal_Battery();
+}
 
-    if (firstKalmVal_c == false)
-    {
-    	KalmAdcVal_c = lldChargeLevelGetAdcVal();
-    	firstKalmVal_c = true;
-    }
-    else
-    {
-
-    	KalmAdcVal_c = KalmCoef * lldChargeLevelGetAdcVal() + lastKalmAdcVal_c * (1 - KalmCoef);
-    }
-    lastKalmAdcVal_c = KalmAdcVal_c;
-
-	return KalmAdcVal_c;
-    //return lldChargeLevelGetAdcVal();
-}*/
-
-
-int16_t lldChargeLevelGetCharge (void)
+int16_t lldChargeLevelGetCharge_STMPower (void)
 {
     if ( !isInitialized )
         return false;
 
     int16_t currentCharge = 0;
     
-    currentCharge = chargePart * (GetAdcValVoltage() - minLvl);
+    currentCharge = chargePart9V * (GetAdcVal_STMPower() - minLvl_STMPower);
     
     return currentCharge;
 }
 
-int8_t lldChargeLevelDiodsQuantity (void)
+int16_t lldChargeLevelGetCharge_Battery (void)
 {
     if ( !isInitialized )
-        return false; 
-    
-    int8_t diodsQuantity = 0;
-    int16_t currentVal = GetAdcValVoltage();
-   
-    if (currentVal <=  maxLvl && currentVal >=  minLvl)
-    {
-        diodsQuantity = (currentVal - minLvl) * displayPart;
-    }
-    return (int)diodsQuantity;    
-}
+        return false;
 
-void lldChargeLevelDisplay (void)
-{
-    /*PC_14, PC_15, PH_0, PH_1, PE_3 */
-	int8_t Diods = lldChargeLevelDiodsQuantity();
+    int16_t currentCharge = 0;
 
-	palSetLineMode( PAL_LINE(GPIOC,14), PAL_MODE_OUTPUT_PUSHPULL);
-	palSetLineMode( PAL_LINE(GPIOC,15), PAL_MODE_OUTPUT_PUSHPULL);
-	palSetLineMode( PAL_LINE(GPIOH,0), PAL_MODE_OUTPUT_PUSHPULL);
-	palSetLineMode( PAL_LINE(GPIOH,1), PAL_MODE_OUTPUT_PUSHPULL);
-	palSetLineMode( PAL_LINE(GPIOE,3), PAL_MODE_OUTPUT_PUSHPULL);
+    currentCharge = chargePart18V * (GetAdcVal_Battery() - minLvl_Battery);
 
-	if (Diods % 2 == 1)
-	{
-        Diods += 1;
-	}
-
-	switch (Diods)
-	{
-	    case (2):
-		    palSetLine(PAL_LINE(GPIOC,14));
-	        break;
-	    case (4):
-            palSetLine(PAL_LINE(GPIOC,14));
-		    palSetLine(PAL_LINE(GPIOC,15));
-            break;
-	    case (6):
-            palSetLine(PAL_LINE(GPIOC,14));
-            palSetLine(PAL_LINE(GPIOC,15));
-		    palSetLine(PAL_LINE(GPIOH,0));
-            break;
-	    case (8):
-            palSetLine(PAL_LINE(GPIOC,14));
-            palSetLine(PAL_LINE(GPIOC,15));
-            palSetLine(PAL_LINE(GPIOH,0));
-		    palSetLine(PAL_LINE(GPIOH,1));
-            break;
-	    case (10):
-            palSetLine(PAL_LINE(GPIOC,14));
-            palSetLine(PAL_LINE(GPIOC,15));
-            palSetLine(PAL_LINE(GPIOH,0));
-            palSetLine(PAL_LINE(GPIOH,1));
-		    palSetLine(PAL_LINE(GPIOE,3));
-            break;
-	    default:
-	        break;
-	}
+    return currentCharge;
 }
 
