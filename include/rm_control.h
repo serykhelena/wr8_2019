@@ -1,8 +1,9 @@
 #ifndef INCLUDE_RM_CONTROL_H_
 #define INCLUDE_RM_CONTROL_H_
 
-typedef uint32_t icucnt_t;
+//typedef uint32_t icucnt_t;
 typedef int32_t controlValue_t;
+typedef thread_t * thread_reference_t;
 
 /**
  * @brief

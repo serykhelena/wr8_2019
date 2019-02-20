@@ -48,14 +48,12 @@ void SerialInit2( void )
 
 void TestRMControl(void)
 {
-  int test_speed = 1520;
-  int test_steer = 1600;
+  int test_speed = 1320;
+  int test_steer = 1640;
   int tt_steer = 0;
   int tt_speed = 0;
-
   controlValue_t delta_spd = 10;
   controlValue_t delta_str = 10;
-
   int count = 0;
   testPWMInit();
   ICUInit();
@@ -63,42 +61,56 @@ void TestRMControl(void)
 
   while (true)
   {
-//  char rcv_data = sdGet( &SD7 );
-//  switch ( rcv_data )
-//        {
-//           case 'w':   // Positive speed
-//             test_speed += delta_spd;
-//               break;
-//
-//           case 'z':   // Negative speed
-//             test_speed -= delta_spd;
-//               break;
-//
-//           case 's':   // Right steer
-//             test_steer += delta_str;
-//               break;
-//
-//           case 'a':   // Left steer
-//             test_steer -= delta_str;
-//               break;
-//
-//           default:
-//             ;
-//       }
+  char rcv_data = sdGet( &SD7 );
+  switch ( rcv_data )
+        {
+           case 'w':   // Positive speed
+             test_speed += delta_spd;
+               break;
+
+           case 'z':   // Negative speed
+             test_speed -= delta_spd;
+               break;
+
+           case 's':   // Right steer
+             test_steer += delta_str;
+               break;
+
+           case 'a':   // Left steer
+             test_steer -= delta_str;
+               break;
+
+           default:
+             ;
+       }
 
     pwmEnableChannel( &PWMD5, 0, test_steer );
     pwmEnableChannel( &PWMD5, 3, test_speed );
 
+//      palSetLine( LINE_LED3 );
+
     tt_steer = FetchSteer();
     tt_speed = FetchSpeed();
 
-    if (count == 100)
-    {
-      chprintf( (BaseSequentialStream *)&SD7, " Speed(%d)\t Steer(%d)\n\r ", tt_speed, tt_steer);
-      count = 0;
-    }
-    else
-    count++;
+//      palSetLine( LINE_LED2 );
+
+//    if (count == 100)
+//    {
+//        palSetLine( LINE_LED3 );
+      chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed_ICU(%d)\t PWM_Steer(%d)\t Steer(%d)\n\r ", test_speed, tt_speed, test_steer, tt_steer);
+//      chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed(%d)\n\r ", test_speed, tt_speed);
+//      count = 0;
+//    }
+//    else
+//    count++;
+
+
+      //  if ( rc_mode )
+      //  {
+      //    //Bunch rc with drives of speed & steer
+      //    lldControlDrivingWheels(speed_rc);
+      //    lldControlSteeringWheels(steer_rc);
+      //  }
 
     chThdSleepMilliseconds( 1 );
   }
