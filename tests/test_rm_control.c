@@ -9,10 +9,10 @@ PWMConfig pwm5conf = { //PWM_period [s] = period / frequency
       .period    = 20000,
       .callback  = NULL,
       .channels  = {
-                       {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL}, // Channel 1 is working CH1 = PE9
-                       {.mode = PWM_OUTPUT_DISABLED,    .callback = NULL},
-                       {.mode = PWM_OUTPUT_DISABLED,    .callback = NULL},
-                       {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL}
+                     {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL}, // Channel 1 is working CH1 = PE9
+                     {.mode = PWM_OUTPUT_DISABLED,    .callback = NULL},
+                     {.mode = PWM_OUTPUT_DISABLED,    .callback = NULL},
+                     {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL}
                     },
       .cr2        = 0,
       .dier       = 0
@@ -48,7 +48,7 @@ void SerialInit2( void )
 
 void TestRMControl(void)
 {
-  int test_speed = 1320;
+  int test_speed = 1490;
   int test_steer = 1640;
   int tt_steer = 0;
   int tt_speed = 0;
@@ -84,33 +84,28 @@ void TestRMControl(void)
              ;
        }
 
+    test_steer = CLIP_VALUE( test_steer, 1200, 2080 );
     pwmEnableChannel( &PWMD5, 0, test_steer );
+    test_speed = CLIP_VALUE( test_speed, 1240, 1600 );
     pwmEnableChannel( &PWMD5, 3, test_speed );
-
-//      palSetLine( LINE_LED3 );
 
     tt_steer = FetchSteer();
     tt_speed = FetchSpeed();
 
-//      palSetLine( LINE_LED2 );
-
 //    if (count == 100)
 //    {
-//        palSetLine( LINE_LED3 );
-      chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed_ICU(%d)\t PWM_Steer(%d)\t Steer(%d)\n\r ", test_speed, tt_speed, test_steer, tt_steer);
-//      chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed(%d)\n\r ", test_speed, tt_speed);
+        chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed_ICU(%d)\t PWM_Steer(%d)\t Steer(%d)\n\r ", test_speed, tt_speed, test_steer, tt_steer);
 //      count = 0;
 //    }
 //    else
 //    count++;
 
-
-      //  if ( rc_mode )
-      //  {
-      //    //Bunch rc with drives of speed & steer
-      //    lldControlDrivingWheels(speed_rc);
-      //    lldControlSteeringWheels(steer_rc);
-      //  }
+//  if ( rc_mode )
+//  {
+//    //Bunch rc with drives of speed & steer
+//    lldControlDrivingWheels(speed_rc);
+//    lldControlSteeringWheels(steer_rc);
+//  }
 
     chThdSleepMilliseconds( 1 );
   }
