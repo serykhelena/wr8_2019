@@ -47,12 +47,12 @@ static const ADCConversionGroup cfg_grp3 = {
   .error_cb     = 0,
   .cr1          = ADC_RES_CONF,
   .cr2          = ADC_MODE_TRIGGER,
-  .smpr1        = ADC_SMPR1_SMP_AN9(ADC_SAMPLE_144) |
-                  ADC_SMPR1_SMP_AN15(ADC_SAMPLE_144),
-  .smpr2        = 0,
+  .smpr1        = 0,
+  .smpr2        = ADC_SMPR2_SMP_AN9(ADC_SAMPLE_144) |
+                  ADC_SMPR2_SMP_AN15(ADC_SAMPLE_144),
   .sqr1         = ADC_SQR1_NUM_CH(ADC3_NUM_CHANNELS),
   .sqr2         = 0,
-  .sqr3         = ADC_SQR3_SQ2_N(ADC3_SEQ1_NUM) |
+  .sqr3         = ADC_SQR3_SQ1_N(ADC3_SEQ1_NUM) |
                   ADC_SQR3_SQ2_N(ADC3_SEQ2_NUM)
 };
 
