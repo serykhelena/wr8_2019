@@ -12,7 +12,7 @@
 #define ADC1_BUF_DEPTH    1
 
 #define ADC3_NUM_CHANNELS 2
-#define ADC3_BUF_DEPTH    2
+#define ADC3_BUF_DEPTH    1
 
 int16_t Adc1BufSteer             = 0;
 int16_t Adc3BufVoltage_9V        = 0;
@@ -47,9 +47,8 @@ static const ADCConversionGroup cfg_grp3 = {
   .error_cb     = 0,
   .cr1          = ADC_RES_CONF,
   .cr2          = ADC_MODE_TRIGGER,
-  .smpr1        = 0,
-  .smpr2        = ADC_SMPR2_SMP_AN9(ADC_SAMPLE_144) |
-                  ADC_SMPR2_SMP_AN15(ADC_SAMPLE_144),
+  .smpr1        = ADC_SMPR1_SMP_AN15(ADC_SAMPLE_144),
+  .smpr2        = ADC_SMPR2_SMP_AN9(ADC_SAMPLE_144) ,
   .sqr1         = ADC_SQR1_NUM_CH(ADC3_NUM_CHANNELS),
   .sqr2         = 0,
   .sqr3         = ADC_SQR3_SQ1_N(ADC3_SEQ1_NUM) |
