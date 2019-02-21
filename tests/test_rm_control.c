@@ -54,7 +54,6 @@ void TestRMControl(void)
   int tt_speed = 0;
   controlValue_t delta_spd = 10;
   controlValue_t delta_str = 10;
-  int count = 0;
   testPWMInit();
   ICUInit();
   SerialInit2();
@@ -92,20 +91,12 @@ void TestRMControl(void)
     tt_steer = FetchSteer();
     tt_speed = FetchSpeed();
 
-//    if (count == 100)
-//    {
-        chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed_ICU(%d)\t PWM_Steer(%d)\t Steer(%d)\n\r ", test_speed, tt_speed, test_steer, tt_steer);
-//      count = 0;
-//    }
-//    else
-//    count++;
+    chprintf( (BaseSequentialStream *)&SD7, " PWM_Speed(%d)\t Speed_ICU(%d)\t PWM_Steer(%d)\t Steer(%d)\n\r ",
+              test_speed, tt_speed, test_steer, tt_steer);
 
-//  if ( rc_mode )
-//  {
-//    //Bunch rc with drives of speed & steer
-//    lldControlDrivingWheels(speed_rc);
-//    lldControlSteeringWheels(steer_rc);
-//  }
+    //Bunch rc with drives of speed & steer
+    lldControlDrivingWheels(tt_speed);
+    lldControlSteeringWheels(tt_steer);
 
     chThdSleepMilliseconds( 1 );
   }

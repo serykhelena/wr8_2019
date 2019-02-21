@@ -6,8 +6,8 @@ bool         rc_mode  = false;
 
 static thread_reference_t trp_rcmode = NULL;
 
-int32_t     speed_rc = 0;
-int32_t     steer_rc = 0;
+controlValue_t     speed_rc = 0;
+controlValue_t     steer_rc = 0;
 
 static void icuwidthcb_speed(ICUDriver *icup)
 {
@@ -72,6 +72,9 @@ static THD_FUNCTION(RCModeDetect, arg)
   }
 }
 
+//controlValue_t outputPrc_speed = 0;
+//controlValue_t outputPrc_steer = 0;
+
 void ICUInit(void)
 {
   icuStart(&ICUD8, &icucfg_speed);
@@ -85,23 +88,9 @@ void ICUInit(void)
   icuEnableNotifications(&ICUD9);
 
   chThdCreateStatic( waRCModeDetect, sizeof(waRCModeDetect), NORMALPRIO+1, RCModeDetect, NULL );
-
-//  steer_rc = (steer_rc - 1640)/4.4 ;
-//
-//  if (speed_rc > 1499)
-//    {
-////    //  palSetLine( LINE_LED2 );
-//    speed_rc = speed_rc - 1500;
-//    }
-//    else
-//    {
-////      palSetLine( LINE_LED1 );
-//      speed_rc = (speed_rc - 1400)/1.6;
-//    }
-
 }
 
-int32_t FetchSpeed (void)
+controlValueICU_t FetchSpeed (void)
 {
   controlValue_t outputPrc = 0;
   if (speed_rc >= 1500 && speed_rc <= 1600)
@@ -114,13 +103,13 @@ int32_t FetchSpeed (void)
   }
   else if (speed_rc >= 1400 && speed_rc <= 1500)
   {
-    speed_rc = NULL;
+    outputPrc = 0;
   }
   outputPrc = CLIP_VALUE( outputPrc, -100, 100 );
   return outputPrc;
 }
 
-int32_t FetchSteer (void)
+controlValueICU_t FetchSteer (void)
 {
   controlValue_t outputPrc = (steer_rc - 1640)/4.4 ;
   outputPrc = CLIP_VALUE( outputPrc, -100, 100 );

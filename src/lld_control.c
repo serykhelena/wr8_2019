@@ -107,14 +107,14 @@ void lldControlDrivingWheels(controlValue_t inputPrc)
       int32_t   speedDuty = inputPrc * SPEED_DUTY_K_max + SPEED_DUTY_B_max;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
 
-      chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
+//      chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
     }
     else
     {
       int32_t   speedDuty = inputPrc * SPEED_DUTY_K_min + SPEED_DUTY_B_min;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
 
-      chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
+//      chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
     }
 }
 
@@ -131,6 +131,6 @@ void lldControlSteeringWheels(controlValue_t inputPrc)
 
     pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
 
-    chprintf( (BaseSequentialStream *)&SD7, "\t steerDuty(%d)\n\r ", steerDuty);
+//    chprintf( (BaseSequentialStream *)&SD7, "\t steerDuty(%d)\n\r ", steerDuty);
 }
 
