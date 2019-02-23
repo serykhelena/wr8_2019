@@ -5,7 +5,8 @@
 /*** Common ADC1 unit ***/
 /************************/
 
-#define ADC_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12)
+#define ADC1_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12)
+#define ADC3_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(0b1101)
 #define ADC_MODE_MANUAL                 ADC_CR2_SWSTART
 
 #define ADC1_NUM_CHANNELS 1
@@ -32,7 +33,7 @@ static const ADCConversionGroup cfg_grp1 = {
   .end_cb       = adc1callback,
   .error_cb     = 0,
   .cr1          = ADC_RES_CONF,
-  .cr2          = ADC_MODE_TRIGGER,
+  .cr2          = ADC1_MODE_TRIGGER,
   .smpr1        = ADC_SMPR1_SMP_AN10(ADC_SAMPLE_144),
   .smpr2        = 0,
   .sqr1         = ADC_SQR1_NUM_CH(ADC1_NUM_CHANNELS),
@@ -46,7 +47,7 @@ static const ADCConversionGroup cfg_grp3 = {
   .end_cb       = adc3callback,
   .error_cb     = 0,
   .cr1          = ADC_RES_CONF,
-  .cr2          = ADC_MODE_TRIGGER,
+  .cr2          = ADC3_MODE_TRIGGER,
   .smpr1        = ADC_SMPR1_SMP_AN15(ADC_SAMPLE_144),
   .smpr2        = ADC_SMPR2_SMP_AN9(ADC_SAMPLE_144) ,
   .sqr1         = ADC_SQR1_NUM_CH(ADC3_NUM_CHANNELS),
