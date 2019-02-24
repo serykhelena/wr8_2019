@@ -7,11 +7,11 @@
 
 static bool     isInitialized       = false;
 
-static float    maxLvl_STMPower     = 3500;// 6 B -> change on 6.4 V
-static float    minLvl_STMPower     = 2500;// 8.4 B
+static float    maxLvl_STMPower     = 3456;// 8.4 B
+static float    minLvl_STMPower     = 2630;// 6 B -> change on 6.4 V
 
-static float    maxLvl_Battery      = 3500;// 12.8 B define adc val
-static float    minLvl_Battery      = 2500;// 16.8 B define adc val
+static float    maxLvl_Battery      = 3823;// 16.8 B define adc val
+static float    minLvl_Battery      = 2913;// 12.8 B define adc val
 
 static float    VoltDiap_STMPower   = 0;
 static float    VoltDiap_Battery    = 0;
@@ -23,7 +23,8 @@ static float    chargePart18V       = 0;
 
 void lldChargeLevelInit (void)
 {
-    InitAdc3();
+	InitAdc1();
+	InitAdc3();
     
     VoltDiap_STMPower = maxLvl_STMPower - minLvl_STMPower;
     VoltDiap_Battery  = maxLvl_Battery  - minLvl_Battery;
@@ -57,6 +58,14 @@ int16_t lldChargeLevelGetCharge_STMPower (void)
     int16_t currentCharge = 0;
     
     currentCharge = chargePart9V * (GetAdcVal_STMPower() - minLvl_STMPower);
+    if (currentCharge < minLvl_STMPower)
+    {
+    	currentCharge = minLvl_STMPower;
+    }
+    else if (currentCharge > maxLvl_STMPower)
+    {
+    	currentCharge = maxLvl_STMPower;
+    }
     
     return currentCharge;
 }
@@ -69,6 +78,14 @@ int16_t lldChargeLevelGetCharge_Battery (void)
     int16_t currentCharge = 0;
 
     currentCharge = chargePart18V * (GetAdcVal_Battery() - minLvl_Battery);
+    if (currentCharge < minLvl_Battery)
+    {
+    	currentCharge = minLvl_Battery;
+    }
+    else if (currentCharge > maxLvl_Battery)
+    {
+    	currentCharge = maxLvl_Battery;
+    }
 
     return currentCharge;
 }

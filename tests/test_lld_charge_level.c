@@ -12,9 +12,10 @@ void testChargeLevel (void)
     while( true )
     {
     	Adc9V =  lldChargeLevelGetCharge_STMPower();
-    	Adc18V = lldChargeLevelGetCharge_Battery();
-
-    	chprintf( (BaseSequentialStream *)&SD7, " STMPower: %d   Battery: %\n", Adc9V , Adc18V);
+    	//Adc18V = lldChargeLevelGetCharge_Battery();
+    	//Adc9V = lldChargeLevelGetAdcVal_STMPower();
+    	chprintf( (BaseSequentialStream *)&SD7, " STMPower: %d \n\r ", Adc9V );
+    	//chprintf( (BaseSequentialStream *)&SD7, " STMPower: %d   Battery: %\n", Adc9V , Adc18V);
         chThdSleepMilliseconds( 500 );
     }
 }

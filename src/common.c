@@ -5,7 +5,7 @@
 /*** Common ADC1 unit ***/
 /************************/
 
-#define ADC1_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12)
+#define ADC1_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(0b1100)
 #define ADC3_MODE_TRIGGER                ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(0b1101)
 #define ADC_MODE_MANUAL                 ADC_CR2_SWSTART
 
