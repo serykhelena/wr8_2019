@@ -58,8 +58,11 @@ void TestRMControl(void)
   ICUInit();
   SerialInit2();
 
+  lldControlInit( );
+
   while (true)
   {
+#if 0
   char rcv_data = sdGet( &SD7 );
   switch ( rcv_data )
         {
@@ -97,7 +100,20 @@ void TestRMControl(void)
     //Bunch rc with drives of speed & steer
     lldControlDrivingWheels(tt_speed);
     lldControlSteeringWheels(tt_steer);
+#endif
 
-    chThdSleepMilliseconds( 1 );
+    uint32_t            test_raw_steer  = icuRawSteerInput( );
+    uint32_t            test_raw_speed  = icuRawSpeedInput( );
+    controlValueICU_t   test_prct_steer =   FetchSteer( );
+    controlValueICU_t   test_prct_speed =   FetchSpeed( );
+
+//    lldControlSteeringWheels( test_prct_steer );
+//    lldControlDrivingWheels(test_prct_speed);
+
+    chprintf( (BaseSequentialStream *)&SD7, "RAW_STEER:(%d)\tSTEER_PRCT:(%d)\tRAW_SPEED:(%d)\tSPEED_PRCT:(%d)\n\r",
+              test_raw_steer, test_prct_steer, test_raw_speed,test_prct_speed );
+
+
+    chThdSleepMilliseconds( 50 );
   }
 }

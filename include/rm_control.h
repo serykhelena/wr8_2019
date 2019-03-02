@@ -11,8 +11,15 @@ typedef thread_t * thread_reference_t;
  */
 void ICUInit ( void );
 
-int32_t FetchSteer (void);
-int32_t FetchSpeed (void);
+//int32_t FetchSteer (void);
+//int32_t FetchSpeed (void);
+
+
+uint32_t icuRawSteerInput( void );
+
+uint32_t icuRawSpeedInput( void );
+
+controlValueICU_t FetchSteer (void);
 
 
 #endif /* INCLUDE_LLD_CONTROL_H_ */

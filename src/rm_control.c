@@ -11,17 +11,32 @@ controlValue_t     steer_rc = 0;
 
 static void icuwidthcb_speed(ICUDriver *icup)
 {
-  speed_rc = icuGetWidthX(icup);
+  controlValue_t temp_speed = 0;
+  temp_speed = icuGetWidthX(icup);
+
+  /*** Add limitations for width control  ***/
+  if (temp_speed > 1240 && temp_speed < 1600)
+      {
+      speed_rc = temp_speed;
+      }
 }
 
 static void icuwidthcb_steer(ICUDriver *icup)
 {
-  steer_rc = icuGetWidthX(icup);
+  controlValue_t temp_steer = 0;
+  temp_steer = icuGetWidthX(icup);
   //Entering I-Locked state and resuming the thread, if suspended
-  chSysLockFromISR();
-  //Resumes a suspended thread
-  chThdResumeI(&trp_rcmode, MSG_OK);
-  chSysUnlockFromISR();
+  /*** Add limitations for width control  ***/
+  if (temp_steer < 2080 && temp_steer > 1200)
+      {
+      steer_rc = temp_steer;
+
+      chSysLockFromISR();
+       //Resumes a suspended thread
+       chThdResumeI(&trp_rcmode, MSG_OK);
+       chSysUnlockFromISR();
+      }
+
 }
 
 ICUConfig icucfg_speed = {
@@ -54,8 +69,7 @@ static THD_FUNCTION(RCModeDetect, arg)
   while( true )
   {
     chSysLock();
-    msg = chThdSuspendS(&trp_rcmode);
-    //msg = chThdSuspendTimeoutS(&trp_rcmode, MS2ST(100));
+    msg = chThdSuspendTimeoutS(&trp_rcmode, MS2ST(100));
     //Suspends the invoking thread on a reference variable with a 100 ms timeout specification
     chSysUnlock();
 
@@ -93,6 +107,11 @@ void ICUInit(void)
 controlValueICU_t FetchSpeed (void)
 {
   controlValue_t outputPrc = 0;
+  if (speed_rc >= 1600 || speed_rc <= 1240)
+    {
+      speed_rc = 1490;
+    }
+
   if (speed_rc >= 1500 && speed_rc <= 1600)
   {
     outputPrc = speed_rc - 1500;
@@ -101,17 +120,36 @@ controlValueICU_t FetchSpeed (void)
   {
     outputPrc = (speed_rc - 1400)/1.6;
   }
-  else if (speed_rc >= 1400 && speed_rc <= 1500)
+  else if (speed_rc > 1400 && speed_rc < 1500)
   {
     outputPrc = 0;
   }
+
   outputPrc = CLIP_VALUE( outputPrc, -100, 100 );
   return outputPrc;
 }
 
 controlValueICU_t FetchSteer (void)
 {
-  controlValue_t outputPrc = (steer_rc - 1640)/4.4 ;
+  if (steer_rc >= 2080 || steer_rc <= 1200)
+        {
+        steer_rc = 1630;
+        }
+  controlValue_t outputPrc = (steer_rc - 1630)/4.4 ;
+
   outputPrc = CLIP_VALUE( outputPrc, -100, 100 );
   return outputPrc;
+}
+
+
+uint32_t icuRawSteerInput( void )
+{
+  return steer_rc;
+
+}
+
+uint32_t icuRawSpeedInput( void )
+{
+  return speed_rc;
+
 }
