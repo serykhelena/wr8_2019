@@ -20,6 +20,7 @@ uint32_t icuRawSteerInput( void );
 uint32_t icuRawSpeedInput( void );
 
 controlValueICU_t FetchSteer (void);
+controlValueICU_t FetchSpeed (void);
 
 
 #endif /* INCLUDE_LLD_CONTROL_H_ */

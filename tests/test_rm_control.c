@@ -107,8 +107,8 @@ void TestRMControl(void)
     controlValueICU_t   test_prct_steer =   FetchSteer( );
     controlValueICU_t   test_prct_speed =   FetchSpeed( );
 
-//    lldControlSteeringWheels( test_prct_steer );
-//    lldControlDrivingWheels(test_prct_speed);
+    lldControlSteeringWheels( test_prct_steer );
+    lldControlDrivingWheels(test_prct_speed);
 
     chprintf( (BaseSequentialStream *)&SD7, "RAW_STEER:(%d)\tSTEER_PRCT:(%d)\tRAW_SPEED:(%d)\tSPEED_PRCT:(%d)\n\r",
               test_raw_steer, test_prct_steer, test_raw_speed,test_prct_speed );
