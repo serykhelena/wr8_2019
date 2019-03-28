@@ -2,9 +2,14 @@
 #include <lld_steering_control.h>
 
 
-int32_t AdcVal = 0;
-int16_t PosVal = 0;
-int16_t Angle  = 0;
+//int32_t AdcVal = 0;
+//int16_t PosVal = 0;
+//int16_t Angle  = 0;
+
+
+uint32_t DataArray[4] = {0, 0, 0, 0};
+uint32_t DataLowPassArray[5] = {0, 0, 0, 0, 0};
+
 
 static const SerialConfig sdcfg = {
   .speed = 115200,
@@ -57,15 +62,31 @@ void testSteeringControl (void)
    gptStartContinuous(Tim5, period_50ms);
     while( true )
     {
-    	last_periodCheckPoint = gptGetCounterX(Tim5);
-    	//AdcVal = lldSteeringControlGetAdcVal();
+    	/*last_periodCheckPoint = gptGetCounterX(Tim5);
     	AdcVal = lldSteeringControlGetAdcVal_Kalman ();
     	periodCheckPoint = gptGetCounterX(Tim5);
     	KalmanTime = total_ticks + periodCheckPoint - last_periodCheckPoint;
     	total_ticks = 0;
         //sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );
-        chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
-        chThdSleepMilliseconds( 200 );
+        chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );*/
+
+
+
+    	DataArray[0]  = lldSteeringControlGetAdcVal();
+    	DataArray[1] = lldSteeringControlGetAdcVal_filt();
+    	DataArray[2]  = lldSteeringControlGetAdcVal_median();
+    	DataArray[3]   = lldSteeringControlGetAdcVal_doublefilt();
+    	sdWrite( &SD7, (uint8_t *)DataArray, sizeof( DataArray ) );
+
+
+    	/*DataLowPassArray[0] = lldSteeringControlGetAdcVal();
+    	DataLowPassArray[1] = lldSteeringControlGetAdcVal_Kalman09();
+    	DataLowPassArray[2] = lldSteeringControlGetAdcVal_Kalman05();
+    	DataLowPassArray[3] = lldSteeringControlGetAdcVal_Kalman01();
+    	DataLowPassArray[4] = lldSteeringControlGetAdcVal_Kalman001();
+    	sdWrite( &SD7, (uint8_t *)DataLowPassArray, sizeof( DataLowPassArray ) );*/
+
+        chThdSleepMilliseconds( 10 );
     }
 }
 

@@ -45,7 +45,10 @@ int16_t lldSteeringControlGetAdcVal (void);
  * @brief   Get ADC filtered value
  * @return  ADC value from 0 to 4095 equal front wheels position
  */
-int16_t lldSteeringControlGetAdcVal_Kalman (void);
+int16_t lldSteeringControlGetAdcVal_Kalman09 (void);
+int16_t lldSteeringControlGetAdcVal_Kalman05 (void);
+int16_t lldSteeringControlGetAdcVal_Kalman01 (void);
+int16_t lldSteeringControlGetAdcVal_Kalman001 (void);
 
 /*
  * @brief   Get ADC filtered value
@@ -59,11 +62,17 @@ int16_t lldSteeringControlGetAdcVal_filt (void);
  */
 int16_t lldSteeringControlGetAdcVal_doublefilt (void);
 
+/*
+ * @brief   Get ADC median-filtered value
+ * @return  ADC value from 0 to 4095 equal front wheels position
+ */
+int16_t lldSteeringControlGetAdcVal_median (void);
+
 
 /*
  * @brief   Get angle of rotate
  * @return  Angle of wheels rotate
  */
-int16_t lldSteeringControlGeAngle (void);
+int16_t lldSteeringControlGetAngle (void);
 
 #endif /* INCLUDE_LLD_STEERING_CONTROL_H_ */
