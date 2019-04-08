@@ -39,8 +39,10 @@ static int32_t  deltaServMIN        = 520;
 static uint8_t  filter_cnt                 = 0;
 int32_t ADCfilter[FiltElements] = {};
 
-static uint8_t  filter_cnt2                 = 0;
+static uint8_t  filter_cnt2                = 0;
 int32_t ADCfilter2[FiltElements] = {};
+uint8_t filter_cnt3                        = 0;
+uint32_t ADCmedian_filter[FiltElements] = {};
 
 static bool     firstKalmVal09                   = false;
 int16_t KalmAdcVal09        = 0;
@@ -323,9 +325,43 @@ int16_t lldSteeringControlGetAdcVal_median (void)
     if ( !isInitialized )
 	    return false;
 
-    int16_t ADC_median = 0;
+    int16_t MedianVal = 0;
+    uint8_t j         = 0;
+    uint8_t k         = 1;
+    uint8_t l         = 1;
+    uint16_t tmp      = 0;
 
-	return ADC_median;
+        if (filter_cnt3 < 5)
+        {
+            MedianVal = GetAdcVal();
+        }
+        else
+        {
+            while (k < 5)
+            {
+                while (l < 5)
+                {
+                    if (ADCmedian_filter[l] > ADCmedian_filter[l - 1])
+                    {
+                        tmp = ADCmedian_filter[l];
+                        ADCmedian_filter[l] = ADCmedian_filter[l - 1];
+                        ADCmedian_filter[l - 1] = tmp;
+                    }
+                    l++;
+                }
+            k++;
+            }
+            MedianVal = ADCmedian_filter[2];
+            while (j < 3)
+            {
+                ADCmedian_filter[j] = ADCmedian_filter[j + 1];
+            }
+            ADCmedian_filter[4] = GetAdcVal();
+            j = 0;
+        }
+        filter_cnt3++;
+
+	return MedianVal;
 }
 
 

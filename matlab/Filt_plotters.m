@@ -3,8 +3,11 @@ delete(instrfind);
 dat = serial('COM7', 'BaudRate', 115200);
 dat.InputBufferSize = 4096;
 
+
+
 fopen(dat)
 set(dat, 'ByteOrder', 'littleEndian')
+fwrite(dat,'s','char');
 
 disp 'Ok!'
 
