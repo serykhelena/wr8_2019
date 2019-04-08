@@ -1,7 +1,7 @@
 
 
 PROJECT_MODULES = src/lld_steering_control.c  \
-                  src/control.c
+                  src/lld_control.c
 				 
 
 PROJECT_TESTS   = tests/test_lld_steering_control.c 

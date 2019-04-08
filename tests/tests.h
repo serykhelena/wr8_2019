@@ -14,13 +14,16 @@
  */
 void testSteeringControl (void);
 
-void testEncoder (void);
+void testDriverControlRoutine(void);
 
 static inline void testsRoutines( void )
 {
 #if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
 
 	testSteeringControl();
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_LL_DRIVER)
+
+    testDriverControlRoutine();
 
 #endif
 }

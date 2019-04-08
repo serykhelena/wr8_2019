@@ -2,6 +2,26 @@
 #include <lld_control.h>
 #include <math.h>
 
+#define SPEED_MIN               (float)-100
+#define SPEED_O                  (float)0
+#define SPEED_MAX                (float)100
+
+#define SPEED_WIDTH_BACKW_MIN    (float)1240
+#define SPEED_WIDTH_BACKW_MAX    (float)1400
+
+#define SPEED_WIDTH_FORW_MIN     (float)1500
+#define SPEED_WIDTH_FORW_MAX     (float)1600
+
+#define STEER_MIN               (float)-100
+#define STEER_MAX                (float)100
+
+#define STEER_WIDTH_MIN          (float)1200
+#define STEER_WIDTH_MAX          (float)2080
+
+#define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
+                                 (x) > (max) ? (max) : (x))
+
+
 /*** Hardware configuration     ***/
 /***  PWM configuration pins    ***/
 /***  PE9 - Speeding            ***/

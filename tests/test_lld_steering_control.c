@@ -2,7 +2,7 @@
 #include <lld_steering_control.h>
 
 
-//int32_t AdcVal = 0;
+int32_t AdcVal = 0;
 //int16_t PosVal = 0;
 //int16_t Angle  = 0;
 
@@ -62,7 +62,7 @@ void testSteeringControl (void)
    gptStartContinuous(Tim5, period_50ms);
     while( true )
     {
-    	char start = sdGetTimeout(&SD7, MS2ST(100));
+    	char start = sdGetTimeout(&SD7, TIME_IMMEDIATE);
 
     	if (start == 's')
     	{
@@ -83,8 +83,8 @@ void testSteeringControl (void)
     	}
     	if (start == 't')
     	{
-    		last_periodCheckoint = gptGetCounterX(Tim5);
-    		AdcVal = lldSteeringControlGetAdcVal_Kalman ();
+    		last_periodCheckPoint = gptGetCounterX(Tim5);
+    		AdcVal = lldSteeringControlGetAdcVal_Kalman09 ();
     		periodCheckPoint = gptGetCounterX(Tim5);
     		KalmanTime = total_ticks + periodCheckPoint - last_periodCheckPoint;
     		total_ticks = 0;
