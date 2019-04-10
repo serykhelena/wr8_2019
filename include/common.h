@@ -13,7 +13,7 @@
 #define     PROGRAM_ROUTINE_TEST_RM_CONTROL             3
 
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_RM_CONTROL
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \

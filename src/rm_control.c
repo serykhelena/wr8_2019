@@ -2,6 +2,12 @@
 #include <rm_control.h>
 #include <common.h>
 
+#define RM_STEER_MIN                (float)-100
+#define RM_STEER_MAX                (float)100
+
+#define RM_STEER_WIDTH_MIN          (float)1054
+#define RM_STEER_WIDTH_MAX          (float)1809
+
 bool         rc_mode  = false;
 
 static thread_reference_t trp_rcmode = NULL;
@@ -15,7 +21,7 @@ static void icuwidthcb_speed(ICUDriver *icup)
   temp_speed = icuGetWidthX(icup);
 
   /*** Add limitations for width control  ***/
-  if (temp_speed > 1240 && temp_speed < 1600)
+  if (temp_speed > 1350 && temp_speed < 1680)
       {
       speed_rc = temp_speed;
       }
@@ -27,7 +33,7 @@ static void icuwidthcb_steer(ICUDriver *icup)
   temp_steer = icuGetWidthX(icup);
   //Entering I-Locked state and resuming the thread, if suspended
   /*** Add limitations for width control  ***/
-  if (temp_steer < 2080 && temp_steer > 1200)
+  if (temp_steer < RM_STEER_WIDTH_MAX && temp_steer > RM_STEER_WIDTH_MIN)
       {
       steer_rc = temp_steer;
 
@@ -107,20 +113,20 @@ void ICUInit(void)
 controlValueICU_t FetchSpeed (void)
 {
   controlValue_t outputPrc = 0;
-  if (speed_rc >= 1600 || speed_rc <= 1240)
+  if (speed_rc >= 1680 || speed_rc <= 1350)
     {
-      speed_rc = 1490;
+      speed_rc = 1500;
     }
 
-  if (speed_rc >= 1500 && speed_rc <= 1600)
+  if (speed_rc >= 1550 && speed_rc <= 1680)
   {
-    outputPrc = speed_rc - 1500;
+    outputPrc = (speed_rc - 1615)/0.65;
   }
-  else if (speed_rc >= 1240 && speed_rc <= 1400)
+  else if (speed_rc >= 1350 && speed_rc <= 1450)
   {
-    outputPrc = (speed_rc - 1400)/1.6;
+    outputPrc = (speed_rc - 1400)/0.5;
   }
-  else if (speed_rc > 1400 && speed_rc < 1500)
+  else if (speed_rc > 1450 && speed_rc < 1550)
   {
     outputPrc = 0;
   }
@@ -131,13 +137,13 @@ controlValueICU_t FetchSpeed (void)
 
 controlValueICU_t FetchSteer (void)
 {
-  if (steer_rc >= 2080 || steer_rc <= 1200)
+  if (steer_rc >= RM_STEER_WIDTH_MAX || steer_rc <= RM_STEER_WIDTH_MIN)
         {
-        steer_rc = 1630;
+        steer_rc = 1439;
         }
-  controlValue_t outputPrc = (steer_rc - 1630)/4.4 ;
+  controlValue_t outputPrc = (steer_rc - 1432)/3.775 ;
 
-  outputPrc = CLIP_VALUE( outputPrc, -100, 100 );
+  outputPrc = CLIP_VALUE( outputPrc, RM_STEER_MIN, RM_STEER_MAX );
   return outputPrc;
 }
 

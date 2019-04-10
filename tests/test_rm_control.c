@@ -39,17 +39,17 @@ static const SerialConfig sdcfg = {
 
 void SerialInit2( void )
 {
-  sdStart( &SD7, &sdcfg );
+  sdStart( &SD3, &sdcfg );
   palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
   palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 
-  chprintf(((BaseSequentialStream *)&SD7), "TEST\r");
+  chprintf(((BaseSequentialStream *)&SD3), "TEST\r");
 }
 
 void TestRMControl(void)
 {
-  int test_speed = 1490;
-  int test_steer = 1640;
+  int test_speed = 1500;
+  int test_steer = 1439;
   int tt_steer = 0;
   int tt_speed = 0;
   controlValue_t delta_spd = 10;
@@ -110,7 +110,7 @@ void TestRMControl(void)
     lldControlSteeringWheels( test_prct_steer );
     lldControlDrivingWheels(test_prct_speed);
 
-    chprintf( (BaseSequentialStream *)&SD7, "RAW_STEER:(%d)\tSTEER_PRCT:(%d)\tRAW_SPEED:(%d)\tSPEED_PRCT:(%d)\n\r",
+    chprintf( (BaseSequentialStream *)&SD3, "RAW_STEER:(%d)\tSTEER_PRCT:(%d)\tRAW_SPEED:(%d)\tSPEED_PRCT:(%d)\n\r",
               test_raw_steer, test_prct_steer, test_raw_speed,test_prct_speed );
 
 
