@@ -73,7 +73,7 @@ void testDriverControlRoutine( void )
     steer = CLIP_VALUE( steer, -100, 100 );
     lldControlSetSteerPower(steer);
 
-    dbgprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+    chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
 
     chThdSleepMilliseconds(100);
     }

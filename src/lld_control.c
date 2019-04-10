@@ -45,10 +45,10 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
 /***********************************************************/
 
 /*** Coefficients declaration K & B ***/
-  //For Speed (width: 1500 - 1600)
+  //For Speed (width: 1550 - 1680)
   float Speed_k_max;
   float Speed_b_max;
-  //For Speed (width: 1240 - 1400)
+  //For Speed (width: 1350 - 1450)
   float Speed_k_min;
   float Speed_b_min;
   //For Steer
@@ -66,10 +66,10 @@ void lldControlInit( void )
   palSetLineMode( PWM1_CH1,  PAL_MODE_ALTERNATE(1) );
   pwmStart( PWMdriver, &pwm1conf );
 
-  //For Speed (width: 1500 - 1600)
+  //For Speed (width: 1550 - 1680)
   Speed_k_max = (SPEED_WIDTH_FORW_MAX - SPEED_WIDTH_FORW_MIN)/(SPEED_O + abs(SPEED_MIN));
   Speed_b_max = SPEED_WIDTH_FORW_MIN + (SPEED_O * Speed_k_max);
-  //For Speed (width: 1240 - 1400)
+  //For Speed (width: 1350 - 1450)
   Speed_k_min = (SPEED_WIDTH_BACKW_MAX - SPEED_WIDTH_BACKW_MIN)/(SPEED_MAX);
   Speed_b_min = SPEED_WIDTH_BACKW_MAX + (SPEED_O * Speed_k_min);
 
@@ -94,17 +94,18 @@ void lldControlSetDrivePower(controlValue_t inputPrc)
 
 //    chprintf((BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
-  else
+  if (inputPrc < 0)
   {
     int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
 
 //    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
-  if (inputPrc = 0)
+  if (inputPrc == 0)
     {
       int32_t  speedDuty = 1500;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+//    chprintf( (BaseSequentialStream *)&SD3, "\t speedDuty(%d)\n\r ", speedDuty);
     }
 }
 

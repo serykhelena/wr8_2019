@@ -27,11 +27,11 @@ void dbgprintf( const char* format, ... );
 #define SPEED_O                  (float)0
 #define SPEED_MAX                (float)100
 
-#define SPEED_WIDTH_BACKW_MIN    (float)1400
+#define SPEED_WIDTH_BACKW_MIN    (float)1350
 #define SPEED_WIDTH_BACKW_MAX    (float)1450
 
-#define SPEED_WIDTH_FORW_MIN     (float)1545
-#define SPEED_WIDTH_FORW_MAX     (float)1600
+#define SPEED_WIDTH_FORW_MIN     (float)1550
+#define SPEED_WIDTH_FORW_MAX     (float)1680
 
 #define STEER_MIN                (float)-100
 #define STEER_MAX                (float)100
@@ -52,9 +52,9 @@ void dbgprintf( const char* format, ... );
 // *
 // *        | Backward  |     Center      | Forward
 // *-------------------------------------------
-// * t, ms  |    1.24   |    1.4 - 1.5    |   1.6
+// * t, ms  |    1.24   |       1.5       |   1.6
 // * ------------------------------------------
-// * width  |    1240   |   1400 - 1500   |   1600
+// * width  |    1350   |      1500       |   1680
 // *
 
 /******************************/
