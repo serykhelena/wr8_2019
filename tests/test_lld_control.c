@@ -27,10 +27,10 @@ void SerialInit( void )
 void testDriverControlRoutine( void )
 {
     controlValue_t speed = 0;
-    controlValue_t delta_speed = 5;
+    controlValue_t delta_speed = 1;
 
     controlValue_t steer = 0;
-    controlValue_t delta_steer = 5;
+    controlValue_t delta_steer = 1;
 
     lldControlInit( );
     SerialInit();
@@ -57,6 +57,11 @@ void testDriverControlRoutine( void )
 
            case 'a':   // Left steer
              steer -= delta_steer;
+               break;
+
+           case ' ':
+             steer = 0;
+             speed = 0;
                break;
 
            default: ;

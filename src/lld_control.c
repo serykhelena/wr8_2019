@@ -87,7 +87,7 @@ void lldControlInit( void )
 void lldControlSetDrivePower(controlValue_t inputPrc)
 {
   inputPrc = CLIP_VALUE( inputPrc, SPEED_MIN, SPEED_MAX );
-  if (inputPrc >= 0)
+  if (inputPrc > 0)
   {
     int32_t  speedDuty = inputPrc * Speed_k_max + Speed_b_max;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
@@ -101,6 +101,10 @@ void lldControlSetDrivePower(controlValue_t inputPrc)
 
 //    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
+  if (inputPrc = 0)
+    {
+      int32_t  speedDuty = 1500;
+      pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
 }
 
 /*

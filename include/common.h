@@ -27,13 +27,13 @@ void dbgprintf( const char* format, ... );
 #define SPEED_O                  (float)0
 #define SPEED_MAX                (float)100
 
-#define SPEED_WIDTH_BACKW_MIN    (float)1240
-#define SPEED_WIDTH_BACKW_MAX    (float)1400
+#define SPEED_WIDTH_BACKW_MIN    (float)1400
+#define SPEED_WIDTH_BACKW_MAX    (float)1450
 
-#define SPEED_WIDTH_FORW_MIN     (float)1500
+#define SPEED_WIDTH_FORW_MIN     (float)1545
 #define SPEED_WIDTH_FORW_MAX     (float)1600
 
-#define STEER_MIN               (float)-100
+#define STEER_MIN                (float)-100
 #define STEER_MAX                (float)100
 
 #define STEER_WIDTH_MIN          (float)500
