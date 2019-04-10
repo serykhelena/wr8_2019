@@ -17,6 +17,8 @@
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
                                  (x) > (max) ? (max) : (x))
 
+void debug_stream_init( void );
+void dbgprintf( const char* format, ... );
 /**************************/
 /*** CONFIGURATION ZONE ***/
 /**************************/

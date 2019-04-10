@@ -1,7 +1,8 @@
 
 
 PROJECT_MODULES = src/lld_encoder.c           \
-				  src/lld_control.c	        
+				  src/lld_control.c			  \
+				  src/debug.c	        
 
 PROJECT_TESTS   = tests/test_lld_encoder.c    \
 				  tests/test_lld_control.c
