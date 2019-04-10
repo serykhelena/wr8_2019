@@ -27,6 +27,13 @@ void testEncoder (void);
 
 void testDriverControlRoutine (void);
 
+/*
+ * @brief   In test: get charge level from 2cell and 4cell batteries
+ * @note    The routine has internal infinite loop
+ * @note    SD7 is used for testing (PE7, PE8)
+ */
+
+void testChargeLevel (void);
 
 /*************************/
 /*** Tests application ***/
@@ -45,6 +52,10 @@ static inline void testsRoutines( void )
 
     testDriverControlRoutine();
 
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_CHARGE_LEVEL)
+
+    testChargeLevel();
+    
   #endif
 }
 
