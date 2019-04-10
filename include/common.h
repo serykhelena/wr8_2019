@@ -34,15 +34,15 @@
 #define STEER_MIN               (float)-100
 #define STEER_MAX                (float)100
 
-#define STEER_WIDTH_MIN          (float)1200
-#define STEER_WIDTH_MAX          (float)2080
+#define STEER_WIDTH_MIN          (float)500
+#define STEER_WIDTH_MAX          (float)2300
 
 
 // *        |  Clockwise  |  Center  | Counterclockwise
 // * -------------------------------------------------
-// * t, ms  |     1.16    |   1.56   |      1.92
+// * t, ms  |     0.5     |   1.4    |      2.3
 // * -------------------------------------------------
-// * width  |     1200    |   1620   |      2080
+// * width  |     500     |   1400   |      2300
 // * -------------------------------------------------
 // *        |on the right |  Center  |   On the left
 // *
