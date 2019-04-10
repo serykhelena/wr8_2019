@@ -105,6 +105,7 @@ void lldControlSetDrivePower(controlValue_t inputPrc)
     {
       int32_t  speedDuty = 1500;
       pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+    }
 }
 
 /*
