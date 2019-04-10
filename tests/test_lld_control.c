@@ -3,7 +3,7 @@
 #include <chprintf.h>
 
 /***  Serial configuration pins    ***/
-static  SerialDriver    *SERIALdriver   = &SD7;
+static  SerialDriver    *SERIALdriver   = &SD3;
 
 /*** Configuration structures ***/
 
