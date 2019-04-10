@@ -33,12 +33,13 @@ void testDriverControlRoutine( void )
     controlValue_t delta_steer = 5;
 
     lldControlInit( );
-    SerialInit();
+    debug_stream_init();
+//    SerialInit();
 
     while( 1 )
     {
 
-      char rcv_data = sdGet( SERIALdriver );
+      char rcv_data = sdGet( &SD3 );
                    switch ( rcv_data )
                    {
                        case 'w':   // Positive speed
@@ -64,7 +65,8 @@ void testDriverControlRoutine( void )
       lldControlDrivingWheels(speed);
       steer = CLIP_VALUE( steer, -100, 100 );
       lldControlSteeringWheels(steer);
-      chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+//      chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+      dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
       chThdSleepMilliseconds(100);
     }
 }
