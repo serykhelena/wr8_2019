@@ -16,6 +16,8 @@ void testSteeringControl (void);
 
 void testDriverControlRoutine(void);
 
+void testCalibration(void);
+
 static inline void testsRoutines( void )
 {
 #if (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
@@ -24,6 +26,9 @@ static inline void testsRoutines( void )
 #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_LL_DRIVER)
 
     testDriverControlRoutine();
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_CALIBRATION)
+
+    testCalibration();
 
 #endif
 }
