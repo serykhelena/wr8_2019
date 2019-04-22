@@ -5,8 +5,17 @@
 #define RM_STEER_MIN                (float)-100
 #define RM_STEER_MAX                (float)100
 
-#define RM_STEER_WIDTH_MIN          (float)1054
-#define RM_STEER_WIDTH_MAX          (float)1809
+//#define RM_STEER_WIDTH_MIN          (float)1054
+//#define RM_STEER_WIDTH_MAX          (float)1809
+
+#define RM_STEER_WIDTH_MIN          (float)1137
+#define RM_STEER_WIDTH_MAX          (float)1697
+
+#define SPEED_WIDTH_MIN       (float)1391
+#define SPEED_WIDTH_MAX       (float)1641
+
+//#define SPEED_WIDTH_FORW_MIN        (float)1550
+//#define SPEED_WIDTH_FORW_MAX        (float)1672
 
 bool         rc_mode  = false;
 
@@ -21,7 +30,7 @@ static void icuwidthcb_speed(ICUDriver *icup)
   temp_speed = icuGetWidthX(icup);
 
   /*** Add limitations for width control  ***/
-  if (temp_speed > 1350 && temp_speed < 1680)
+  if (temp_speed > SPEED_WIDTH_MIN && temp_speed < SPEED_WIDTH_MAX)
       {
       speed_rc = temp_speed;
       }
@@ -113,23 +122,23 @@ void ICUInit(void)
 controlValueICU_t FetchSpeed (void)
 {
   controlValue_t outputPrc = 0;
-  if (speed_rc >= 1680 || speed_rc <= 1350)
+  if (speed_rc > SPEED_WIDTH_MAX || speed_rc < SPEED_WIDTH_MIN) //>= and <=
     {
-      speed_rc = 1500;
+      speed_rc = 1515;
     }
 
-  if (speed_rc >= 1550 && speed_rc <= 1680)
-  {
-    outputPrc = (speed_rc - 1615)/0.65;
-  }
-  else if (speed_rc >= 1350 && speed_rc <= 1450)
-  {
-    outputPrc = (speed_rc - 1400)/0.5;
-  }
-  else if (speed_rc > 1450 && speed_rc < 1550)
-  {
-    outputPrc = 0;
-  }
+//  if (speed_rc >= SPEED_WIDTH_MIN && speed_rc <= SPEED_WIDTH_MAX)
+//  {
+    outputPrc = (speed_rc - 1515)/1.235;
+//  }
+//  else if (speed_rc >= SPEED_WIDTH_BACKW_MIN && speed_rc <= SPEED_WIDTH_BACKW_MAX)
+//  {
+//    outputPrc = (speed_rc - 1611)/0.61;
+//  }
+//  else if (speed_rc > SPEED_WIDTH_BACKW_MAX && speed_rc < SPEED_WIDTH_FORW_MIN)
+//  {
+//    outputPrc = 0;
+//  }
 
   outputPrc = CLIP_VALUE( outputPrc, -100, 100 );
   return outputPrc;
@@ -139,9 +148,11 @@ controlValueICU_t FetchSteer (void)
 {
   if (steer_rc >= RM_STEER_WIDTH_MAX || steer_rc <= RM_STEER_WIDTH_MIN)
         {
-        steer_rc = 1439;
+//        steer_rc = 1438;
+          steer_rc = 1417;
         }
-  controlValue_t outputPrc = (steer_rc - 1432)/3.775 ;
+//  controlValue_t outputPrc = (steer_rc - 1432)/3.775 ;
+    controlValue_t outputPrc = (steer_rc - 1417)/2.8 ;
 
   outputPrc = CLIP_VALUE( outputPrc, RM_STEER_MIN, RM_STEER_MAX );
   return outputPrc;

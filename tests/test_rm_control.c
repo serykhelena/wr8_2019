@@ -48,12 +48,12 @@ void SerialInit2( void )
 
 void TestRMControl(void)
 {
-  int test_speed = 1500;
-  int test_steer = 1439;
+  int test_speed = 1515;
+  int test_steer = 1417;
   int tt_steer = 0;
   int tt_speed = 0;
-  controlValue_t delta_spd = 10;
-  controlValue_t delta_str = 10;
+  controlValue_t delta_spd = 1;
+  controlValue_t delta_str = 1;
   testPWMInit();
   ICUInit();
   SerialInit2();
