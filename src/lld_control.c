@@ -48,9 +48,11 @@ PWMConfig pwm1conf = { //PWM_period [s] = period / frequency
   //For Speed (width: 1550 - 1680)
   float Speed_k_max;
   float Speed_b_max;
+
   //For Speed (width: 1350 - 1450)
   float Speed_k_min;
   float Speed_b_min;
+
   //For Steer
   float Steer_k;
   float Steer_b;
