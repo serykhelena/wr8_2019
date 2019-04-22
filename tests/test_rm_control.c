@@ -43,7 +43,7 @@ void SerialInit2( void )
   palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
   palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 
-  chprintf(((BaseSequentialStream *)&SD3), "TEST\r");
+  dbgprintf("TEST\r");
 }
 
 void TestRMControl(void)
@@ -110,10 +110,10 @@ void TestRMControl(void)
     lldControlSteeringWheels( test_prct_steer );
     lldControlDrivingWheels(test_prct_speed);
 
-    chprintf( (BaseSequentialStream *)&SD3, "RAW_STEER:(%d)\tSTEER_PRCT:(%d)\tRAW_SPEED:(%d)\tSPEED_PRCT:(%d)\n\r",
-              test_raw_steer, test_prct_steer, test_raw_speed,test_prct_speed );
+    dbgprintf("RAW_STEER:(%d)\tSTEER_PRCT:(%d)\tRAW_SPEED:(%d)\tSPEED_PRCT:(%d)\n\r",
+          test_raw_steer, test_prct_steer, test_raw_speed,test_prct_speed );
 
 
-    chThdSleepMilliseconds( 50 );
+    systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
   }
 }
