@@ -22,7 +22,7 @@ void SerialInit( void )
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) ); // RX
     sdStart( SERIALdriver, &sdcfg );
 
-    dbgprint(((BaseSequentialStream *)SERIALdriver), "TEST\r");
+    dbgprintf("TEST\r");
 }
 
 void testDriverControlRoutine( void )
@@ -71,8 +71,8 @@ void testDriverControlRoutine( void )
     steer = CLIP_VALUE( steer, -100, 100 );
     lldControlSetSteerPower(steer);
 
-    dbgprint(((BaseSequentialStream *)SERIALdriver), "\t Speed(%d) Steer(%d)\n\r ");
-    dbgprint(((BaseSequentialStream *)SERIALdriver), "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+    dbgprintf("\t Speed(%d) Steer(%d)\n\r ");
+    dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
 
     systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
     }
