@@ -93,22 +93,17 @@ void lldControlSetDrivePower(controlValue_t inputPrc)
   {
     int32_t  speedDuty = inputPrc * Speed_k_max + Speed_b_max;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
-
-//    chprintf((BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
   if (inputPrc < 0)
   {
     int32_t speedDuty = inputPrc * Speed_k_min + Speed_b_min;
     pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
-
-//    chprintf( (BaseSequentialStream *)&SD7, "\t speedDuty(%d)\n\r ", speedDuty);
   }
   if (inputPrc == 0)
-    {
-      int32_t  speedDuty = 1500;
-      pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
-//    chprintf( (BaseSequentialStream *)&SD3, "\t speedDuty(%d)\n\r ", speedDuty);
-    }
+  {
+    int32_t  speedDuty = 1500;
+    pwmEnableChannel( PWMdriver, SPEED_PWMch, speedDuty );
+  }
 }
 
 /*
@@ -122,27 +117,4 @@ void lldControlSetSteerPower(controlValue_t inputPrc)
   inputPrc = CLIP_VALUE( inputPrc, STEER_MIN, STEER_MAX );
   int32_t steerDuty = inputPrc * Steer_k + Steer_b;
   pwmEnableChannel( PWMdriver, STEER_PWMch, steerDuty );
-
-//  chprintf( (BaseSequentialStream *)&SD7, "\t steerDuty(%d)\n\r ", steerDuty);
 }
-
-//void PrintKBsteer(void)
-//{
-//  int K_st = Steer_k * 100;
-//  int B_st = Steer_b * 100;
-//  chprintf( (BaseSequentialStream *)&SD7, "\t Steer_k(%d)\n\r ", K_st);
-//  chprintf( (BaseSequentialStream *)&SD7, "\t Steer_b(%d)\n\r ", B_st);
-//}
-//
-//void PrintKBspeed(void)
-//{
-//  int K_sp_max = Speed_k_max * 100;
-//  int B_sp_max= Speed_b_max * 100;
-//  int K_sp_min = Speed_k_min * 100;
-//  int B_sp_min= Speed_b_min * 100;
-//
-//  chprintf( (BaseSequentialStream *)&SD7, "\t Speed_k_max(%d)\n\r ", K_sp_max);
-//  chprintf( (BaseSequentialStream *)&SD7, "\t Speed_b_max(%d)\n\r ", B_sp_max);
-//  chprintf( (BaseSequentialStream *)&SD7, "\t Speed_k_min(%d)\n\r ", K_sp_min);
-//  chprintf( (BaseSequentialStream *)&SD7, "\t Speed_b_min(%d)\n\r ", B_sp_min);
-//}

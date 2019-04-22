@@ -1,6 +1,7 @@
 #include <tests.h>
 #include <lld_control.h>
 #include <chprintf.h>
+#include <common.h>
 
 /***  Serial configuration pins    ***/
 static  SerialDriver    *SERIALdriver   = &SD3;
@@ -21,7 +22,7 @@ void SerialInit( void )
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) ); // RX
     sdStart( SERIALdriver, &sdcfg );
 
-    chprintf(((BaseSequentialStream *)SERIALdriver), "TEST\r");
+    dbgprint(((BaseSequentialStream *)SERIALdriver), "TEST\r");
 }
 
 void testDriverControlRoutine( void )
@@ -34,9 +35,6 @@ void testDriverControlRoutine( void )
 
     lldControlInit( );
     SerialInit();
-
-//    PrintKBsteer();
-//    PrintKBspeed();
 
     while( 1 )
     {
@@ -73,8 +71,9 @@ void testDriverControlRoutine( void )
     steer = CLIP_VALUE( steer, -100, 100 );
     lldControlSetSteerPower(steer);
 
-    chprintf( (BaseSequentialStream *)SERIALdriver, "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+    dbgprint(((BaseSequentialStream *)SERIALdriver), "\t Speed(%d) Steer(%d)\n\r ");
+    dbgprint(((BaseSequentialStream *)SERIALdriver), "\t Speed(%d) Steer(%d)\n\r ", speed, steer);
 
-    chThdSleepMilliseconds(100);
+    systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
     }
 }
