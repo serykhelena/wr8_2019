@@ -14,9 +14,6 @@
 #define SPEED_WIDTH_MIN       (float)1391
 #define SPEED_WIDTH_MAX       (float)1641
 
-//#define SPEED_WIDTH_FORW_MIN        (float)1550
-//#define SPEED_WIDTH_FORW_MAX        (float)1672
-
 bool         rc_mode  = false;
 
 static thread_reference_t trp_rcmode = NULL;
