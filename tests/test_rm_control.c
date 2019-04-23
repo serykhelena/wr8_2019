@@ -27,25 +27,6 @@ void testPWMInit( void )
 
 }
 
-/*===========================================================================*/
-/* Serial driver related.                                                    */
-/*===========================================================================*/
-static const SerialConfig sdcfg = {
-  .speed = 115200,
-  .cr1 = 0,
-  .cr2 = 0,
-  .cr3 = 0
-};
-
-void SerialInit2( void )
-{
-  sdStart( &SD3, &sdcfg );
-  palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
-  palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
-
-  dbgprintf("TEST\r");
-}
-
 void TestRMControl(void)
 {
 
@@ -57,11 +38,13 @@ void TestRMControl(void)
   controlValue_t delta_str = 1;
   testPWMInit();
   ICUInit();
-  SerialInit2();
 
   lldControlInit( );
+  debug_stream_init( );
 
   systime_t time = chVTGetSystemTime(); // Current system time.
+
+  dbgprintf("TEST\r");
 
   while (true)
   {
