@@ -14,12 +14,14 @@ void testDriverControlRoutine( void )
     controlValue_t steer = 0;
     controlValue_t delta_steer = 1;
 
+    debug_stream_init( );
     lldControlInit( );
 
-    systime_t time = chVTGetSystemTime(); // Current system time.
+    systime_t time = chVTGetSystemTime(); // Current system time
 
     while( 1 )
     {
+//       debug_stream_init( );
        char rcv_data = sdGet( SERIALdriver );
        switch ( rcv_data )
        {
@@ -53,7 +55,6 @@ void testDriverControlRoutine( void )
     steer = CLIP_VALUE( steer, -100, 100 );
     lldControlSetSteerPower(steer);
 
-    dbgprintf("\t Speed(%d) Steer(%d)\n\r ");
     dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
 
 
