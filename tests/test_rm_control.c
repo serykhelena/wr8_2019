@@ -48,7 +48,6 @@ void SerialInit2( void )
 
 void TestRMControl(void)
 {
-  systime_t time = chVTGetSystemTime(); // Current system time.
 
   int test_speed = 1515;
   int test_steer = 1417;
@@ -61,6 +60,8 @@ void TestRMControl(void)
   SerialInit2();
 
   lldControlInit( );
+
+  systime_t time = chVTGetSystemTime(); // Current system time.
 
   while (true)
   {
@@ -116,6 +117,6 @@ void TestRMControl(void)
           test_raw_steer, test_prct_steer, test_raw_speed,test_prct_speed );
 
 
-    time = chThdSleepUntilWindowed(time, time+ MS2ST(500));
+    time = chThdSleepUntilWindowed(time, time + MS2ST(100));
   }
 }
