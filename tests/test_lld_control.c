@@ -6,25 +6,6 @@
 /***  Serial configuration pins    ***/
 static  SerialDriver    *SERIALdriver   = &SD3;
 
-/*** Configuration structures ***/
-
-static const SerialConfig sdcfg = {
-    .speed  = 115200,
-    .cr1 = 0, .cr2 = 0, .cr3 = 0
-};
-
-/***********************************************************/
-
-void SerialInit( void )
-{
-    /*** serial pins configuration ***/
-    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) ); // TX
-    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) ); // RX
-    sdStart( SERIALdriver, &sdcfg );
-
-    dbgprintf("TEST\r");
-}
-
 void testDriverControlRoutine( void )
 {
     controlValue_t speed = 0;
@@ -34,7 +15,8 @@ void testDriverControlRoutine( void )
     controlValue_t delta_steer = 1;
 
     lldControlInit( );
-    SerialInit();
+
+    systime_t time = chVTGetSystemTime(); // Current system time.
 
     while( 1 )
     {
@@ -74,6 +56,7 @@ void testDriverControlRoutine( void )
     dbgprintf("\t Speed(%d) Steer(%d)\n\r ");
     dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
 
-    systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
+
+     time = chThdSleepUntilWindowed(time, time+ MS2ST(100));
     }
 }

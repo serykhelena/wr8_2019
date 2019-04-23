@@ -24,8 +24,8 @@ void lldControlSetDrivePower(controlValue_t inputPrc);
  */
 void lldControlSetSteerPower(controlValue_t inputPrc);
 
-void PrintKBsteer(void);
-void PrintKBspeed(void);
+//void PrintKBsteer(void);
+//void PrintKBspeed(void);
 
 
 #endif /* INCLUDE_LLD_CONTROL_H_ */
