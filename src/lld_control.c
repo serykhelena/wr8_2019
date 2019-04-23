@@ -1,6 +1,5 @@
 #include <tests.h>
 #include <lld_control.h>
-#include <math.h>
 
 /*** Hardware configuration     ***/
 /***  PWM configuration pins    ***/

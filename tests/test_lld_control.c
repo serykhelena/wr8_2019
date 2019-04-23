@@ -21,7 +21,6 @@ void testDriverControlRoutine( void )
 
     while( 1 )
     {
-//       debug_stream_init( );
        char rcv_data = sdGet( SERIALdriver );
        switch ( rcv_data )
        {
@@ -57,7 +56,6 @@ void testDriverControlRoutine( void )
 
     dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
 
-
-     time = chThdSleepUntilWindowed(time, time+ MS2ST(100));
+    time = chThdSleepUntilWindowed(time, time+ MS2ST(100));
     }
 }
