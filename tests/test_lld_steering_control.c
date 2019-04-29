@@ -23,6 +23,7 @@ static const GPTConfig gpt5cfg = {
   .dier      =  0U
 };
 
+
 #define period_50ms         gpt5cfg.frequency/20
 
 static void gpt_callback (GPTDriver *gptd)

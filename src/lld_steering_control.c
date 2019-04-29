@@ -25,7 +25,6 @@ static int32_t  deltaServMIN        = 795;
 
 
 
-
 /******************************/
 /*** CONFIGURATION ZONE END ***/
 /******************************/
