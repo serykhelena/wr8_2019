@@ -30,6 +30,8 @@ void testEncoder (void)
     uint16_t Rev = 0;
     uint32_t Ticks = 0;
 
+    systime_t time = chVTGetSystemTime();
+
     while (true)
     {
         SpeedRPM = lldEncoderGetSpeedRPM() ;
@@ -74,6 +76,6 @@ void testEncoder (void)
         {
             chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         }
-    chThdSleepMilliseconds(300);
+        time = chThdSleepUntilWindowed (time, time + MS2ST(300));
     }
 }
