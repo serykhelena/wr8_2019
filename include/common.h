@@ -11,6 +11,7 @@
 #define     PROGRAM_ROUTINE_TEST_ENCODER                1
 #define     PROGRAM_ROUTINE_TEST_LL_DRIVER              2
 #define     PROGRAM_ROUTINE_TEST_CHARGE_LEVEL           3
+#define     PROGRAM_ROUTINE_TEST_STEERING_CONTROL       4
 
 #define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
 

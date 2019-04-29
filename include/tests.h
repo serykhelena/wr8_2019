@@ -35,6 +35,14 @@ void testDriverControlRoutine (void);
 
 void testChargeLevel (void);
 
+/*
+ * @brief   In test: get angle of rotation and front wheels position
+ * @note    The routine has internal infinite loop
+ * @note    SD7 is used for testing (PE7, PE8)
+ */
+
+void testSteeringControl (void);
+
 /*************************/
 /*** Tests application ***/
 /*************************/
@@ -56,6 +64,10 @@ static inline void testsRoutines( void )
 
     testChargeLevel();
     
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
+
+    testSteeringControl();
+
   #endif
 }
 
