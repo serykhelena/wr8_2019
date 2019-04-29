@@ -169,6 +169,7 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     ExtAcnt = palReadPad(GPIOC, 3);
 }
 
+
 /* EXT channel B (input A2) */
 static void extcbB(EXTDriver *extp, expchannel_t channel)
 {
