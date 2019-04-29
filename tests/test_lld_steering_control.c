@@ -1,6 +1,6 @@
 #include <tests.h>
 #include <lld_steering_control.h>
-
+#include <chprintf.h>
 
 int32_t AdcVal = 0;
 
@@ -32,16 +32,26 @@ static void gpt_callback (GPTDriver *gptd)
 
 /////////////////////////////////////////////////////////////////////
 
-void sd_set(void)
+void SerialInit(void)
 {
     sdStart( &SD7, &sdcfg );
     palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 }
 
+#define MATLAB
+//#define DEBUG_NUC
+
 void testSteeringControl (void)
 {
-   sd_set();
+    #ifdef DEBUG_NUC
+        debug_stream_init();
+    #endif
+
+    #ifdef MATLAB
+        SerialInit();
+    #endif
+
    lldSteeringControlInit();
    /* Start working GPT driver in asynchronous mode */
    gptStart(Tim5, &gpt5cfg);
