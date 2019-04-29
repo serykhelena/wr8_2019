@@ -9,6 +9,7 @@
 #define WheelRadius     0.04
 
 static float OverflowsInTimeDiap      = 1000;
+static float circumference            = 0.2513; // 2 * pi * WheelRadius
 
 /******************************/
 /*** CONFIGURATION ZONE END ***/
@@ -280,7 +281,7 @@ encValue_t lldEncoderGetDistance (void)
     /* distance for 1 revolution is wheel circumference */
     /*  total distance is N revolutions( N wheel circumferences ) */
     /* [S = 2 * pi * (distance for 1 revolution)] */
-    distance = 2 * 3.14 * RevQuantity * WheelRadius;
+    distance = circumference * RevQuantity;
 
     return distance;
 }
@@ -308,9 +309,9 @@ encValue_t lldEncoderGetSpeedMPS (void)
 
     float SpeedMPS = 0;
     /* Get speed in revolutions per second */    
-    float speedRevPerSec = lldEncoderGetSpeedRPM () / 60.0f ;
+    float speedRevPerSec = lldEncoderGetSpeedRPM () * 0.0167 ;
     /* [V = 2 * pi * (speed in revolutions per second)] */
-    SpeedMPS = 2 * 3.14 * WheelRadius * speedRevPerSec;
+    SpeedMPS = circumference * speedRevPerSec;
         
     return SpeedMPS;
 }
