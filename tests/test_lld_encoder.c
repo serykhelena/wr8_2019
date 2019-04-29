@@ -16,9 +16,20 @@ void sd_set(void)
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 }
 
+//#define MATLAB
+#define DEBUG_NUC
+
 void testEncoder (void)
 {
-    sd_set();
+
+    #ifdef DEBUG_NUC
+        debug_stream_init();
+    #endif
+
+    #ifdef MATLAB
+        sd_set();
+    #endif
+
     lldEncoderSensInit();
 
     float SpeedRPM = 0 ;
@@ -58,23 +69,23 @@ void testEncoder (void)
         {
             if (SpeedKPH < 0 && (int)SpeedKPH == 0)
             {
-        	    chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS:-%d.%02d      KPH: -%d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        	    dbgprintf("RPM: %d.%02d     MPS:-%d.%02d      KPH: -%d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
             }
             else
             {
         	    if ((int)SpeedKPH == 0 && fPartKPH < 0 )
         	    {
-        		    chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS:-%d.%02d      KPH: -%d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        		    dbgprintf("RPM: %d.%02d     MPS:-%d.%02d      KPH: -%d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         	    }
         	    else
         	    {
-        	        chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS:-%d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        	    	dbgprintf("RPM: %d.%02d     MPS:-%d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         	    }
             }
         }
         else
         {
-            chprintf((BaseSequentialStream *)&SD7, "RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        	dbgprintf("RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         }
         time = chThdSleepUntilWindowed (time, time + MS2ST(300));
     }
