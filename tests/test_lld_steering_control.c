@@ -3,12 +3,6 @@
 
 
 int32_t AdcVal = 0;
-//int16_t PosVal = 0;
-//int16_t Angle  = 0;
-
-
-uint32_t DataArray[4] = {0, 0, 0, 0};
-uint32_t DataLowPassArray[5] = {0, 0, 0, 0, 0};
 
 
 static const SerialConfig sdcfg = {
@@ -29,19 +23,11 @@ static const GPTConfig gpt5cfg = {
   .dier      =  0U
 };
 
-#define period_20ms         gpt5cfg.frequency/50
-#define period_100ms        gpt5cfg.frequency/10
 #define period_50ms         gpt5cfg.frequency/20
-
-/*int32_t total_ticks                       = 0;
-int32_t KalmanTime                        = 0;
-int32_t periodCheckPoint                  = 0;
-int32_t last_periodCheckPoint             = 0;*/
 
 static void gpt_callback (GPTDriver *gptd)
 {
     gptd = gptd;
-    //total_ticks += period_50ms;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -60,38 +46,12 @@ void testSteeringControl (void)
    /* Start working GPT driver in asynchronous mode */
    gptStart(Tim5, &gpt5cfg);
    gptStartContinuous(Tim5, period_50ms);
+
+   systime_t time = chVTGetSystemTime();
+
     while( true )
     {
-    	char start = sdGetTimeout(&SD7, TIME_IMMEDIATE);
-
-    	if (start == 's')
-    	{
-    	    DataArray[0]  = lldSteeringControlGetAdcVal();
-    	    DataArray[1] = lldSteeringControlGetAdcVal_filt();
-    	    DataArray[2]  = lldSteeringControlGetAdcVal_median();
-    	    DataArray[3]   = lldSteeringControlGetAdcVal_doublefilt();
-    	    sdWrite( &SD7, (uint8_t *)DataArray, sizeof( DataArray ) );
-    	}
-    	if (start == 'f')
-    	{
-    		DataLowPassArray[0] = lldSteeringControlGetAdcVal();
-    		DataLowPassArray[1] = lldSteeringControlGetAdcVal_Kalman09();
-    		DataLowPassArray[2] = lldSteeringControlGetAdcVal_Kalman05();
-    		DataLowPassArray[3] = lldSteeringControlGetAdcVal_Kalman01();
-    		DataLowPassArray[4] = lldSteeringControlGetAdcVal_Kalman001();
-    		sdWrite( &SD7, (uint8_t *)DataLowPassArray, sizeof( DataLowPassArray ) );
-    	}
-    	if (start == 't')
-    	{
-    		/*last_periodCheckPoint = gptGetCounterX(Tim5);
-    		AdcVal = lldSteeringControlGetAdcVal_Kalman09 ();
-    		periodCheckPoint = gptGetCounterX(Tim5);
-    		KalmanTime = total_ticks + periodCheckPoint - last_periodCheckPoint;
-    		total_ticks = 0;
-    		sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );*/
-    		//chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
-    	}
-        chThdSleepMilliseconds( 10 );
+        time = chThdSleepUntilWindowed (time, time + MS2ST(500));
     }
 }
 

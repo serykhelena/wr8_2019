@@ -109,7 +109,7 @@ void testCalibration( void )
     gptStartContinuous(Tim5, period_50ms);
 
     result = chVTGetSystemTimeX();
-    AdcVal = lldSteeringControlGetAdcVal_Kalman09();
+    AdcVal = lldSteeringControlGetAdcVal_Kalman();
 
 	CalcTime = total_ticks + gptGetCounterX(Tim5);
 
@@ -119,7 +119,7 @@ void testCalibration( void )
               (int)RTC2US( period_50ms * 1.0, CalcTime ), (int)CalcTime,
               (int)result );
 
-
+    //dbgprintf("\n\r ", );
        time = chThdSleepUntilWindowed (time, time + MS2ST(500));
     }
 }

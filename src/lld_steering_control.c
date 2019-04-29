@@ -44,26 +44,17 @@ uint32_t ADCfilter2[FiltElements] = {};
 uint8_t filter_cnt3                        = 0;
 uint32_t ADCmedian_filter[FiltElements] = {};
 
-static bool     firstKalmVal09                   = false;
-float KalmAdcVal09        = 0;
-float lastKalmAdcVal09    = 2200;
-static bool     firstKalmVal05                   = false;
-float KalmAdcVal05        = 0;
-float lastKalmAdcVal05    = 0;
-static bool     firstKalmVal01                   = false;
-float KalmAdcVal01        = 0;
-float lastKalmAdcVal01    = 0;
-static bool     firstKalmVal001                  = false;
-float KalmAdcVal001        = 0;
-float lastKalmAdcVal001    = 0;
+static bool     firstKalmVal               = false;
+float KalmAdcVal                           = 0;
+float lastKalmAdcVal                       = 2200;
 
 
 /* ADC value */
 
 static bool     isInitialized              = false;
 
-static float leftMaxAngle                  = 34.56;
-static float rightMaxAngle                 = 29.98;
+static float leftMaxAngle                  = 34.0;
+static float rightMaxAngle                 = 29.0;
 
 static float leftFrontPosAngle             = 0;
 static float rightFrontPosAngle            = 0;
@@ -163,92 +154,29 @@ int16_t lldSteeringControlGetAdcVal (void)
 }
 
 
-int16_t lldSteeringControlGetAdcVal_Kalman09 (void)
-{
-    if ( !isInitialized )
-	    return false;
-
-    float KalmCoef          = 0.9;
-
-
-    if (firstKalmVal09 == false)
-    {
-    	KalmAdcVal09 = GetAdcVal();
-    	firstKalmVal09 = true;
-    }
-    else
-    {
-    	KalmAdcVal09 = KalmCoef * GetAdcVal() + lastKalmAdcVal09 * ((float)1 - KalmCoef);
-    }
-    lastKalmAdcVal09 = KalmAdcVal09;
-
-	return (int)KalmAdcVal09;
-}
-
-int16_t lldSteeringControlGetAdcVal_Kalman05 (void)
-{
-    if ( !isInitialized )
-	    return false;
-
-    float KalmCoef          = 0.5;
-
-    if (firstKalmVal05 == false)
-    {
-    	KalmAdcVal05 = GetAdcVal();
-    	firstKalmVal05 = true;
-    }
-    else
-    {
-    	KalmAdcVal05 = KalmCoef * GetAdcVal() + lastKalmAdcVal05 * ((float)1 - KalmCoef);
-    }
-    lastKalmAdcVal05 = KalmAdcVal05;
-
-	return (int)KalmAdcVal05;
-}
-
-int16_t lldSteeringControlGetAdcVal_Kalman01 (void)
+int16_t lldSteeringControlGetAdcVal_Kalman (void)
 {
     if ( !isInitialized )
 	    return false;
 
     float KalmCoef          = 0.1;
 
-    if (firstKalmVal01 == false)
+
+    if (firstKalmVal == false)
     {
-    	KalmAdcVal01 = GetAdcVal();
-    	firstKalmVal01 = true;
+    	KalmAdcVal = GetAdcVal();
+    	firstKalmVal = true;
     }
     else
     {
-    	KalmAdcVal01 = KalmCoef * GetAdcVal() + lastKalmAdcVal01 * ((float)1 - KalmCoef);
+    	KalmAdcVal = KalmCoef * GetAdcVal() + lastKalmAdcVal * ((float)1 - KalmCoef);
     }
-    lastKalmAdcVal01 = KalmAdcVal01;
+    lastKalmAdcVal = KalmAdcVal;
 
-	return (int)KalmAdcVal01;
+	return (int)KalmAdcVal;
 }
 
-int16_t lldSteeringControlGetAdcVal_Kalman001 (void)
-{
-    if ( !isInitialized )
-	    return false;
 
-    float KalmCoef          = 0.01;
-
-    if (firstKalmVal001 == false)
-    {
-    	KalmAdcVal001 = GetAdcVal();
-    	firstKalmVal001 = true;
-    }
-    else
-    {
-    	KalmAdcVal001 = KalmCoef * GetAdcVal() + lastKalmAdcVal001 * ((float)1 - KalmCoef);
-    }
-    lastKalmAdcVal001 = KalmAdcVal001;
-
-	return (int)KalmAdcVal001;
-}
-
-///////////////////////////////////////////////////////////////////////////////////
 
 int16_t lldSteeringControlGetAdcVal_filt (void)
 {
