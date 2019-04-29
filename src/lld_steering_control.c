@@ -34,19 +34,19 @@ static int32_t  deltaServMIN        = 795;
 
 #define servADCchannel       ADC_SEQ1_CH
 
-#define FiltElements         5
+#define FiltElements         15
 
 static uint8_t  filter_cnt                 = 0;
-int32_t ADCfilter[FiltElements] = {};
+uint32_t ADCfilter[FiltElements] = {};
 
 static uint8_t  filter_cnt2                = 0;
-int32_t ADCfilter2[FiltElements] = {};
+uint32_t ADCfilter2[FiltElements] = {};
 uint8_t filter_cnt3                        = 0;
 uint32_t ADCmedian_filter[FiltElements] = {};
 
 static bool     firstKalmVal09                   = false;
 float KalmAdcVal09        = 0;
-float lastKalmAdcVal09    = 0;
+float lastKalmAdcVal09    = 2200;
 static bool     firstKalmVal05                   = false;
 float KalmAdcVal05        = 0;
 float lastKalmAdcVal05    = 0;
@@ -170,6 +170,7 @@ int16_t lldSteeringControlGetAdcVal_Kalman09 (void)
 
     float KalmCoef          = 0.9;
 
+
     if (firstKalmVal09 == false)
     {
     	KalmAdcVal09 = GetAdcVal();
@@ -177,7 +178,7 @@ int16_t lldSteeringControlGetAdcVal_Kalman09 (void)
     }
     else
     {
-    	KalmAdcVal09 = KalmCoef * KalmAdcVal09 + lastKalmAdcVal09 * ((float)1 - KalmCoef);
+    	KalmAdcVal09 = KalmCoef * GetAdcVal() + lastKalmAdcVal09 * ((float)1 - KalmCoef);
     }
     lastKalmAdcVal09 = KalmAdcVal09;
 
@@ -198,7 +199,7 @@ int16_t lldSteeringControlGetAdcVal_Kalman05 (void)
     }
     else
     {
-    	KalmAdcVal05 = KalmCoef * KalmAdcVal05 + lastKalmAdcVal05 * ((float)1 - KalmCoef);
+    	KalmAdcVal05 = KalmCoef * GetAdcVal() + lastKalmAdcVal05 * ((float)1 - KalmCoef);
     }
     lastKalmAdcVal05 = KalmAdcVal05;
 
@@ -219,7 +220,7 @@ int16_t lldSteeringControlGetAdcVal_Kalman01 (void)
     }
     else
     {
-    	KalmAdcVal01 = KalmCoef * KalmAdcVal01 + lastKalmAdcVal01 * ((float)1 - KalmCoef);
+    	KalmAdcVal01 = KalmCoef * GetAdcVal() + lastKalmAdcVal01 * ((float)1 - KalmCoef);
     }
     lastKalmAdcVal01 = KalmAdcVal01;
 
@@ -240,7 +241,7 @@ int16_t lldSteeringControlGetAdcVal_Kalman001 (void)
     }
     else
     {
-    	KalmAdcVal001 = KalmCoef * KalmAdcVal001 + lastKalmAdcVal001 * ((float)1 - KalmCoef);
+    	KalmAdcVal001 = KalmCoef * GetAdcVal() + lastKalmAdcVal001 * ((float)1 - KalmCoef);
     }
     lastKalmAdcVal001 = KalmAdcVal001;
 
@@ -255,7 +256,7 @@ int16_t lldSteeringControlGetAdcVal_filt (void)
       return false;
 
   int16_t ADC_val = 0;
-  int16_t Sum = 0;
+  int32_t Sum = 0;
   uint8_t i = 0;
   uint8_t j = 0;
 
@@ -290,7 +291,7 @@ int16_t lldSteeringControlGetAdcVal_doublefilt (void)
       return false;
 
   int16_t ADC_filtered_val = 0;
-  int16_t Sum = 0;
+  int32_t Sum = 0;
   uint8_t i = 0;
   uint8_t j = 0;
 
@@ -327,9 +328,11 @@ int16_t lldSteeringControlGetAdcVal_median (void)
 
     int16_t MedianVal = 0;
     uint8_t j         = 0;
+    uint8_t b         = 0;
     uint8_t k         = 1;
     uint8_t l         = 1;
     uint16_t tmp      = 0;
+    uint32_t Temp_Array[FiltElements] = {};
 
         if (filter_cnt3 < FiltElements)
         {
@@ -339,27 +342,33 @@ int16_t lldSteeringControlGetAdcVal_median (void)
         }
         else
         {
+            while (b < FiltElements)
+            {
+            	Temp_Array[b] = ADCmedian_filter[b];
+                b++;
+            }
+            b = 0;
             while (k < FiltElements)
             {
                 while (l < FiltElements)
                 {
-                    if (ADCmedian_filter[l] > ADCmedian_filter[l - 1])
+                    if (Temp_Array[l] > Temp_Array[l - 1])
                     {
-                        tmp = ADCmedian_filter[l];
-                        ADCmedian_filter[l] = ADCmedian_filter[l - 1];
-                        ADCmedian_filter[l - 1] = tmp;
+                        tmp = Temp_Array[l];
+                        Temp_Array[l] = Temp_Array[l - 1];
+                        Temp_Array[l - 1] = tmp;
                     }
                     l++;
                 }
             k++;
             }
-            MedianVal = ADCmedian_filter[FiltElements / 2];
-            while (j < 4)
+            MedianVal = Temp_Array[FiltElements / 2];
+            while (j < FiltElements - 1)
             {
                 ADCmedian_filter[j] = ADCmedian_filter[j + 1];
                 j++;
             }
-            ADCmedian_filter[4] = GetAdcVal();
+            ADCmedian_filter[j] = GetAdcVal();
             j = 0;
         }
 

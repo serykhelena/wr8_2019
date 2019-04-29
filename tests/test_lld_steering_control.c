@@ -33,15 +33,15 @@ static const GPTConfig gpt5cfg = {
 #define period_100ms        gpt5cfg.frequency/10
 #define period_50ms         gpt5cfg.frequency/20
 
-int32_t total_ticks                       = 0;
+/*int32_t total_ticks                       = 0;
 int32_t KalmanTime                        = 0;
 int32_t periodCheckPoint                  = 0;
-int32_t last_periodCheckPoint             = 0;
+int32_t last_periodCheckPoint             = 0;*/
 
 static void gpt_callback (GPTDriver *gptd)
 {
     gptd = gptd;
-    total_ticks += period_50ms;
+    //total_ticks += period_50ms;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -83,12 +83,12 @@ void testSteeringControl (void)
     	}
     	if (start == 't')
     	{
-    		last_periodCheckPoint = gptGetCounterX(Tim5);
+    		/*last_periodCheckPoint = gptGetCounterX(Tim5);
     		AdcVal = lldSteeringControlGetAdcVal_Kalman09 ();
     		periodCheckPoint = gptGetCounterX(Tim5);
     		KalmanTime = total_ticks + periodCheckPoint - last_periodCheckPoint;
     		total_ticks = 0;
-    		sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );
+    		sdWrite( &SD7, (uint16_t *)&AdcVal, sizeof( AdcVal ) );*/
     		//chprintf( (BaseSequentialStream *)&SD7, "%d \n", AdcVal );
     	}
         chThdSleepMilliseconds( 10 );

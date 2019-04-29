@@ -15,8 +15,8 @@
 #define STEER_MIN               (float)-100
 #define STEER_MAX                (float)100
 
-#define STEER_WIDTH_MIN          (float)1200
-#define STEER_WIDTH_MAX          (float)2080
+#define STEER_WIDTH_MIN          (float)500
+#define STEER_WIDTH_MAX          (float)2300
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
                                  (x) > (max) ? (max) : (x))

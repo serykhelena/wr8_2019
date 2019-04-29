@@ -10,9 +10,9 @@ disp 'Ok!'
 
 A=[];
 B = [];
-t = 10;
+t = 1000;
  for i = 1:t
-    A=fread(dat, [100,1], 'int16');
+    A=fread(dat, [1,1], 'int16');
     B = [B; A];
  end
 fclose(dat);
