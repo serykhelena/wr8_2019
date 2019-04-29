@@ -28,6 +28,7 @@ adcsample_t GetAdcVal ( void );
 #define ADC_CR1_6B_RESOLUTION       (ADC_CR1_RES_0 | ADC_CR1_RES_1)
 
 
+
 typedef int16_t           steer_angle_t;
 
 /*
