@@ -15,11 +15,13 @@ static float circumference            = 0.2513; // 2 * pi * WheelRadius
 /*** CONFIGURATION ZONE END ***/
 /******************************/
 
-#define encoderChA       PAL_LINE ( GPIOC, 0 )
-#define encoderChB       PAL_LINE ( GPIOC, 3 )
+#define encoderChA       PAL_LINE ( GPIOD, 5 )
+#define encoderChB       PAL_LINE ( GPIOD, 4 )
+#define encoderChI       PAL_LINE ( GPIOD, 3 )
 
 static void extcbA ( EXTDriver *extp, expchannel_t channel );
 static void extcbB ( EXTDriver *extp, expchannel_t channel );
+static void extcbI ( EXTDriver *extp, expchannel_t channel );
 
 static void gpt_callback ( GPTDriver *Tim2 );
 static GPTDriver                     *Tim2 = &GPTD2;
@@ -52,6 +54,8 @@ uint8_t ExtAcnt                         = 0;
 uint8_t ExtBcnt                         = 0;
 uint8_t ExtAtick                        = 0;
 uint8_t ExtBtick                        = 0;
+uint8_t ExtIstate                       = 0;
+uint16_t ExtIcnt                        = 0;
 
 
 #define ImpsFor1Rev         360
@@ -61,12 +65,12 @@ static float speed1ImpsTicksPerMin = 0;
 EXTConfig extcfg = {
 .channels =
     {
-        [0]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbA}, // PC0 green
+        [0]  = {EXT_CH_MODE_DISABLED, NULL},
         [1]  = {EXT_CH_MODE_DISABLED, NULL},
         [2]  = {EXT_CH_MODE_DISABLED, NULL},
-        [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, extcbB}, // PC3 white
-        [4]  = {EXT_CH_MODE_DISABLED, NULL},
-        [5]  = {EXT_CH_MODE_DISABLED, NULL},
+        [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbI}, // PD3 abs_null
+        [4]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbB}, // PD4 white
+        [5]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbA}, // PD5 green,
         [6]  = {EXT_CH_MODE_DISABLED, NULL},
         [7]  = {EXT_CH_MODE_DISABLED, NULL},
         [8]  = {EXT_CH_MODE_DISABLED, NULL},
@@ -92,6 +96,7 @@ void lldEncoderSensInit (void)
     /*Set up EXT channels A and B hardware pin mode as digital inputs*/
     palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
     palSetLineMode( encoderChB, PAL_MODE_INPUT_PULLUP );
+    palSetLineMode( encoderChI, PAL_MODE_INPUT_PULLUP );
     
     /* Start working GPT driver in asynchronous mode */
     gptStart(Tim2, &gpt2cfg);
@@ -159,24 +164,35 @@ int8_t lldEncoderDirection(void)
     return InvDrive;
 }
 
+/* EXT channel I (input PD3) */
+static void extcbI(EXTDriver *extp, expchannel_t channel)
+{
+    extp = extp; channel = channel;
 
-/* EXT channel A (input A1) */
+    ExtIstate = palReadPad(GPIOD, 3);
+    if (ExtIstate == 1)
+    	{
+    	    ExtIcnt++;
+    	}
+}
+
+/* EXT channel A (input PD5) */
 static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
 
     ExtAtick = 1;
-    ExtAcnt = palReadPad(GPIOC, 3);
+    ExtAcnt = palReadPad(GPIOD, 5);
 }
 
 
-/* EXT channel B (input A2) */
+/* EXT channel B (input PD4) */
 static void extcbB(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
 
     ExtBtick = 1;
-    ExtBcnt = palReadPad(GPIOC, 0);
+    ExtBcnt = palReadPad(GPIOD, 4);
 
     int8_t Direction = lldEncoderDirection();
     if (ExtAtick == 1 && ExtBtick == 1)
@@ -216,6 +232,20 @@ uint16_t lldEncoderGetRevolutions(void)
     }
     /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
     return TotalImps / ImpsFor1Rev ;
+}
+
+/**
+ * @ brief                             Gets current quantity of absolute revolutions
+ * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 1 tick from I channel)
+ *           -1                        Sensor is not initialized
+ */
+uint16_t lldEncoderGetAbsRevolutions(void)
+{
+    if ( isInitialized == false )
+    {
+	    return -1;
+    }
+     return ExtIcnt++ ;
 }
 
 /**
