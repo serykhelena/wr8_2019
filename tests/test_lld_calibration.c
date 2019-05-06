@@ -8,8 +8,8 @@
 //#define MATLAB
 
 
-#define GPT_USE // not working
-//#define TM_USE
+//#define GPT_USE
+#define TM_USE
 
 
 #ifdef MATLAB
@@ -62,8 +62,6 @@ static void gpt_callback (GPTDriver *gptd)
 #endif
 /////////////////////////////////////////////////////////////////////
 
-
-
 #ifdef TM_USE
 
 #define SYSTEM_FREQUENCY   216000000UL
@@ -71,26 +69,7 @@ static time_measurement_t  processing_time;
 
 #endif
 
-
 uint16_t Value = 0;
-
-
-double test_function( void )
-{
-    float var;
-    for( uint32_t g = 0; g < 400000; g++)
-    {
-        var = chVTGetSystemTimeX();
-        var *= 2;
-        var *= chVTGetSystemTimeX();
-        var /= chVTGetSystemTimeX();
-        var = var - 5.2;
-    }
-
-    return var;
-}
-
-double result;
 
 /*
  * COMMENTS
@@ -115,7 +94,7 @@ void testCalibration( void )
 #endif
 
     systime_t time = chVTGetSystemTime();
-    while( 1 )
+    while( true )
     {
 #ifdef TM_USE
         chTMStartMeasurementX( &processing_time );
@@ -125,15 +104,13 @@ void testCalibration( void )
         gptStartContinuous(Tim5, period_50ms);
 #endif
 
-        result = test_function();
-//        Value = lldSteeringControlGetAdcVal_Kalman();
+        Value = lldSteeringControlGetAdcVal_Kalman();
 
 #ifdef GPT_USE
 	    total_time = gpt_ticks + gptGetCounterX(Tim5);
 #endif
 #ifdef TM_USE
 	    chTMStopMeasurementX( &processing_time );
-
 #endif
 #ifdef MATLAB
 	    /*You send string to Matlab O_o
@@ -145,14 +122,15 @@ void testCalibration( void )
 #ifdef DEBUG_NUC
 
   #ifdef GPT_USE
-        dbgprintf( "T:%d (us)\t/%d(ticks)\n\r",
-                   (int)RTC2US( SYSTEM_FREQUENCY * 1.0, total_time ),
-                   gpt_ticks );
-//                   total_time);
+
+        dbgprintf( "Time:(%d / %d) - %d\n\r",
+                          (int)RTC2US( SYSTEM_FREQUENCY * 1.0, total_time ), total_time,
+                          (int)Value );
+
   #endif
   #ifdef TM_USE
         dbgprintf( "%d / Best time:(%d)\tWorst time:(%d)\n\r",
-                   (int)result,
+                   (int)Value,
                    RTC2US( SYSTEM_FREQUENCY, processing_time.best ),
                    RTC2US( SYSTEM_FREQUENCY, processing_time.worst ) );
 
