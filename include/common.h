@@ -15,6 +15,8 @@
 
 #define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_CALIBRATION
 
+
 void debug_stream_init( void );
 void dbgprintf( const char* format, ... );
+
 #endif /* INCLUDE_COMMON_H_ */

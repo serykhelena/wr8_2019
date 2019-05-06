@@ -156,8 +156,8 @@ int16_t lldSteeringControlGetAdcVal (void)
 
 int16_t lldSteeringControlGetAdcVal_Kalman (void)
 {
-    if ( !isInitialized )
-	    return false;
+//    if ( !isInitialized )
+//	    return false;
 
     float KalmCoef          = 0.1;
 
