@@ -14,7 +14,7 @@
 #define     PROGRAM_ROUTINE_TEST_STEERING_CONTROL       4
 #define     PROGRAM_ROUTINE_TEST_STEERING_SYSTEM        5
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_STEERING_SYSTEMs
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_STEERING_SYSTEM
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \

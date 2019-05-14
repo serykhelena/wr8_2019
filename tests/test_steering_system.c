@@ -1,37 +1,48 @@
 #include <tests.h>
 #include <steering_system.h>
+#include <lld_control.h>
 #include <chprintf.h>
 #include <common.h>
 
 void testSteeringSystem(void)
 {
-  float test_steer_cs = 0;
-  controlValue_t delta_steer_cs = 1;
+  controlValue_t test_steer_cs;
+  controlValue_t test_ang_ref = 0;
+  controlValue_t delta_steer_ref = 1;
+  controlValue_t test_ang_real = 0;
 
-  ICUInit2();
   lldControlInit();
+  lldSteeringControlInit();
+//  SteerCSInit();
   debug_stream_init();
 
-  dbgprintf("TEST STEERING SYSTEM\r");
+  systime_t time = chVTGetSystemTime(); // Current system time
+
+  dbgprintf("TEST STEERING SYSTEM\r\n");
 
   while(true)
   {
-    char rcv_data_cs = sdGet (&SD7);
-    switch (rcv_data_cs)
+
+    char rc_data = sdGet (&SD7);
+    switch (rc_data)
     {
     case 'a':
-      test_steer_cs -= delta_steer_cs;
+      test_ang_ref -= delta_steer_ref;
       break;
 
     case 's':
-      test_steer_cs += delta_steer_cs;
+      test_ang_ref += delta_steer_ref;
 
     }
 
+    test_ang_real = lldSteeringControlGetAngle();
+    test_steer_cs = GetSteerControl();
+    lldControlSetSteerPower(test_steer_cs);
 
+    dbgprintf("\tRef_angle:(%d) \tReal_angel:(%d) \tSteer_control:(%d)\n\r",
+              test_ang_ref, test_ang_real, test_steer_cs);
 
-    lldSteeringControlGetAngle();
+    time = chThdSleepUntilWindowed(time, time + MS2ST(100));
 
-    dbgprintf("\t Steer(%d)\n\r ", steer_cs);
   }
 }
