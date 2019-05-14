@@ -91,7 +91,7 @@ float SteerPIDReg (float ang_dgr)
 {
   float ang_p, ang_i, ang_d, error, position;
 
-  error = ang_dgr; //feedback RotateAngle
+  error = ang_dgr; //feedback RotateAngle.
   ang_p = kp * error;
 
   sum_i = sum_i + error;
