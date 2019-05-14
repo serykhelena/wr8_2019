@@ -13,7 +13,7 @@ void testSteeringSystem(void)
 
   lldControlInit();
   lldSteeringControlInit();
-  SteerCSInit(1);
+  SteerCSInit(NORMALPRIO);
   debug_stream_init();
 
   systime_t time = chVTGetSystemTime(); // Current system time
