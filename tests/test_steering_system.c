@@ -13,7 +13,7 @@ void testSteeringSystem(void)
 
   lldControlInit();
   lldSteeringControlInit();
-//  SteerCSInit(1);
+  SteerCSInit(1);
   debug_stream_init();
 
   systime_t time = chVTGetSystemTime(); // Current system time
@@ -23,7 +23,7 @@ void testSteeringSystem(void)
   while(true)
   {
 
-    char rc_data = sdGet (&SD3);
+    char rc_data = sdGet(&SD3);
     switch (rc_data)
     {
     case 'a':
@@ -32,7 +32,10 @@ void testSteeringSystem(void)
 
     case 's':
       test_ang_ref += delta_steer_ref;
+      break;
 
+    default:
+      ;
     }
 
 //    test_ang_ref = CLIP_VALUE(test_ang_ref, -29, 29);
@@ -44,7 +47,7 @@ void testSteeringSystem(void)
     dbgprintf("\tRef_ang:(%d)\tReal_ang:(%d)\tStr_cntrl:(%d)\n\r",
               test_ang_ref, test_ang_real, test_steer_cs);
 
-    time = chThdSleepUntilWindowed(time, time + MS2ST(500));
+    time = chThdSleepUntilWindowed(time, time + MS2ST(100));
 
   }
 }
