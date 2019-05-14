@@ -145,7 +145,7 @@ controlValueICU_t FetchSteer (void)
 {
   if (steer_rc >= RM_STEER_WIDTH_MAX || steer_rc <= RM_STEER_WIDTH_MIN)
         {
-//        steer_rc = 1438;
+//         1438;
           steer_rc = 1417;
         }
 //  controlValue_t outputPrc = (steer_rc - 1432)/3.775 ;
