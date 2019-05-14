@@ -64,9 +64,13 @@ static inline void testsRoutines( void )
 
     testChargeLevel();
     
-#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
 
     testSteeringControl();
+
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_SYSTEM)
+
+    testSteeringSystem();
 
   #endif
 }
