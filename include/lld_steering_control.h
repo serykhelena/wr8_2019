@@ -29,7 +29,7 @@ adcsample_t GetAdcVal ( void );
 
 
 
-typedef int16_t           steer_angle_t;
+typedef float           steer_angle_t;
 
 /*
  * @brief   Initialize front wheels control
@@ -71,6 +71,6 @@ int16_t lldSteeringControlGetAdcVal_median (void);
  * @brief   Get angle of rotate
  * @return  Angle of wheels rotate
  */
-int16_t lldSteeringControlGetAngle (void);
+float lldSteeringControlGetAngle (void);
 
 #endif /* INCLUDE_LLD_STEERING_CONTROL_H_ */

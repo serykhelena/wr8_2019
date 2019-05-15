@@ -43,6 +43,8 @@ void testChargeLevel (void);
 
 void testSteeringControl (void);
 
+void testSteeringSystem(void);
+
 /*************************/
 /*** Tests application ***/
 /*************************/
