@@ -5,7 +5,9 @@
 #include <lld_control.h>
 #include <lld_steering_control.h>
 
+//#define WORK_NUC
 #define WORK_MATLAB
+
 
 #ifdef WORK_MATLAB
 static const SerialConfig sdcfg = {
@@ -13,7 +15,6 @@ static const SerialConfig sdcfg = {
     .cr1 = 0, .cr2 = 0, .cr3 = 0
 };
 #endif
-
 
 void testSteeringSystem(void)
 {
@@ -23,29 +24,34 @@ void testSteeringSystem(void)
   controlValue_t delta_steer_ref = 1;
   controlValue_t t_ang_real = 0;
 
-#ifdef WORK_MATLAB
-  int32_t start = 0;
-  sdStart( &SD7, &sdcfg );
-  palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );   // TX
-  palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );   // RX
-#endif
-
 //  lldControlInit();
   lldSteeringControlInit();
   ControlSystemInit(NORMALPRIO-1);
+
+#ifdef WORK_MATLAB
+  int32_t start = 0;
+  sdStart( &SD7, &sdcfg );
+  palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+  palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+  chprintf(((BaseSequentialStream *)&SD7), "TEST\r\n");
+#endif
+
+#ifdef WORK_NUC
   debug_stream_init();
+  dbgprintf("TEST\r\n");
+#endif
 
   systime_t time = chVTGetSystemTime(); // Current system time
 
-  dbgprintf("TEST\r\n");
-
   while(true)
   {
+
 #ifdef WORK_MATLAB
     char cs_data = sdGetTimeout(&SD7, TIME_IMMEDIATE); //send to matlab
 #else
     //    char cs_data = sdGet(&SD3); //send to nuc
 #endif
+
     switch (cs_data)
     {
     case 's':
@@ -84,13 +90,15 @@ void testSteeringSystem(void)
     t_steer_cs = GetSteerControl();
 //    lldControlSetSteerPower(test_steer_cs);
 
+#ifdef WORK_NUC
     dbgprintf("\tRef_ang:(%d)\t Real_ang:(%d)\tStr_cntrl:(%d)\n\r",
               t_ang_ref, t_ang_real, t_steer_cs);
+#endif
 
 #ifdef WORK_MATLAB
     if(start == 1)
     {
-      sdWrite(&SD7,&t_steer_cs, 2);
+      sdWrite(&SD7, (uint8_t*) &t_steer_cs, 2);
     }
 #endif
 
