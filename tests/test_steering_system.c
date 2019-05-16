@@ -8,7 +8,6 @@
 //#define WORK_NUC
 #define WORK_MATLAB
 
-
 #ifdef WORK_MATLAB
 static const SerialConfig sdcfg = {
     .speed  = 115200,
@@ -22,7 +21,7 @@ void testSteeringSystem(void)
   controlValue_t t_ang_ref = 0;
   controlValue_t delta_steer_ref = 1;
   controlValue_t t_ang_real = 0;
-  controlValue_t t_steer_cs;
+  int16_t t_steer_cs;
 
 //  lldControlInit();
   lldSteeringControlInit();
@@ -33,7 +32,7 @@ void testSteeringSystem(void)
   sdStart( &SD7, &sdcfg );
   palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
   palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
-  chprintf(((BaseSequentialStream *)&SD7), "TEST\r\n");
+  //chprintf(((BaseSequentialStream *)&SD7), "TEST\r\n");
 #endif
 
 #ifdef WORK_NUC
@@ -96,15 +95,16 @@ void testSteeringSystem(void)
 #endif
 
 #ifdef WORK_MATLAB
-    chprintf(((BaseSequentialStream *)&SD7), "\tRef_ang:(%d)\tReal_ang:(%d)\tStr_cntrl:(%d)\n\r",
-             t_ang_ref, t_ang_real, t_steer_cs);
+    //chprintf(((BaseSequentialStream *)&SD7), "\tRef_ang:(%d)\tReal_ang:(%d)\tStr_cntrl:(%d)\n\r",
+            // t_ang_ref, t_ang_real, t_steer_cs);
     if(start == 1)
     {
-      sdWrite(&SD7, (uint8_t*) &t_steer_cs, 2);
+      sdWrite(&SD7, (uint16_t*) &t_ang_ref, 2);
+      sdWrite(&SD7, (uint16_t*) &t_ang_real, 2);
     }
 #endif
 
-    time = chThdSleepUntilWindowed(time, time + MS2ST(100));
+    time = chThdSleepUntilWindowed(time, time + MS2ST(10));
 
   }
 }
