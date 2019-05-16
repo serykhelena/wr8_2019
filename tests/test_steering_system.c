@@ -24,7 +24,7 @@ void testSteeringSystem(void)
   int16_t t_steer_cs;
 
 //  lldControlInit();
-  lldSteeringControlInit();
+//  lldSteeringControlInit();
   ControlSystemInit(NORMALPRIO-1);
 
 #ifdef WORK_MATLAB
@@ -32,7 +32,6 @@ void testSteeringSystem(void)
   sdStart( &SD7, &sdcfg );
   palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
   palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
-  //chprintf(((BaseSequentialStream *)&SD7), "TEST\r\n");
 #endif
 
 #ifdef WORK_NUC
@@ -95,8 +94,6 @@ void testSteeringSystem(void)
 #endif
 
 #ifdef WORK_MATLAB
-    //chprintf(((BaseSequentialStream *)&SD7), "\tRef_ang:(%d)\tReal_ang:(%d)\tStr_cntrl:(%d)\n\r",
-            // t_ang_ref, t_ang_real, t_steer_cs);
     if(start == 1)
     {
       sdWrite(&SD7, (uint16_t*) &t_ang_ref, 2);

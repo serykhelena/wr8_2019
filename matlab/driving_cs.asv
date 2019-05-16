@@ -1,0 +1,138 @@
+instrreset
+global igotit
+
+igotit = serial('COM4','BaudRate',115200);
+igotit.InputBufferSize = 4096;
+
+fopen(igotit);
+set(igotit,'ByteOrder','littleEndian');
+
+disp 'Ok!'
+
+tline = [];
+array = [];
+count = 2;
+
+ref5 = [];
+ref10 = [];
+ref15 = [];
+ref20 = [];
+
+real5 = [];
+real10 = [];
+real15 = [];
+real20 = [];
+
+start = 'o';
+fwrite(igotit, start, 'int16')
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'f'; %forward +5
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'v'; %backward -5
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'g'; %forward +10
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'b'; %backward -10
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'h'; %forward +15
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+
+start = 'n'; %backward -15
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'j'; %forward +20
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+start = 'm'; %backward -20
+fwrite(igotit, start, 'int16');
+for i = 1:count
+    tline = fread(igotit, [500,1], 'int16');
+    array = [array; tline];
+end
+
+fclose(igotit);
+
+for i = 1:2:(2000-1)
+    real5 = [real5; array(i,1)];
+end
+
+for i = (2000-1):2:(4000-1)
+    real10 = [real10; array(i,1)];
+end
+
+for i = (4000-1):2:(6000-1)
+    real15 = [real15; array(i,1)];
+end
+
+for i = (6000-1):2:(8000-1)
+    real20 = [real20; array(i,1)];
+end
+
+for j = 2:2:(2000)
+    ref5 = [ref5; array(j,1)];
+end
+
+for j = 2000:2:(4000)
+    ref10 = [ref10; array(j,1)];
+end
+
+for j = 8000:2:(12000)
+    ref15 = [ref15; array(j,1)];
+end
+
+for j = 12000:2:(16000)
+    ref20 = [ref20; array(j,1)];
+end
+
+grid on;
+hold on;
+plot(real5,'r')
+plot(real10,'k')
+plot(real15,'g')
+plot(real20)
+plot(ref5,'c')
+plot(ref10,'m')
+plot(ref15,'y')
+plot(ref20,'b')
+
+disp 'Done!'
+
+delete(igotit);
+clear igotit

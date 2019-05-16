@@ -45,6 +45,8 @@ void testSteeringControl (void);
 
 void testSteeringSystem(void);
 
+void testDrivingSystem(void);
+
 /*************************/
 /*** Tests application ***/
 /*************************/
@@ -73,6 +75,11 @@ static inline void testsRoutines( void )
   #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_SYSTEM)
 
     testSteeringSystem();
+
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM)
+
+    testDrivingSystem();
+
 
   #endif
 }
