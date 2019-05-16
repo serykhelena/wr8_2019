@@ -18,11 +18,11 @@ static const SerialConfig sdcfg = {
 
 void testSteeringSystem(void)
 {
-  controlValue_t t_steer_cs;
   controlValue_t ang_ref_dgr = 0;
   controlValue_t t_ang_ref = 0;
   controlValue_t delta_steer_ref = 1;
   controlValue_t t_ang_real = 0;
+  controlValue_t t_steer_cs;
 
 //  lldControlInit();
   lldSteeringControlInit();
@@ -49,7 +49,7 @@ void testSteeringSystem(void)
 #ifdef WORK_MATLAB
     char cs_data = sdGetTimeout(&SD7, TIME_IMMEDIATE); //send to matlab
 #else
-    //    char cs_data = sdGet(&SD3); //send to nuc
+    char cs_data = sdGet(&SD3); //send to nuc
 #endif
 
     switch (cs_data)
@@ -96,6 +96,8 @@ void testSteeringSystem(void)
 #endif
 
 #ifdef WORK_MATLAB
+    chprintf(((BaseSequentialStream *)&SD7), "\tRef_ang:(%d)\tReal_ang:(%d)\tStr_cntrl:(%d)\n\r",
+             t_ang_ref, t_ang_real, t_steer_cs);
     if(start == 1)
     {
       sdWrite(&SD7, (uint8_t*) &t_steer_cs, 2);
