@@ -5,8 +5,8 @@
 #include <lld_control.h>
 //#include <lld_steering_control.h>
 
-//#define WORK_NUC
-#define WORK_MATLAB
+#define WORK_NUC
+//#define WORK_MATLAB
 
 #ifdef WORK_MATLAB
 static const SerialConfig sdcfg = {
@@ -95,7 +95,7 @@ void testDrivingSystem(void)
 
     spd_ref = CLIP_VALUE(spd_ref, -20, 20);
     t_spd_ref = fetchRefSpeed(spd_ref);
-    t_spd_real = lldDrivingControlGetSpeedMPS();
+    t_spd_real = DrivingControlGetSpeedMPS();
     t_speed_cs = GetSpeedControl();
 //    lldControlSetDrivePower(t_speed_cs);
 

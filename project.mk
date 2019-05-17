@@ -5,7 +5,8 @@ PROJECT_MODULES = src/lld_encoder.c           \
 				  src/debug.c	        	  \
                   scr/lld_charge_level.c      \
                   scr/lld_steering_control.c  \
-                  src/control_system.c		  \                 
+                  src/control_system.c		  \
+                  src/driving_control.c		  \                 
 
 
 PROJECT_TESTS   = tests/test_lld_encoder.c         	\
@@ -13,6 +14,7 @@ PROJECT_TESTS   = tests/test_lld_encoder.c         	\
                   tests/test_lld_charge_level.c    	\
                   tests/test_lld_steering_control.c \
                   tests/test_steering_system.c		\
+                  tests/test_driving_control.c		
                        
 PROJECT_CSRC    = src/main.c src/common.c \
     				$(PROJECT_MODULES) $(PROJECT_TESTS)
