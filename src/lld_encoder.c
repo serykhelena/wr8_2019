@@ -26,7 +26,7 @@ static void extcbB ( EXTDriver *extp, expchannel_t channel );
 static void extcbI ( EXTDriver *extp, expchannel_t channel );
 
 static void gpt_callback ( GPTDriver *Tim2 );
-static GPTDriver                     *Tim2 = &GPTD2;
+static GPTDriver                     *Tim2 = &GPTD7;
 
 static const GPTConfig gpt2cfg = { 
   .frequency =  100000,
@@ -184,9 +184,6 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     last_periodCheckPoint = periodCheckPoint;
 
     drivingWheelsMoving = true;
-
-    ExtAtick = 0;
-    ExtBtick = 0;
 }
 
 
@@ -196,7 +193,6 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     extp = extp; channel = channel;
 
 }
-
 
 
 /**

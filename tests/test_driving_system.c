@@ -3,6 +3,7 @@
 #include <chprintf.h>
 #include <control_system.h>
 #include <lld_control.h>
+#include <driving_control.h>
 //#include <lld_steering_control.h>
 
 #define WORK_NUC
@@ -77,7 +78,7 @@ void testDrivingSystem(void)
       spd_ref = -15;//backward
       break;
     case 'h':
-      pd_ref = 15;//forward
+      spd_ref = 15;//forward
       break;
     case 'm':
       spd_ref = 20;//forward
