@@ -53,6 +53,8 @@ static bool    isInitialized            = false;
 static bool    drivingWheelsMoving      = false;
 
 
+uint8_t ExtAtick                        = 0;
+uint8_t ExtBtick                        = 0;
 uint8_t ExtIstate                       = 0;
 uint16_t ExtIcnt                        = 0;
 int8_t Direction                        = 0;
@@ -60,6 +62,7 @@ int32_t Revolutions                     = 0;
 
 
 #define ImpsFor1Rev         500
+
 
 static float speed1ImpsTicksPerMin = 0;
 
