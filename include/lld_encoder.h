@@ -6,12 +6,6 @@
 typedef float encValue_t;
 
 /*
- * EXT driver uses input PС0 (A1) - channel A and PC3 (A2) - channel B
- * GPT2 used for measure time between encoder ticks
- */
-
-
-/*
  * @brief   Initialize EXT, gpt  
  */
 void lldEncoderSensInit (void);
@@ -22,7 +16,7 @@ void lldEncoderSensInit (void);
  * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 100 encoder ticks)
  *           -1                        Sensor is not initialized
  */
-uint16_t lldEncoderGetRevolutions(void);
+float lldEncoderGetRevolutions(void);
 
 /**
  * @ brief                             Gets current quantity of absolute revolutions
@@ -50,20 +44,6 @@ encValue_t lldEncoderGetSpeedRPM (void);
 
 
 
-/**
- * @ brief                             Gets current distance [metres]
- * @ param[in] ImpsFor1Rev             Impulse quantity per one revolution 
- * @ param[in] TotalImps               Impulse quantity from the beginning of the movement  
- * @ return  >=0                       Current distance [metres]
- *           -1                        Sensor is not initialized
- */
-encValue_t lldEncoderGetDistance (void);
-
-
-/*
- * @brief   Reset impulse quantity from the beginning of the movement 
- */
-void lldEncoderResetDistance (void);
 
 /**
  * @ brief                             Gets wheels current speed [mps]                          
@@ -79,5 +59,10 @@ float lldEncoderGetSpeedMPS (void);
  *           -1                        Sensor is not initialized
  */
 encValue_t lldEncoderGetSpeedKPH (void);
+
+
+
+void lldEncoderResetDistance (void);
+
 
 #endif /* INCLUDE_LLD_ENCODER_H_ */

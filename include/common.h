@@ -12,8 +12,11 @@
 #define     PROGRAM_ROUTINE_TEST_LL_DRIVER              2
 #define     PROGRAM_ROUTINE_TEST_CHARGE_LEVEL           3
 #define     PROGRAM_ROUTINE_TEST_STEERING_CONTROL       4
+#define     PROGRAM_ROUTINE_TEST_STEERING_SYSTEM        5
+#define     PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM         6
+#define     PROGRAM_ROUTINE_TEST_DRIVING_CONTROL        7
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_LL_DRIVER
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_DRIVING_CONTROL
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \

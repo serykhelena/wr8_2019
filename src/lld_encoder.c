@@ -8,8 +8,9 @@
 
 #define WheelRadius     0.04
 
-static float OverflowsInTimeDiap      = 1000;
-static float circumference            = 0.2513; // 2 * pi * WheelRadius
+static float circumference       = 0.2513; // 2 * pi * WheelRadius
+static float OverflowsInTimeDiap = 1000;
+
 
 /******************************/
 /*** CONFIGURATION ZONE END ***/
@@ -18,6 +19,7 @@ static float circumference            = 0.2513; // 2 * pi * WheelRadius
 #define encoderChA       PAL_LINE ( GPIOD, 5 )
 #define encoderChB       PAL_LINE ( GPIOD, 4 )
 #define encoderChI       PAL_LINE ( GPIOD, 3 )
+
 
 static void extcbA ( EXTDriver *extp, expchannel_t channel );
 static void extcbB ( EXTDriver *extp, expchannel_t channel );
@@ -50,15 +52,14 @@ static int32_t   maxOverflows   = 0;
 static bool    isInitialized            = false;
 static bool    drivingWheelsMoving      = false;
 
-uint8_t ExtAcnt                         = 0;
-uint8_t ExtBcnt                         = 0;
-uint8_t ExtAtick                        = 0;
-uint8_t ExtBtick                        = 0;
+
 uint8_t ExtIstate                       = 0;
 uint16_t ExtIcnt                        = 0;
+int8_t Direction                        = 0;
+int32_t Revolutions                     = 0;
 
 
-#define ImpsFor1Rev         360
+#define ImpsFor1Rev         500
 
 static float speed1ImpsTicksPerMin = 0;
 
@@ -128,41 +129,6 @@ static void gpt_callback (GPTDriver *gptd)
     }
 }
 
-/**
- * @ brief                             Definition of current wheel travel direction and time interval between encoder ticks
- * @ return  -1                        Sensor is not initialized
- */
-int8_t lldEncoderDirection(void)
-{
-	int8_t InvDrive = 0;
-
-	if (ExtAcnt == 1)
-    {
-        if (ExtBcnt == 0)
-        {
-            InvDrive = 1;
-        }
-        else
-        {
-    	    InvDrive = -1;
-        }
-    }
-    else
-    {
-        if (ExtAcnt == 0)
-        {
-            if (ExtBcnt == 1)
-            {
-                InvDrive = -1;
-            }
-            else
-            {
-        	    InvDrive = 1;
-            }
-        }
-    }
-    return InvDrive;
-}
 
 /* EXT channel I (input PD3) */
 static void extcbI(EXTDriver *extp, expchannel_t channel)
@@ -181,33 +147,36 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
 
-    ExtAtick = 1;
-    ExtAcnt = palReadPad(GPIOD, 5);
-}
-
-
-/* EXT channel B (input PD4) */
-static void extcbB(EXTDriver *extp, expchannel_t channel)
-{
-    extp = extp; channel = channel;
-
-    ExtBtick = 1;
-    ExtBcnt = palReadPad(GPIOD, 4);
-
-    int8_t Direction = lldEncoderDirection();
-    if (ExtAtick == 1 && ExtBtick == 1)
+    if (palReadPad(GPIOD, 5))
     {
+    	Direction = -1;
+    	TotalImps --;
+    }
+    else
+    {
+    	Direction = 1;
+    	TotalImps ++;
+    }
+
+    if (TotalImps >= 500)
+    {
+    	TotalImps = 0;
+    	Revolutions++;
+    }
+    else if (TotalImps <= -500)
+    	{
+			TotalImps = 0;
+			Revolutions--;
+    	}
+
     /*time between ticks*/
     FromTickToTickEncoder = 0;
     /* number of ticks from last overflow */
     periodCheckPoint = gptGetCounterX(Tim2);
-
-    if ( drivingWheelsMoving )
-    {
-        FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
-	    FromTickToTickEncoder = FromTickToTickEncoder * Direction;
-	    TotalImps++;
-    }
+	if ( drivingWheelsMoving )
+	{
+		FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+	}
     total_ticks = 0;
     last_periodCheckPoint = periodCheckPoint;
 
@@ -215,8 +184,16 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
 
     ExtAtick = 0;
     ExtBtick = 0;
-    }
 }
+
+
+/* EXT channel B (input A2) */
+static void extcbB(EXTDriver *extp, expchannel_t channel)
+{
+    extp = extp; channel = channel;
+
+}
+
 
 
 /**
@@ -224,14 +201,16 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
  * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 100 encoder ticks)
  *           -1                        Sensor is not initialized
  */
-uint16_t lldEncoderGetRevolutions(void)
+float lldEncoderGetRevolutions(void)
 {
     if ( isInitialized == false )
     {
 	    return -1;
     }
+    float Revs = 0;
     /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
-    return TotalImps / ImpsFor1Rev ;
+    Revs = (float)Revolutions + TotalImps / ImpsFor1Rev;
+    return Revs ;
 }
 
 /**
@@ -288,34 +267,12 @@ encValue_t lldEncoderGetSpeedRPM (void)
     }
     else
     {
-	    RevSpeed  = speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
+        	RevSpeed  = Direction * speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
     }
     return RevSpeed;
 }
 
 
-/**
- * @ brief                             Gets current distance [metres]
- * @ return  >=0                       Current distance [metres]
- *           -1                        Sensor is not initialized
- */
-encValue_t lldEncoderGetDistance (void)
-{
-    if ( !isInitialized )
-    {
-        return -1;
-    }
-    float RevQuantity = 0;
-    float distance = 0;
-
-    RevQuantity = lldEncoderGetRevolutions();
-    /* distance for 1 revolution is wheel circumference */
-    /*  total distance is N revolutions( N wheel circumferences ) */
-    /* [S = 2 * pi * (distance for 1 revolution)] */
-    distance = circumference * RevQuantity;
-
-    return distance;
-}
 
 /*
  * @brief   Reset impulse quantity from the beginning of the movement 
@@ -342,7 +299,7 @@ encValue_t lldEncoderGetSpeedMPS (void)
     /* Get speed in revolutions per second */    
     float speedRevPerSec = lldEncoderGetSpeedRPM () * 0.0167 ;
     /* [V = 2 * pi * (speed in revolutions per second)] */
-    SpeedMPS = circumference * speedRevPerSec;
+    SpeedMPS = circumference * speedRevPerSec ;
         
     return SpeedMPS;
 }

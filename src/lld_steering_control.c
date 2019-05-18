@@ -16,12 +16,12 @@
 
 
 static int32_t  servLimValue        = 30; // permissible error after reading from ADC
-static int32_t  servMAX             = 3005;
-static int32_t  servMIN             = 1450;
-static int32_t  servMID             = 2245;
+static int32_t  servMAX             = 3400;//3005;
+static int32_t  servMIN             = 220;//1450;
+static int32_t  servMID             = 1790;//2245;
 
-static int32_t  deltaServMAX        = 760;
-static int32_t  deltaServMIN        = 795;
+static int32_t  deltaServMAX        = 1610;//760;
+static int32_t  deltaServMIN        = 1570;//795;
 
 
 
@@ -52,7 +52,7 @@ float lastKalmAdcVal                       = 2200;
 
 static bool     isInitialized              = false;
 
-static float leftMaxAngle                  = 34.0;
+static float leftMaxAngle                  = 29.0;
 static float rightMaxAngle                 = 29.0;
 
 static float leftFrontPosAngle             = 0;
@@ -308,7 +308,7 @@ steer_angle_t lldSteeringControlGetAngle (void)
   if ( !isInitialized )
       return false;
     
-  int16_t RotateAngle  = 0;
+  float RotateAngle  = 0;
   int16_t lldAdcVal = GetAdcVal();
      
     if (lldAdcVal < servMIN - servLimValue)
@@ -321,11 +321,11 @@ steer_angle_t lldSteeringControlGetAngle (void)
   }
   if (lldAdcVal - servMID > 0)
   {
-      RotateAngle = (lldAdcVal - servMID) * leftFrontPosAngle;
+      RotateAngle = (float)(lldAdcVal - servMID) * leftFrontPosAngle;
   }
   else
   {
-      RotateAngle = (lldAdcVal - servMID) * rightFrontPosAngle;
+      RotateAngle = (float)(lldAdcVal - servMID) * rightFrontPosAngle;
   }
   return RotateAngle;  
 }

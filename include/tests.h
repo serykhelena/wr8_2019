@@ -43,6 +43,12 @@ void testChargeLevel (void);
 
 void testSteeringControl (void);
 
+void testSteeringSystem (void);
+
+void testDrivingSystem (void);
+
+void testDrivingControl (void);
+
 /*************************/
 /*** Tests application ***/
 /*************************/
@@ -64,9 +70,21 @@ static inline void testsRoutines( void )
 
     testChargeLevel();
     
-#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_CONTROL)
 
     testSteeringControl();
+
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_STEERING_SYSTEM)
+
+    testSteeringSystem();
+
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM)
+
+    testDrivingSystem();
+
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_DRIVING_CONTROL)
+
+    testDrivingControl();
 
   #endif
 }
