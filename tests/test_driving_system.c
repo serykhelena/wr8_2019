@@ -1,13 +1,12 @@
 #include <common.h>
 #include <tests.h>
 #include <chprintf.h>
-#include <control_system.h>
 #include <lld_control.h>
+#include <control_system.h>
 #include <driving_control.h>
-//#include <lld_steering_control.h>
 
-#define WORK_NUC
-//#define WORK_MATLAB
+//#define WORK_NUC
+#define WORK_MATLAB
 
 #ifdef WORK_MATLAB
 static const SerialConfig sdcfg = {
@@ -20,16 +19,14 @@ void testDrivingSystem(void)
 {
   controlValue_t spd_ref = 0;
   controlValue_t t_spd_ref = 0;
-  controlValue_t delta_speed_ref = 1;
-  controlValue_t t_spd_real = 0;
-  int16_t t_speed_cs;
+  controlValue_t delta_speed_ref = 5;
+  float t_spd_real = 0;
+  controlValue_t t_speed_cs = 0;
 
-//  lldControlInit();
-//  lldSteeringControlInit();
-  ControlSystemInit(NORMALPRIO-1);
+  ControlSystemInit(NORMALPRIO);
 
 #ifdef WORK_MATLAB
-  int32_t start = 0;
+  int8_t start = 0;
   sdStart( &SD7, &sdcfg );
   palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
   palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
@@ -48,7 +45,7 @@ void testDrivingSystem(void)
 #ifdef WORK_MATLAB
     char csd_data = sdGetTimeout(&SD7, TIME_IMMEDIATE); //send to matlab
 #else
-    char csd_data = sdGet(&SD3); //send to nuc
+    char csd_data = sdGetTimeout(&SD3,TIME_IMMEDIATE); //send to nuc
 #endif
 
     switch (csd_data)
@@ -68,24 +65,24 @@ void testDrivingSystem(void)
     case 'f':
       spd_ref = 5;//forward
       break;
-    case 'b':
-      spd_ref = -10;//backward
-      break;
-    case 'g':
-      spd_ref = 10;//forward
-      break;
-    case 'n':
-      spd_ref = -15;//backward
-      break;
-    case 'h':
-      spd_ref = 15;//forward
-      break;
-    case 'm':
-      spd_ref = 20;//forward
-      break;
-    case 'j':
-      spd_ref = -20;//backward
-      break;
+//    case 'b':
+//      spd_ref = -10;//backward
+//      break;
+//    case 'g':
+//      spd_ref = 10;//forward
+//      break;
+//    case 'n':
+//      spd_ref = -15;//backward
+//      break;
+//    case 'h':
+//      spd_ref = 15;//forward
+//      break;
+//    case 'm':
+//      spd_ref = 20;//forward
+//      break;
+//    case 'j':
+//      spd_ref = -20;//backward
+//      break;
 #ifdef WORK_MATLAB
     case 'o':
       start = 1;
@@ -102,18 +99,18 @@ void testDrivingSystem(void)
 
 #ifdef WORK_NUC
     dbgprintf("\tRef:(%d)\tReal:(%d)\tSpeed_cs:(%d)\n\r",
-              t_spd_ref, t_spd_real, t_speed_cs);
+              t_spd_ref, (int)(t_spd_real*100), t_speed_cs);
 #endif
 
 #ifdef WORK_MATLAB
     if(start == 1)
     {
-      sdWrite(&SD7, (uint16_t*) &t_spd_ref, 2);
-      sdWrite(&SD7, (uint16_t*) &t_spd_real, 2);
+      sdWrite(&SD7, (uint8_t*) &t_spd_ref, 2);
+      int16_t t_spd_rl = (int16_t)(100*t_spd_real);
+      sdWrite(&SD7, (uint8_t*) &t_spd_rl, 2);
     }
 #endif
 
-    time = chThdSleepUntilWindowed(time, time + MS2ST(10));
-
+    time = chThdSleepUntilWindowed(time, time + MS2ST(25));
   }
 }

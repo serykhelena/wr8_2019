@@ -3,6 +3,7 @@
 #include <chprintf.h>
 #include <common.h>
 #include <lld_steering_control.h>
+//#include <driving_control.h>
 
 /***  Serial configuration pins    ***/
 static  SerialDriver    *SERIALdriver   = &SD3;
@@ -15,17 +16,18 @@ void testDriverControlRoutine( void )
     controlValue_t steer = 0;
     controlValue_t delta_steer = 1;
 
-//    controlValue_t real_ang_str = 0;
+//    float real_spd = 0;
 
     debug_stream_init( );
     lldControlInit( );
-//    lldSteeringControlInit();
+
+//    DrivingControlInit();
 
     systime_t time = chVTGetSystemTime(); // Current system time
 
     while( 1 )
     {
-       char rcv_data = sdGet( SERIALdriver );
+       char rcv_data = sdGetTimeout( SERIALdriver,TIME_IMMEDIATE);
        switch ( rcv_data )
        {
            case 'w':   // Positive speed
@@ -52,17 +54,17 @@ void testDriverControlRoutine( void )
            default: ;
        }
 
-    speed = CLIP_VALUE( speed, -100, 100 );
-    lldControlSetDrivePower(speed);
+      speed = CLIP_VALUE( speed, -100, 100 );
+      lldControlSetDrivePower(speed);
 
-    steer = CLIP_VALUE( steer, -100, 100 );
-    lldControlSetSteerPower(steer);
+      steer = CLIP_VALUE( steer, -100, 100 );
+      lldControlSetSteerPower(steer);
 
-//    real_ang_str = lldSteeringControlGetAngle();
+//      real_spd = DrivingControlGetSpeedMPS();
 
-    dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
-//              real_ang_str); Real(%d)
+      dbgprintf("Speed(%d)\tSteer(%d)\tReal(%d)\n\r ", speed, steer);
+  //              (int)(real_spd*100)); Real(%d)
 
-    time = chThdSleepUntilWindowed(time, time+ MS2ST(100));
+      time = chThdSleepUntilWindowed(time, time+ MS2ST(100));
     }
 }

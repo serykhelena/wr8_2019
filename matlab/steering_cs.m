@@ -46,12 +46,20 @@ for j = 2:2:(length(array))
     ref = [ref; array(j,1)];
 end
 
-plot(real,'r')
-grid on;
-hold on;
-plot(ref)
-
 disp 'Done!'
 
 delete(igotit);
+
+T = []
+
+for t = 0:10:length(real)
+    T = [T; t]
+end
+
+plot(T, real,'r')
+grid on;
+hold on;
+plot(T,ref)
+
+
 clear igotit

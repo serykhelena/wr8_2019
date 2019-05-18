@@ -14,6 +14,7 @@ array = [];
 count = 2;
 ref = [];
 real = [];
+time = [];
 
 start = 'o';
 fwrite(igotit, start, 'int16')
@@ -46,12 +47,20 @@ for j = 2:2:(length(array))
     ref = [ref; array(j,1)];
 end
 
-plot(real,,'r')
+disp 'Done!'
+
+delete(igotit);
+
+T = []
+
+for t = 0:10:length(real)
+    T = [T; t]
+end
+
+plot(real,'r')
 grid on;
 hold on;
 plot(ref)
 
-disp 'Done!'
 
-delete(igotit);
 clear igotit

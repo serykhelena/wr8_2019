@@ -98,6 +98,7 @@ void testSteeringSystem(void)
     {
       sdWrite(&SD7, (uint16_t*) &t_ang_ref, 2);
       sdWrite(&SD7, (uint16_t*) &t_ang_real, 2);
+
     }
 #endif
 
