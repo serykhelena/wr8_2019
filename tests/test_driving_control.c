@@ -5,13 +5,27 @@
 #include <lld_control.h>
 #include <lld_encoder.h>
 
-#define DEBUG
+//#define DEBUG
+#define TERMINAL
 
 float speedMPS = 0;
 encValue_t encSpeedRPM = 0;
 int16_t speed = 0;
 int8_t delta = 1;
 
+static const SerialConfig sdcfg = {
+  .speed = 115200,
+  .cr1 = 0,
+  .cr2 = 0,
+  .cr3 = 0
+};
+
+void serial_init(void)
+{
+    sdStart( &SD7, &sdcfg );
+    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+}
 
 void testDrivingControl()
 {
@@ -19,6 +33,11 @@ void testDrivingControl()
           debug_stream_init();
           dbgprintf("TEST\r\n");
     #endif
+
+	#ifdef TERMINAL
+          serial_init();
+          chprintf((BaseSequentialStream *)&SD7, "TEST\r\n");
+	#endif
 
 	DrivingControlInit();
     lldControlInit( );
@@ -32,7 +51,7 @@ void testDrivingControl()
                char data = sdGetTimeout( &SD3, TIME_IMMEDIATE );;
          #endif
 
-               switch ( data )
+             /*  switch ( data )
                {
                    case 'w':   // Positive speed
                      speed += delta;
@@ -46,7 +65,7 @@ void testDrivingControl()
                        break;
 
                    default: ;
-               }
+               }*/
 
         speed = CLIP_VALUE( speed, -100, 100 );
         lldControlSetDrivePower(speed);
@@ -57,6 +76,10 @@ void testDrivingControl()
         #ifdef DEBUG
         	dbgprintf("Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
         #endif
+
+		#ifdef TERMINAL
+            chprintf((BaseSequentialStream *)&SD7, "eRPM(%d)\tMPS(%d)\n\r", (int)encSpeedRPM, (int)(speedMPS * 100));
+		#endif
     time = chThdSleepUntilWindowed(time, time + MS2ST(100));
     }
 }
