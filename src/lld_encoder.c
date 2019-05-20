@@ -16,14 +16,11 @@ static float OverflowsInTimeDiap = 1000;
 /*** CONFIGURATION ZONE END ***/
 /******************************/
 
-#define encoderChA       PAL_LINE ( GPIOD, 5 )
-#define encoderChB       PAL_LINE ( GPIOD, 4 )
-#define encoderChI       PAL_LINE ( GPIOD, 3 )
-
+#define encoderChA       PAL_LINE ( GPIOD, 4 )
+#define encoderChB       PAL_LINE ( GPIOD, 5 )
 
 static void extcbA ( EXTDriver *extp, expchannel_t channel );
 static void extcbB ( EXTDriver *extp, expchannel_t channel );
-static void extcbI ( EXTDriver *extp, expchannel_t channel );
 
 static void gpt_callback ( GPTDriver *Tim2 );
 static GPTDriver                     *Tim2 = &GPTD7;
@@ -52,17 +49,15 @@ static int32_t   maxOverflows   = 0;
 static bool    isInitialized            = false;
 static bool    drivingWheelsMoving      = false;
 
-
+uint8_t ExtAcnt                         = 0;
+uint8_t ExtBcnt                         = 0;
 uint8_t ExtAtick                        = 0;
 uint8_t ExtBtick                        = 0;
-uint8_t ExtIstate                       = 0;
-uint16_t ExtIcnt                        = 0;
 int8_t Direction                        = 0;
 int32_t Revolutions                     = 0;
 
 
 #define ImpsFor1Rev         500
-
 
 static float speed1ImpsTicksPerMin = 0;
 
@@ -72,9 +67,9 @@ EXTConfig extcfg = {
         [0]  = {EXT_CH_MODE_DISABLED, NULL},
         [1]  = {EXT_CH_MODE_DISABLED, NULL},
         [2]  = {EXT_CH_MODE_DISABLED, NULL},
-        [3]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbI}, // PD3 abs_null
-        [4]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbB}, // PD4 white
-        [5]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbA}, // PD5 green,
+        [3]  = {EXT_CH_MODE_DISABLED, NULL},
+        [4]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbA},// PD4 green
+        [5]  = {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOD, extcbB},// PD5 white
         [6]  = {EXT_CH_MODE_DISABLED, NULL},
         [7]  = {EXT_CH_MODE_DISABLED, NULL},
         [8]  = {EXT_CH_MODE_DISABLED, NULL},
@@ -100,7 +95,6 @@ void lldEncoderSensInit (void)
     /*Set up EXT channels A and B hardware pin mode as digital inputs*/
     palSetLineMode( encoderChA, PAL_MODE_INPUT_PULLUP );
     palSetLineMode( encoderChB, PAL_MODE_INPUT_PULLUP );
-    palSetLineMode( encoderChI, PAL_MODE_INPUT_PULLUP );
     
     /* Start working GPT driver in asynchronous mode */
     gptStart(Tim2, &gpt2cfg);
@@ -133,22 +127,12 @@ static void gpt_callback (GPTDriver *gptd)
 }
 
 
-/* EXT channel I (input PD3) */
-static void extcbI(EXTDriver *extp, expchannel_t channel)
-{
-    extp = extp; channel = channel;
-
-    ExtIstate = palReadPad(GPIOD, 3);
-    if (ExtIstate == 1)
-    	{
-    	    ExtIcnt++;
-    	}
-}
-
-/* EXT channel A (input PD5) */
+/* EXT channel A (input A1) */
 static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
+
+    ExtAtick = 1;
 
     if (palReadPad(GPIOD, 5))
     {
@@ -165,7 +149,7 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     {
     	TotalImps = 0;
     	Revolutions++;
-    }
+    	    }
     else if (TotalImps <= -500)
     	{
 			TotalImps = 0;
@@ -183,10 +167,10 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     total_ticks = 0;
     last_periodCheckPoint = periodCheckPoint;
 
+    drivingWheelsMoving = true;
+
     ExtAtick = 0;
     ExtBtick = 0;
-
-    drivingWheelsMoving = true;
 }
 
 
@@ -196,6 +180,7 @@ static void extcbB(EXTDriver *extp, expchannel_t channel)
     extp = extp; channel = channel;
 
 }
+
 
 
 /**
@@ -213,20 +198,6 @@ float lldEncoderGetRevolutions(void)
     /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
     Revs = (float)Revolutions + TotalImps / ImpsFor1Rev;
     return Revs ;
-}
-
-/**
- * @ brief                             Gets current quantity of absolute revolutions
- * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 1 tick from I channel)
- *           -1                        Sensor is not initialized
- */
-uint16_t lldEncoderGetAbsRevolutions(void)
-{
-    if ( isInitialized == false )
-    {
-	    return -1;
-    }
-     return ExtIcnt++ ;
 }
 
 /**
