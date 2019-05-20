@@ -51,7 +51,9 @@ void testDrivingControl()
                char data = sdGetTimeout( &SD3, TIME_IMMEDIATE );;
          #endif
 
-             /*  switch ( data )
+               char data = sdGetTimeout( &SD7, TIME_IMMEDIATE );
+
+               switch ( data )
                {
                    case 'w':   // Positive speed
                      speed += delta;
@@ -65,7 +67,7 @@ void testDrivingControl()
                        break;
 
                    default: ;
-               }*/
+               }
 
         speed = CLIP_VALUE( speed, -100, 100 );
         lldControlSetDrivePower(speed);
@@ -78,7 +80,7 @@ void testDrivingControl()
         #endif
 
 		#ifdef TERMINAL
-            chprintf((BaseSequentialStream *)&SD7, "eRPM(%d)\tMPS(%d)\n\r", (int)encSpeedRPM, (int)(speedMPS * 100));
+            chprintf((BaseSequentialStream *)&SD7, "speed (%d) \teRPM(%d)\tMPS(%d)\n\r", (int)speed, (int)encSpeedRPM, (int)(speedMPS * 100));
 		#endif
     time = chThdSleepUntilWindowed(time, time + MS2ST(100));
     }
