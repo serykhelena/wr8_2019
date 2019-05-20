@@ -79,7 +79,16 @@ float kd_spdmin_b = 0;       //differential
 float old_err_spdmin_b = 0;  //previous signal value
 
 /*********** SPEED (10;20) ***************/
-
+//float kp_spdmax_f = 0.9;      //proportional
+//
+//float ki_spdmax_f = 0.02;     //integral
+//float sum_i_spdmax_f = 0;     //sum of errors
+////integrator limits
+//#define MIN_I_SPDMAX_F   -200 //200-300
+//#define MAX_I_SPDMAX_F    200
+//
+//float kd_spdmax_f = 0;        //differential
+//float old_err_spdmax_f = 0;   //previous signal value
 
 /*********** SPEED (-20;-10) ***************/
 

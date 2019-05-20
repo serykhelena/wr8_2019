@@ -7,6 +7,10 @@
 static float   GearRatio         = 0.105;
 static float   circumference     = 0.2513; // 2 * pi * WheelRadius
 
+static bool     firstLPval               = false;
+float LPAdcVal                           = 0;
+float lastLPAdcVal                       = 0;
+
 void DrivingControlInit(void)
 {
 
@@ -30,6 +34,25 @@ float DrivingControlGetSpeedMPS (void)
     MPS = lldEncoderGetSpeedMPS() * GearRatio;
 
     return MPS;
+}
+
+float DrivingControlGetSpeedMPS_lowpass (void)
+{
+    float LPcoef          = 0.1;
+
+
+    if (firstLPval == false)
+    {
+    	LPAdcVal = DrivingControlGetSpeedMPS();
+    	firstLPval = true;
+    }
+    else
+    {
+    	LPAdcVal = LPcoef * DrivingControlGetSpeedMPS() + lastLPAdcVal * ((float)1 - LPcoef);
+    }
+    lastLPAdcVal = LPAdcVal;
+
+	return LPAdcVal;
 }
 
 int16_t DrivingControlGetSpeedKPH (void)

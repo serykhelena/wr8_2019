@@ -5,7 +5,15 @@
 #include <lld_control.h>
 #include <lld_encoder.h>
 
-#define DEBUG
+//#define DEBUG
+#define TERM
+
+static const SerialConfig sdcfg = {
+  .speed = 115200,
+  .cr1 = 0,
+  .cr2 = 0,
+  .cr3 = 0
+};
 
 float speedMPS = 0;
 encValue_t encSpeedRPM = 0;
@@ -24,12 +32,20 @@ void testDrivingControl()
     lldControlInit( );
     lldEncoderSensInit();
 
+	#ifdef TERM
+      sdStart( &SD7, &sdcfg );
+  	  palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+  	  palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+	#endif
+
 	systime_t time = chVTGetSystemTime(); // Current system time
 
     while(1)
     {
          #ifdef DEBUG
-               char data = sdGetTimeout( &SD3, TIME_IMMEDIATE );;
+               char data = sdGetTimeout( &SD3, TIME_IMMEDIATE );
+         #else
+               char data = sdGetTimeout(&SD7, TIME_IMMEDIATE);
          #endif
 
                switch ( data )
@@ -56,6 +72,8 @@ void testDrivingControl()
 
         #ifdef DEBUG
         	dbgprintf("Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
+        #else
+        	chprintf( (BaseSequentialStream *)&SD7, "Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
         #endif
     time = chThdSleepUntilWindowed(time, time + MS2ST(100));
     }

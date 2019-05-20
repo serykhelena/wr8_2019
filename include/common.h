@@ -16,7 +16,7 @@
 #define     PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM         6
 #define     PROGRAM_ROUTINE_TEST_DRIVING_CONTROL        7
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_STEERING_SYSTEM
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \

@@ -11,9 +11,12 @@
 #ifdef WORK_MATLAB
 static const SerialConfig sdcfg = {
     .speed  = 115200,
-    .cr1 = 0, .cr2 = 0, .cr3 = 0
+    .cr1 = 0,
+    .cr2 = 0,
+    .cr3 = 0
 };
 #endif
+
 
 void testSteeringSystem(void)
 {
@@ -23,8 +26,6 @@ void testSteeringSystem(void)
   controlValue_t t_ang_real = 0;
   int16_t t_steer_cs;
 
-//  lldControlInit();
-//  lldSteeringControlInit();
   ControlSystemInit(NORMALPRIO-1);
 
 #ifdef WORK_MATLAB
@@ -43,6 +44,7 @@ void testSteeringSystem(void)
 
   while(true)
   {
+    chprintf(((BaseSequentialStream *)&SD7), "TEST\r\n");
 
 #ifdef WORK_MATLAB
     char cs_data = sdGetTimeout(&SD7, TIME_IMMEDIATE); //send to matlab
@@ -88,6 +90,7 @@ void testSteeringSystem(void)
     t_steer_cs = GetSteerControl();
 //    lldControlSetSteerPower(test_steer_cs);
 
+
 #ifdef WORK_NUC
     dbgprintf("\tRef_ang:(%d)\t Real_ang:(%d)\tStr_cntrl:(%d)\n\r",
               t_ang_ref, t_ang_real, t_steer_cs);
@@ -102,7 +105,7 @@ void testSteeringSystem(void)
     }
 #endif
 
-    time = chThdSleepUntilWindowed(time, time + MS2ST(10));
+    time = chThdSleepUntilWindowed(time, time + MS2ST(100));
 
   }
 }

@@ -97,19 +97,22 @@ void testDrivingSystem(void)
     t_speed_cs = GetSpeedControl();
 //    lldControlSetDrivePower(t_speed_cs);
 
+    chprintf(((BaseSequentialStream *)&SD7), "\tRef_ang:(%d)\t Real_ang:(%d)\tStr_cntrl:(%d)\n\r",
+             t_ang_ref, t_ang_real, t_steer_cs);
+
 #ifdef WORK_NUC
     dbgprintf("\tRef:(%d)\tReal:(%d)\tSpeed_cs:(%d)\n\r",
               t_spd_ref, (int)(t_spd_real*100), t_speed_cs);
 #endif
 
-#ifdef WORK_MATLAB
-    if(start == 1)
-    {
-      sdWrite(&SD7, (uint8_t*) &t_spd_ref, 2);
-      int16_t t_spd_rl = (int16_t)(100*t_spd_real);
-      sdWrite(&SD7, (uint8_t*) &t_spd_rl, 2);
-    }
-#endif
+//#ifdef WORK_MATLAB
+//    if(start == 1)
+//    {
+//      sdWrite(&SD7, (uint8_t*) &t_spd_ref, 2);
+//      int16_t t_spd_rl = (int16_t)(100*t_spd_real);
+//      sdWrite(&SD7, (uint8_t*) &t_spd_rl, 2);
+//    }
+//#endif
 
     time = chThdSleepUntilWindowed(time, time + MS2ST(25));
   }
