@@ -183,6 +183,9 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     total_ticks = 0;
     last_periodCheckPoint = periodCheckPoint;
 
+    ExtAtick = 0;
+    ExtBtick = 0;
+
     drivingWheelsMoving = true;
 }
 

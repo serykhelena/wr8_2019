@@ -25,6 +25,12 @@ float DrivingControlGetSpeedMPS (void);
  * @brief
  * @note
  */
+float DrivingControlGetSpeedMPS_lowpass (void);
+
+/**
+ * @brief
+ * @note
+ */
 int16_t DrivingControlGetSpeedKPH (void);
 
 /**
