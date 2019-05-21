@@ -7,6 +7,7 @@
 /**************************/
 
 #define WheelRadius     0.04
+#define ScanFreq        5
 
 static float circumference       = 0.2513; // 2 * pi * WheelRadius
 static float OverflowsInTimeDiap = 1000;
@@ -43,6 +44,10 @@ int32_t periodCheckPoint        = 0;
 int32_t last_periodCheckPoint   = 0;
 int32_t FromTickToTickEncoder   = 0;
 int32_t TotalImps               = 0;
+int32_t timeSum                 = 0;
+int8_t  ScanCnt                 = 0;
+bool    SpeedState              = 0;
+int32_t timeForSpeed            = 0;
 
 static int32_t   maxOverflows   = 0;
 
@@ -54,7 +59,7 @@ uint8_t ExtBcnt                         = 0;
 uint8_t ExtAtick                        = 0;
 uint8_t ExtBtick                        = 0;
 int8_t Direction                        = 0;
-int32_t Revolutions                     = 0;
+int32_t Revolutions                     = false;
 
 
 #define ImpsFor1Rev         500
@@ -128,6 +133,52 @@ static void gpt_callback (GPTDriver *gptd)
 
 
 /* EXT channel A (input A1) */
+//static void extcbA(EXTDriver *extp, expchannel_t channel)
+//{
+//    extp = extp; channel = channel;
+//
+//    ExtAtick = 1;
+//
+//    if (palReadPad(GPIOD, 5))
+//    {
+//    	Direction = -1;
+//    	TotalImps --;
+//    }
+//    else
+//    {
+//    	Direction = 1;
+//    	TotalImps ++;
+//    }
+//
+//    if (TotalImps >= 500)
+//    {
+//    	TotalImps = 0;
+//    	Revolutions++;
+//    	    }
+//    else if (TotalImps <= -500)
+//    	{
+//			TotalImps = 0;
+//			Revolutions--;
+//    	}
+//
+//    /*time between ticks*/
+//    FromTickToTickEncoder = 0;
+//    /* number of ticks from last overflow */
+//    periodCheckPoint = gptGetCounterX(Tim2);
+//	if ( drivingWheelsMoving )
+//	{
+//		FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
+//	}
+//    total_ticks = 0;
+//    last_periodCheckPoint = periodCheckPoint;
+//
+//    drivingWheelsMoving = true;
+//
+//    ExtAtick = 0;
+//    ExtBtick = 0;
+//}
+
+
 static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
@@ -166,6 +217,20 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
 	}
     total_ticks = 0;
     last_periodCheckPoint = periodCheckPoint;
+    ScanCnt++;
+
+    if (ScanCnt <= ScanFreq)
+    {
+        timeSum += FromTickToTickEncoder;
+    }
+    else
+    {
+    	SpeedState = true;
+    	timeForSpeed = timeSum / ScanFreq;
+        timeSum  = 0;
+        ScanCnt  = 1;
+        timeSum += FromTickToTickEncoder;
+    }
 
     drivingWheelsMoving = true;
 
@@ -240,7 +305,11 @@ encValue_t lldEncoderGetSpeedRPM (void)
     }
     else
     {
-        	RevSpeed  = Direction * speed1ImpsTicksPerMin / FromTickToTickEncoder   ;
+    	if (SpeedState)
+    	{
+    	    RevSpeed  = Direction * speed1ImpsTicksPerMin / timeForSpeed;
+    	    SpeedState = false;
+    	}
     }
     return RevSpeed;
 }
