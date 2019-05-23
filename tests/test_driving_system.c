@@ -65,24 +65,24 @@ void testDrivingSystem(void)
     case 'f':
       spd_ref = 5;//forward
       break;
-//    case 'b':
-//      spd_ref = -10;//backward
-//      break;
-//    case 'g':
-//      spd_ref = 10;//forward
-//      break;
-//    case 'n':
-//      spd_ref = -15;//backward
-//      break;
-//    case 'h':
-//      spd_ref = 15;//forward
-//      break;
-//    case 'm':
-//      spd_ref = 20;//forward
-//      break;
-//    case 'j':
-//      spd_ref = -20;//backward
-//      break;
+    case 'b':
+      spd_ref = -10;//backward
+      break;
+    case 'g':
+      spd_ref = 10;//forward
+      break;
+    case 'n':
+      spd_ref = -15;//backward
+      break;
+    case 'h':
+      spd_ref = 15;//forward
+      break;
+    case 'm':
+      spd_ref = 20;//forward
+      break;
+    case 'j':
+      spd_ref = -20;//backward
+      break;
 #ifdef WORK_MATLAB
     case 'o':
       start = 1;
@@ -93,27 +93,27 @@ void testDrivingSystem(void)
 
     spd_ref = CLIP_VALUE(spd_ref, -20, 20);
     t_spd_ref = fetchRefSpeed(spd_ref);
-    t_spd_real = DrivingControlGetSpeedMPS();
+    t_spd_real = DrivingControlGetSpeedMPS_lowpass();
     t_speed_cs = GetSpeedControl();
 //    lldControlSetDrivePower(t_speed_cs);
 
-    chprintf(((BaseSequentialStream *)&SD7), "\tRef_ang:(%d)\t Real_ang:(%d)\tStr_cntrl:(%d)\n\r",
-             t_ang_ref, t_ang_real, t_steer_cs);
+//    chprintf(((BaseSequentialStream *)&SD7), "\tRef:(%d)\tReal:(%d)\tSpeed_cs:(%d)\n\r",
+//             t_spd_ref, (int)(t_spd_real*100), t_speed_cs);
 
 #ifdef WORK_NUC
     dbgprintf("\tRef:(%d)\tReal:(%d)\tSpeed_cs:(%d)\n\r",
               t_spd_ref, (int)(t_spd_real*100), t_speed_cs);
 #endif
 
-//#ifdef WORK_MATLAB
-//    if(start == 1)
-//    {
-//      sdWrite(&SD7, (uint8_t*) &t_spd_ref, 2);
-//      int16_t t_spd_rl = (int16_t)(100*t_spd_real);
-//      sdWrite(&SD7, (uint8_t*) &t_spd_rl, 2);
-//    }
-//#endif
+#ifdef WORK_MATLAB
+    if(start == 1)
+    {
+      sdWrite(&SD7, (uint8_t*) &t_spd_ref, 2);
+      int16_t t_spd_rl = (int16_t)(100*t_spd_real);
+      sdWrite(&SD7, (int8_t*) &t_spd_rl, 2);
+    }
+#endif
 
-    time = chThdSleepUntilWindowed(time, time + MS2ST(25));
+    time = chThdSleepUntilWindowed(time, time + MS2ST(10));//time for mb 25
   }
 }

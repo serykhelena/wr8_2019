@@ -40,11 +40,14 @@ int32_t steer_cntrl_prc = 0;
 #define SPEED_MAX_FRW  20
 #define SPEED_MAX_BCW  -20
 
-//#define SPEED_K_FRW    5
-//#define SPEED_B_FRW    0
-//
-//#define SPEED_K_BCW    5
-//#define SPEED_B_BCW    0
+#define SPEED_K_FRW    0.1//1.1
+#define SPEED_B_FRW    0
+
+#define SPEED_K_BCW    1.3
+#define SPEED_B_BCW    0
+
+#define SPEED_K_BCW_MINI    0.3
+#define SPEED_K_FRW_MINI    0.4
 
 float speed_ref = 0;
 float spd_p = 0;
@@ -55,21 +58,21 @@ float speed_real = 0;
 int32_t speed_cntrl_prc = 0;
 
 /*********** SPEED (0;10) ***************/
-float kp_spdmin_f = 0.9;      //proportional
+float kp_spdmin_f = 0.4;//2;      //proportional
 
-float ki_spdmin_f = 0.02;     //integral
+float ki_spdmin_f = 0.00125;//0.02;     //integral
 float sum_i_spdmin_f = 0;     //sum of errors
 //integrator limits
-#define MIN_I_SPDMIN_F   -200 //200-300
-#define MAX_I_SPDMIN_F    200
+#define MIN_I_SPDMIN_F   -300 //200-300
+#define MAX_I_SPDMIN_F    300
 
 float kd_spdmin_f = 0;        //differential
 float old_err_spdmin_f = 0;   //previous signal value
 
 /*********** SPEED (-10;0) ***************/
-float kp_spdmin_b = 0.5;       //proportional
+float kp_spdmin_b = 0.125;//0.5;       //proportional
 
-float ki_spdmin_b = 0.02;     //integral
+float ki_spdmin_b = 0.002;//0.02;     //integral
 float sum_i_spdmin_b = 0;    //sum of errors
 //integrator limits
 #define MIN_I_SPDMIN_B   -200 //200-300
@@ -79,18 +82,28 @@ float kd_spdmin_b = 0;       //differential
 float old_err_spdmin_b = 0;  //previous signal value
 
 /*********** SPEED (10;20) ***************/
-//float kp_spdmax_f = 0.9;      //proportional
-//
-//float ki_spdmax_f = 0.02;     //integral
-//float sum_i_spdmax_f = 0;     //sum of errors
-////integrator limits
-//#define MIN_I_SPDMAX_F   -200 //200-300
-//#define MAX_I_SPDMAX_F    200
-//
-//float kd_spdmax_f = 0;        //differential
-//float old_err_spdmax_f = 0;   //previous signal value
+float kp_spdmax_f = 0.156; //0.25;//2;      //proportional
+
+float ki_spdmax_f = 0.03;//0.01;//0.03;     //integral
+float sum_i_spdmax_f = 0;     //sum of errors
+//integrator limits
+#define MIN_I_SPDMAX_F   -300 //200-300
+#define MAX_I_SPDMAX_F    300
+
+float kd_spdmax_f = 0.1;        //differential
+float old_err_spdmax_f = 0;   //previous signal value
 
 /*********** SPEED (-20;-10) ***************/
+float kp_spdmax_b = 2;//1.2;//0.3;//3.1;      //proportional
+
+float ki_spdmax_b = 0.008;     //integral
+float sum_i_spdmax_b = 0;     //sum of errors
+//integrator limits
+#define MIN_I_SPDMAX_B   -400 //200-300
+#define MAX_I_SPDMAX_B    400
+
+float kd_spdmax_b = 0;        //differential
+float old_err_spdmax_b = 0;   //previous signal value
 
 /*******************************************************/
 
@@ -142,9 +155,9 @@ static THD_FUNCTION(ControlSystem, arg)
     lldControlSetSteerPower(steer_cntrl_prc);
 
     /************PID REGULATOR FOR SPEED***********/
-    speed_real = DrivingControlGetSpeedMPS();
+    speed_real = DrivingControlGetSpeedMPS_lowpass();
 
-    if (speed_ref >= 0 && speed_ref < 10)
+    if (speed_ref > 0 && speed_ref < 10)
     {
       err_spd = speed_ref - (speed_real*100);
 
@@ -158,7 +171,11 @@ static THD_FUNCTION(ControlSystem, arg)
       spd_d = kd_spdmin_f * (err_spd - old_err_spdmin_f);//differential
       old_err_spdmin_f = err_spd;
 
-      speed_cntrl_prc = spd_p + spd_i + spd_d;// + (speed_ref * SPEED_K_FRW - SPEED_B_FRW);
+      speed_cntrl_prc = spd_p + spd_i + spd_d + (speed_ref * SPEED_K_FRW_MINI - SPEED_B_FRW);
+//      if (speed_cntrl_prc == 0)
+//      {
+//        speed_cntrl_prc = 1;
+//      }
     }
     else if (speed_ref > -10 && speed_ref < 0)
     {
@@ -174,40 +191,51 @@ static THD_FUNCTION(ControlSystem, arg)
       spd_d = kd_spdmin_b * (err_spd - old_err_spdmin_b);//differential
       old_err_spdmin_b = err_spd;
 
-      speed_cntrl_prc = spd_p + spd_i + spd_d;// + (speed_ref * SPEED_K_BCW - SPEED_B_BCW);
+      speed_cntrl_prc = spd_p + spd_i + spd_d + (speed_ref * SPEED_K_BCW_MINI - SPEED_B_BCW);
     }
-//    else if (speed_ref <= -10)
-//    {
-//      err_spd = speed_ref - (speed_real*100);
-//
-//      spd_p = kp_spd * err_spd;//proportional
-//
-//      sum_i_spd = sum_i_spd + err_spd;
-//      sum_i_spd = CLIP_VALUE(sum_i_spd, MIN_I_SPD,MAX_I_SPD);
-//      if (sum_i_spd > MAX_I_SPD && sum_i_spd < MIN_I_SPD) sum_i_spd = 0;
-//      spd_i = ki_spd * sum_i_spd;//integral
-//
-//      spd_d = kd_spd * (err_spd - old_err_spd);//differential
-//      old_err_spd = err_spd;
-//
-//      speed_cntrl_prc = spd_p + spd_i + spd_d;// + (speed_ref * SPEED_K_BCW - SPEED_B_BCW);
-//    }
-//    else if (speed_ref >= 10)
-//    {
-//      err_spd = speed_ref - (speed_real*100);
-//
-//      spd_p = kp_spd * err_spd;//proportional
-//
-//      sum_i_spd = sum_i_spd + err_spd;
-//      sum_i_spd = CLIP_VALUE(sum_i_spd, MIN_I_SPD,MAX_I_SPD);
-//      if (sum_i_spd > MAX_I_SPD && sum_i_spd < MIN_I_SPD) sum_i_spd = 0;
-//      spd_i = ki_spd * sum_i_spd;//integral
-//
-//      spd_d = kd_spd * (err_spd - old_err_spd);//differential
-//      old_err_spd = err_spd;
-//
-//      speed_cntrl_prc = spd_p + spd_i + spd_d;// + (speed_ref * SPEED_K_FRW - SPEED_B_FRW);
-//    }
+    else if (speed_ref <= -10)
+    {
+      err_spd = speed_ref - (speed_real*100);
+
+      spd_p = kp_spdmax_b * err_spd;//proportional
+
+      sum_i_spdmax_b += err_spd;
+      sum_i_spdmax_b = CLIP_VALUE(sum_i_spdmax_b, MIN_I_SPDMAX_B,MAX_I_SPDMAX_B);
+      if (sum_i_spdmax_b > MAX_I_SPDMAX_B && sum_i_spdmax_b < MIN_I_SPDMAX_B) sum_i_spdmax_b = 0;
+      spd_i = ki_spdmax_b * sum_i_spdmax_b;//integral
+      sum_i_spdmax_f = 0;
+
+      spd_d = kd_spdmax_b * (err_spd - old_err_spdmax_b);//differential
+      old_err_spdmax_b = err_spd;
+
+      if (err_spd >= -1 && err_spd <= 1)
+      {
+        sum_i_spdmax_b = 0;
+      }
+
+      speed_cntrl_prc = spd_p + spd_i + spd_d + (speed_ref * SPEED_K_FRW - SPEED_B_FRW);
+    }
+    else if (speed_ref >= 10)
+    {
+      err_spd = speed_ref - (speed_real*100);
+
+      spd_p = kp_spdmax_f * err_spd;//proportional
+
+      sum_i_spdmax_f = sum_i_spdmax_f + err_spd;
+      sum_i_spdmax_f = CLIP_VALUE(sum_i_spdmax_f, MIN_I_SPDMAX_F,MAX_I_SPDMAX_F);
+      if (sum_i_spdmax_f > MAX_I_SPDMAX_F && sum_i_spdmax_f < MIN_I_SPDMAX_F) sum_i_spdmax_f = 0;
+      spd_i = ki_spdmax_f * sum_i_spdmax_f;//integral
+
+      spd_d = kd_spdmax_f * (err_spd - old_err_spdmax_f);//differential
+      old_err_spdmax_f = err_spd;
+      sum_i_spdmax_b = 0;
+
+      speed_cntrl_prc = spd_p + spd_i + spd_d + (speed_ref * SPEED_K_FRW - SPEED_B_FRW);
+    }
+    else if (speed_ref == 0)
+    {
+      speed_cntrl_prc = 0;
+    }
 
     speed_cntrl_prc = CLIP_VALUE(speed_cntrl_prc, SPEED_MIN, SPEED_MAX);
     lldControlSetDrivePower(speed_cntrl_prc);
