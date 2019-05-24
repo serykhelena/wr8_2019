@@ -19,16 +19,21 @@ void sd_set(void)
 //#define MATLAB
 #define DEBUG_NUC
 
+
+/*
+ * TODO COMMENTS
+ * TODO MATLAB DEBUG - where is code?
+ */
 void testEncoder (void)
 {
 
-    #ifdef DEBUG_NUC
+#ifdef DEBUG_NUC
         debug_stream_init();
-    #endif
+#endif
 
-    #ifdef MATLAB
+#ifdef MATLAB
         sd_set();
-    #endif
+#endif
 
     lldEncoderSensInit();
 
@@ -65,6 +70,8 @@ void testEncoder (void)
         }
         Rev = lldEncoderGetRevolutions();
         Ticks = lldEncoderGetEncTicks();
+
+#ifdef DEBUG_NUC
         if ((int)SpeedMPS == 0 && SpeedMPS < 0)
         {
             if (SpeedKPH < 0 && (int)SpeedKPH == 0)
@@ -88,5 +95,6 @@ void testEncoder (void)
         	dbgprintf("RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         }
         time = chThdSleepUntilWindowed (time, time + MS2ST(300));
+#endif
     }
 }

@@ -12,7 +12,6 @@
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
-
 void testEncoder (void);
 
 /****************************/
@@ -24,7 +23,6 @@ void testEncoder (void);
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
-
 void testDriverControlRoutine (void);
 
 /*
@@ -32,7 +30,6 @@ void testDriverControlRoutine (void);
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
-
 void testChargeLevel (void);
 
 /*
@@ -40,14 +37,22 @@ void testChargeLevel (void);
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
-
 void testSteeringControl (void);
 
+/*
+ * TODO COMMENTS
+ */
 void testSteeringSystem (void);
 
+/*
+ * TODO COMMENTS
+ */
 void testDrivingSystem (void);
 
-void testDrivingControl (void);
+/*
+ * TODO COMMENTS
+ */
+void testOdometry (void);
 
 /*************************/
 /*** Tests application ***/
@@ -82,9 +87,9 @@ static inline void testsRoutines( void )
 
     testDrivingSystem();
 
-  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_DRIVING_CONTROL)
+  #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ODOMETRY)
 
-    testDrivingControl();
+    testOdometry();
 
   #endif
 }

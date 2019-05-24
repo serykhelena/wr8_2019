@@ -3,7 +3,7 @@
 #include <chprintf.h>
 #include <control_system.h>
 #include <lld_control.h>
-#include <driving_control.h>
+#include <odometry.h>
 //#include <lld_steering_control.h>
 
 #define WORK_NUC
@@ -96,7 +96,7 @@ void testDrivingSystem(void)
 
     spd_ref = CLIP_VALUE(spd_ref, -20, 20);
     t_spd_ref = fetchRefSpeed(spd_ref);
-    t_spd_real = DrivingControlGetSpeedMPS();
+    t_spd_real = odometryGetSpeedMPS();
     t_speed_cs = GetSpeedControl();
 //    lldControlSetDrivePower(t_speed_cs);
 
