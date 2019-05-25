@@ -1,12 +1,18 @@
 #include <common.h>
 #include <tests.h>
 #include <chprintf.h>
-#include <driving_control.h>
+#include <odometry.h>
 #include <lld_control.h>
 #include <lld_encoder.h>
 
 //#define DEBUG
-#define TERM
+#define TERMINAL
+
+
+float speedMPS = 0;
+encValue_t encSpeedRPM = 0;
+int16_t speed = 0;
+int8_t delta = 1;
 
 static const SerialConfig sdcfg = {
   .speed = 115200,
@@ -15,20 +21,26 @@ static const SerialConfig sdcfg = {
   .cr3 = 0
 };
 
-float speedMPS = 0;
-encValue_t encSpeedRPM = 0;
-int16_t speed = 0;
-int8_t delta = 1;
+void serial_init(void)
+{
+    sdStart( &SD7, &sdcfg );
+    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+}
 
-
-void testDrivingControl()
+void testOdometry()
 {
     #ifdef DEBUG
           debug_stream_init();
           dbgprintf("TEST\r\n");
     #endif
 
-	DrivingControlInit();
+	#ifdef TERMINAL
+          serial_init();
+          chprintf((BaseSequentialStream *)&SD7, "TEST\r\n");
+	#endif
+
+	OdometryInit();
     lldControlInit( );
     lldEncoderSensInit();
 
@@ -68,13 +80,17 @@ void testDrivingControl()
         lldControlSetDrivePower(speed);
 
         encSpeedRPM = lldEncoderGetSpeedMPS();
-        speedMPS    = DrivingControlGetSpeedMPS();
+        speedMPS    = OdometryGetSpeedMPS();
 
         #ifdef DEBUG
         	dbgprintf("Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
         #else
         	chprintf( (BaseSequentialStream *)&SD7, "Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
         #endif
+
+		#ifdef TERMINAL
+            chprintf((BaseSequentialStream *)&SD7, "speed (%d) \teRPM(%d)\tMPS(%d)\n\r", (int)speed, (int)encSpeedRPM, (int)(speedMPS * 100));
+		#endif
     time = chThdSleepUntilWindowed(time, time + MS2ST(100));
     }
 }

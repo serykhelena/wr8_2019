@@ -14,9 +14,9 @@
 #define     PROGRAM_ROUTINE_TEST_STEERING_CONTROL       4
 #define     PROGRAM_ROUTINE_TEST_STEERING_SYSTEM        5
 #define     PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM         6
-#define     PROGRAM_ROUTINE_TEST_DRIVING_CONTROL        7
+#define     PROGRAM_ROUTINE_TEST_ODOMETRY               7
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_DRIVING_CONTROL
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_ODOMETRY
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
