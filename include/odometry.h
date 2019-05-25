@@ -1,5 +1,5 @@
-#ifndef INCLUDE_DRIVING_CONTROL_H_
-#define INCLUDE_DRIVING_CONTROL_H_
+#ifndef INCLUDE_ODOMETRY_H_
+#define INCLUDE_ODOMETRY_H_
 
 typedef int16_t	   drvctrl_t;
 
@@ -7,35 +7,35 @@ typedef int16_t	   drvctrl_t;
 /*
  * @brief   Initialize DriveControl
  */
-void DrivingControlInit(void);
+void OdometryInit(void);
 
 /**
  * @brief
  * @note
  */
-int16_t DrivingControlGetSpeedRPM (void);
+int16_t OdometryGetSpeedRPM (void);
 
 /**
  * @brief
  * @note
  */
-float DrivingControlGetSpeedMPS (void);
+float OdometryGetSpeedMPS (void);
 
 /**
  * @brief
  * @note
  */
-int16_t DrivingControlGetSpeedKPH (void);
+int16_t OdometryGetSpeedKPH (void);
 
 /**
  * @ brief                             Gets current distance [metres]
  * @ return  >=0                       Current distance [metres]
  */
-int16_t DrivingControlGetDistance (void);
+int16_t OdometryGetDistance (void);
 
 /*
  * @brief   Reset impulse quantity from the beginning of the movement
  */
-void DrivingControlResetDistance (void);
+void OdometryResetDistance (void);
 
-#endif /* INCLUDE_DRIVING_CONTROL_H_ */
+#endif /* INCLUDE_ODOMETRY_H_ */

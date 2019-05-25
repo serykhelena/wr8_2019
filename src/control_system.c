@@ -3,7 +3,7 @@
 #include <control_system.h>
 #include <lld_control.h>
 #include <lld_steering_control.h>
-#include <driving_control.h>
+#include <odometry.h>
 
 systime_t time_cs;
 
@@ -113,7 +113,7 @@ static THD_FUNCTION(ControlSystem, arg)
 //    lldControlSetSteerPower(steer_cntrl_prc);
 
     /************PID REGULATOR FOR SPEED***********/
-    speed_real = DrivingControlGetSpeedMPS(); //in m/s from Oleg
+    speed_real = OdometryGetSpeedMPS(); //in m/s from Oleg
     speed_real = speed_real*100;           //in cm/s
     err_spd = speed_ref - speed_real;
 

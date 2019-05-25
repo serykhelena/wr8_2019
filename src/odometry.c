@@ -1,20 +1,20 @@
 #include <common.h>
 #include <tests.h>
-#include <driving_control.h>
+#include <odometry.h>
 #include <lld_encoder.h>
 
 
 static float   GearRatio         = 0.105;
 static float   circumference     = 0.2513; // 2 * pi * WheelRadius
 
-void DrivingControlInit(void)
+void OdometryInit(void)
 {
 
     lldEncoderSensInit();
 }
 
 
-int16_t DrivingControlGetSpeedRPM (void)
+int16_t OdometryGetSpeedRPM (void)
 {
     drvctrl_t RPM = 0;
 
@@ -23,7 +23,7 @@ int16_t DrivingControlGetSpeedRPM (void)
     return RPM;
 }
 
-float DrivingControlGetSpeedMPS (void)
+float OdometryGetSpeedMPS (void)
 {
     float MPS = 0;
 
@@ -32,7 +32,7 @@ float DrivingControlGetSpeedMPS (void)
     return MPS;
 }
 
-int16_t DrivingControlGetSpeedKPH (void)
+int16_t OdometryGetSpeedKPH (void)
 {
     drvctrl_t KPH = 0;
 
@@ -41,21 +41,21 @@ int16_t DrivingControlGetSpeedKPH (void)
     return KPH;
 }
 
-int16_t DrivingControlGetDistance (void)
+int16_t OdometryGetDistance (void)
 {
     drvctrl_t distance    = 0;
     drvctrl_t RevQuantity = 0;
 
     RevQuantity = lldEncoderGetRevolutions();
-     /* distance for 1 revolution is wheel circumference */
+     /* distance for 1 revolution is wheel circumference in cm*/
      /*  total distance is N revolutions( N wheel circumferences ) */
      /* [S = 2 * pi * (distance for 1 revolution)] */
-    distance = circumference * RevQuantity;
+    distance = circumference * RevQuantity * 100;
 
      return distance;
 }
 
-void DrivingControlResetDistance (void)
+void OdometryResetDistance (void)
 {
     /* Total distance is determined by all encoder ticks */
 	lldEncoderResetDistance();

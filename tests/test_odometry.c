@@ -1,7 +1,7 @@
 #include <common.h>
 #include <tests.h>
 #include <chprintf.h>
-#include <driving_control.h>
+#include <odometry.h>
 #include <lld_control.h>
 #include <lld_encoder.h>
 
@@ -27,7 +27,7 @@ void serial_init(void)
     palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
 }
 
-void testDrivingControl()
+void testOdometry()
 {
     #ifdef DEBUG
           debug_stream_init();
@@ -39,7 +39,7 @@ void testDrivingControl()
           chprintf((BaseSequentialStream *)&SD7, "TEST\r\n");
 	#endif
 
-	DrivingControlInit();
+	OdometryInit();
     lldControlInit( );
     lldEncoderSensInit();
 
@@ -73,7 +73,7 @@ void testDrivingControl()
         lldControlSetDrivePower(speed);
 
         encSpeedRPM = lldEncoderGetSpeedMPS();
-        speedMPS    = DrivingControlGetSpeedMPS();
+        speedMPS    = OdometryGetSpeedMPS();
 
         #ifdef DEBUG
         	dbgprintf("Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
