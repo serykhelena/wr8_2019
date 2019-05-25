@@ -4,34 +4,71 @@
 #include <lld_encoder.h>
 
 
-static float   GearRatio         = 0.105;
-static float   circumference     = 0.2513; // 2 * pi * WheelRadius
+#define VTPEDIOD	10
+#define LPFCOEF		(float)0.1
 
-static bool    firstLPval        = false;
-float          LPAdcVal          = 0;
-float          lastLPAdcVal      = 0;
+static virtual_timer_t odom_vt;
 
-static bool    isInitialized            = false;
+float OdomDistance                  = 0;
+float OdomPrevDist                  = 0;
+float OdomRawSpeed 	                = 0;
 
-/*
- * @brief   Initialize Odometry unit
- */
-void odometryInit(void)
-{
-    if ( isInitialized )
-            return;
+static float   GearRatio            = 0.105;
+static float   circumference        = 25.13; // 2 * pi * WheelRadius [cm]
 
-    lldEncoderSensInit();
-    isInitialized       = true;
 
+static bool     firstOdomLPFSpeed   = false;
+float           OdomLPFSpeed      	= 0;
+float           lastOdomLPFSpeed   	= 0;
+
+static bool IsInit = false;
+
+static void odom_cb(void *arg) {
+
+    arg = arg; // to avoid warnings
+
+    float RevQuantity = 0;
+
+    RevQuantity = lldEncoderGetRevolutions();
+     /* distance for 1 revolution is wheel circumference in cm*/
+     /*  total distance is N revolutions( N wheel circumferences ) */
+     /* [S = 2 * pi * (distance for 1 revolution)] */
+    OdomDistance = circumference * RevQuantity * GearRatio;
+
+    OdomRawSpeed = (OdomDistance - OdomPrevDist) * 100; // ds/dt * 100 [cm/10 ms -> cm/sec]
+
+    if (firstOdomLPFSpeed == false)
+    {
+    	OdomLPFSpeed = OdomRawSpeed;
+    	firstOdomLPFSpeed = true;
+    }
+    else
+    {
+    	OdomLPFSpeed = LPFCOEF * OdomRawSpeed + lastOdomLPFSpeed * ((float)1 - LPFCOEF);
+    }
+    lastOdomLPFSpeed = OdomLPFSpeed;
+
+    OdomPrevDist = OdomDistance;
+
+	chSysLockFromISR();
+	chVTSetI(&odom_vt, MS2ST(VTPEDIOD), odom_cb, NULL);
+	chSysUnlockFromISR();
 }
 
-/**
- * TODO COMMENTS
- */
-int16_t odometryGetSpeedRPM (void)
+void OdometryInit(void)
 {
-    odomValue_t RPM = 0;
+	if (IsInit)
+		return;
+	chVTObjectInit(&odom_vt);
+    lldEncoderSensInit();
+    chVTSet(&odom_vt, MS2ST(VTPEDIOD), odom_cb, NULL);
+    IsInit = true;
+}
+
+
+int16_t OdometryGetSpeedRPM (void)
+{
+    drvctrl_t RPM = 0;
 
     RPM = lldEncoderGetSpeedRPM() * GearRatio;
 
@@ -39,9 +76,9 @@ int16_t odometryGetSpeedRPM (void)
 }
 
 /**
- * TODO COMMENTS
+ * TODO COMMENTS NEED TO FIX
  */
-float odometryGetSpeedMPS (void)
+float OdometryGetSpeedMPS (void)
 {
     float MPS = 0;
 
@@ -50,63 +87,34 @@ float odometryGetSpeedMPS (void)
     return MPS;
 }
 
-/**
- * TODO COMMENTS
- */
-float odometryGetLPFSpeedMPS (void)
+float OdometryGetSpeedSmPS (void)
 {
-    float LPcoef          = 0.1;
-
-    if (firstLPval == false)
-    {
-    	LPAdcVal = odometryGetSpeedMPS();
-    	firstLPval = true;
-    }
-    else
-    {
-    	LPAdcVal = LPcoef * odometryGetSpeedMPS() + lastLPAdcVal * ((float)1 - LPcoef);
-    }
-    lastLPAdcVal = LPAdcVal;
-
-	return LPAdcVal;
+    return OdomRawSpeed;
 }
 
-/**
- * TODO COMMENTS
- */
-int16_t odometryGetSpeedKPH (void)
+
+float OdometryGetLPFSpeedSmPS (void)
 {
-    odomValue_t KPH = 0;
+	return OdomLPFSpeed;
+}
+
+
+int16_t OdometryGetSpeedKPH (void)
+{
+    drvctrl_t KPH = 0;
 
     KPH = lldEncoderGetSpeedKPH() * GearRatio;
 
     return KPH;
 }
 
-/**
- * @ brief      Gets current distance [m]
- * @ return     Current distance [m]
- */
-int16_t odometryGetDistance (void)
+
+float OdometryGetDistance (void)
 {
-    odomValue_t distance    = 0;
-    odomValue_t RevQuantity = 0;
-
-    RevQuantity = lldEncoderGetRevolutions();
-     /* distance for 1 revolution is wheel circumference */
-     /*  total distance is N revolutions( N wheel circumferences ) */
-     /* [S = 2 * pi * (distance for 1 revolution)] */
-    distance = circumference * RevQuantity;
-
-     return distance;
+     return OdomDistance;
 }
 
-
-/*
- * @brief   Reset impulse quantity from
- *          the beginning of the movement
- */
-void odometryResetDistance (void)
+void OdometryResetDistance (void)
 {
     /* Total distance is determined by all encoder ticks */
 	lldEncoderResetDistance();

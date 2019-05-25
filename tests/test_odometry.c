@@ -6,108 +6,171 @@
 #include <lld_encoder.h>
 
 //#define DEBUG
+//#define TERMINAL
 #define MATLAB
 
-#ifdef MATLAB
+
+float speedMPS = 0;
+encValue_t encSpeedRPM = 0;
+int16_t speed = 0;
+int8_t delta = 1;
+
 static const SerialConfig sdcfg = {
   .speed = 115200,
   .cr1 = 0,
   .cr2 = 0,
   .cr3 = 0
 };
-#endif
 
-
+void serial_init(void)
+{
+    sdStart( &SD7, &sdcfg );
+    palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+    palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+}
 
 /*
- * TODO COMMENTS
+ * TODO COMMETNS
  */
 void testOdometry()
 {
-#ifdef DEBUG
+    #ifdef DEBUG
           debug_stream_init();
+          dbgprintf("TEST\r\n");
+    #endif
 
-          encValue_t encSpeedRPM      = 0;
-#endif
+    #ifdef TERMINAL
+          serial_init();
+          chprintf((BaseSequentialStream *)&SD7, "TEST\r\n");
+    #endif
 
-	odometryInit();
+    OdometryInit();
     lldControlInit( );
     lldEncoderSensInit();
 
-    float speedMPS              = 0;
-    float speedMPS_lpf          = 0;
-
-    int16_t speed               = 0;
-    int8_t delta                = 1;
-
-#ifdef MATLAB
+    #ifdef TERM
       sdStart( &SD7, &sdcfg );
-  	  palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
-  	  palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+      palSetPadMode( GPIOE, 8, PAL_MODE_ALTERNATE(8) );    // TX
+      palSetPadMode( GPIOE, 7, PAL_MODE_ALTERNATE(8) );    // RX
+    #endif
 
-  	  uint8_t matlab_start_flag = 0;
-  	  int16_t matlab_speed      = 0;
-  	  int16_t matlab_speed_lpf  = 0;
-#endif
-
-	systime_t time = chVTGetSystemTime(); // Current system time
+    systime_t time = chVTGetSystemTime(); // Current system time
 
     while(1)
     {
-#ifdef DEBUG
-         char data = sdGetTimeout( &SD3, TIME_IMMEDIATE );
-#endif
-#ifdef MATLAB
-         char data = sdGetTimeout(&SD7, TIME_IMMEDIATE);
-#endif
-         switch ( data )
-         {
-           case 'a':
-             matlab_start_flag = 1;
-             break;
+         #ifdef DEBUG
+               char data = sdGetTimeout( &SD3, TIME_IMMEDIATE );
+         #else
+               char data = sdGetTimeout(&SD7, TIME_IMMEDIATE);
+         #endif
 
-           case 'w':   // Positive speed
-             speed += delta;
-             break;
+               switch ( data )
+               {
+                   case 'w':   // Positive speed
+                     speed += delta;
+                       break;
 
-           case 's':   // Negative speed
-             speed -= delta;
-             break;
+                   case 's':   // Negative speed
+                     speed -= delta;
+                       break;
+                   case ' ':
+                     speed = 0;
+                       break;
 
-           case ' ':
-             speed = 0;
-             break;
-
-           default: ;
-         }
+                   default: ;
+               }
 
         speed = CLIP_VALUE( speed, -100, 100 );
         lldControlSetDrivePower(speed);
 
+        encSpeedRPM = lldEncoderGetSpeedMPS();
+        speedMPS    = OdometryGetSpeedMPS();
 
-        speedMPS        = odometryGetSpeedMPS();
-        speedMPS_lpf    = odometryGetLPFSpeedMPS( );
+        #ifdef DEBUG
+            dbgprintf("Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
+        #else
+            chprintf( (BaseSequentialStream *)&SD7, "Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r", (int)speed , (int)encSpeedRPM, (int)(speedMPS * 100));
+        #endif
 
-#ifdef DEBUG
-        encSpeedRPM     = lldEncoderGetSpeedMPS();
-        dbgprintf("Cntrl:(%d)\teRPM(%d)\tMPS(%d)\n\r",
-                  (int)speed , (int)encSpeedRPM,
-                  (int)(speedMPS * 100));
+        #ifdef TERMINAL
+            chprintf((BaseSequentialStream *)&SD7, "speed (%d) \teRPM(%d)\tMPS(%d)\n\r", (int)speed, (int)encSpeedRPM, (int)(speedMPS * 100));
+        #endif
+    time = chThdSleepUntilWindowed(time, time + MS2ST(100));
+    }
+}
 
-        time = chThdSleepUntilWindowed(time, time + MS2ST(100));
+
+/*
+ * TODO COMMETNS
+ */
+void testSpeed_Distance(void)
+{
+#ifdef TERMINAL
+    float DistTest    = 0;
+#endif
+    float SpeedTest   = 0;
+    float FSpeedTest  = 0;
+
+    bool permission      = false;
+	int16_t MLABSpeed = 0;
+	int16_t MLABFSpeed = 0;
+
+	serial_init();
+	OdometryInit();
+    lldControlInit( );
+
+	systime_t time = chVTGetSystemTime(); // Current system time
+
+	while(1)
+	{
+        char data = sdGetTimeout(&SD7, TIME_IMMEDIATE);
+
+        switch ( data )
+        {
+            case 'w':   // Positive speed
+              speed = 10;
+              break;
+
+            case 's':
+              speed = -10;
+              break;
+
+            case ' ':
+              speed = 0;
+              break;
+
+            case 'q':
+              permission = true;
+              break;
+
+
+            default: ;
+        }
+
+        speed = CLIP_VALUE( speed, -100, 100 );
+        lldControlSetDrivePower(speed);
+#ifdef TERMINAL
+		DistTest = OdometryGetDistance();
+#endif
+		SpeedTest = OdometryGetSpeedSmPS();
+		FSpeedTest = OdometryGetLPFSpeedSmPS();
+
+#ifdef TERMINAL
+		chprintf((BaseSequentialStream *)&SD7, "dist:(%d)\tspeed:(%d)\tfspeed:(%d)\n\r",
+				(int)(DistTest), (int)SpeedTest, (int)FSpeedTest);
 #endif
 
 #ifdef MATLAB
-        if( matlab_start_flag )
-        {
-          matlab_speed      = (int)( speedMPS * 100 );
-          matlab_speed_lpf  = (int)( speedMPS_lpf * 100 );
+		if (permission)
+		{
 
-          sdWrite( &SD7, (uint8_t*) &matlab_speed, 2);
-          sdWrite( &SD7, (uint8_t*) &matlab_speed_lpf, 2);
-        }
+			MLABSpeed = (int)SpeedTest;
+			MLABFSpeed = (int)FSpeedTest;
 
-        time = chThdSleepUntilWindowed(time, time + MS2ST(20));
+			sdWrite(&SD7, (uint8_t*) &MLABSpeed, 2);
+	    	sdWrite(&SD7, (uint8_t*) &MLABFSpeed, 2);
+		}
 #endif
-    }
+		time = chThdSleepUntilWindowed(time, time + MS2ST(10));
+	}
 }

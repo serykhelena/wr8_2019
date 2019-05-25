@@ -18,12 +18,6 @@ void lldEncoderSensInit (void);
  */
 float lldEncoderGetRevolutions(void);
 
-/**
- * @ brief                             Gets current quantity of absolute revolutions
- * @ return  >=0                       Current quantity of revolutions (in 1 revolution - 1 tick from I channel)
- *           -1                        Sensor is not initialized
- */
-uint16_t lldEncoderGetAbsRevolutions(void);
 
 
 /**
@@ -31,7 +25,7 @@ uint16_t lldEncoderGetAbsRevolutions(void);
  * @ return  >=0                       Current total quantity of encoder ticks
  *           -1                        Sensor is not initialized
  */
-uint32_t lldEncoderGetEncTicks(void);
+int32_t lldEncoderGetEncTicks(void);
 
 
 /**

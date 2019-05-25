@@ -1,44 +1,47 @@
 #ifndef INCLUDE_ODOMETRY_H_
 #define INCLUDE_ODOMETRY_H_
 
-typedef int16_t	   odomValue_t;
+typedef int16_t	   drvctrl_t;
 
 
 /*
- * @brief   Initialize Odometry unit
+ * @brief   Initialize DriveControl
  */
-void odometryInit(void);
+void OdometryInit(void);
 
 /**
  * TODO COMMENTS
  */
-int16_t odometryGetSpeedRPM (void);
+int16_t OdometryGetSpeedRPM (void);
 
 /**
  * TODO COMMENTS
  */
-float odometryGetSpeedMPS (void);
+float OdometryGetSpeedMPS (void);
 
 /**
  * TODO COMMENTS
  */
-float odometryGetLPFSpeedMPS (void);
+float OdometryGetSpeedSmPS (void);
 
 /**
  * TODO COMMENTS
  */
-int16_t odometryGetSpeedKPH (void);
+float OdometryGetLPFSpeedSmPS (void);
 
 /**
- * @ brief      Gets current distance [m]
- * @ return     Current distance [m]
+ * TODO COMMENTS
  */
-int16_t odometryGetDistance (void);
+int16_t OdometryGetSpeedKPH (void);
+
+/**
+ * TODO COMMENTS
+ */
+float OdometryGetDistance (void);
 
 /*
- * @brief   Reset impulse quantity from
- *          the beginning of the movement
+ * @brief   Reset impulse quantity from the beginning of the movement
  */
-void odometryResetDistance (void);
+void OdometryResetDistance (void);
 
 #endif /* INCLUDE_ODOMETRY_H_ */

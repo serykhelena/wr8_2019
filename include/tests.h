@@ -37,6 +37,10 @@ void testChargeLevel (void);
  * @note    The routine has internal infinite loop
  * @note    SD7 is used for testing (PE7, PE8)
  */
+
+/*
+ * TODO COMMENTS
+ */
 void testSteeringControl (void);
 
 /*
@@ -53,6 +57,16 @@ void testDrivingSystem (void);
  * TODO COMMENTS
  */
 void testOdometry (void);
+
+/*
+ * TODO COMMENTS
+ */
+void testImps_Revs (void);
+
+/*
+ * TODO COMMENTS
+ */
+void testSpeed_Distance (void);
 
 /*************************/
 /*** Tests application ***/
@@ -90,6 +104,14 @@ static inline void testsRoutines( void )
   #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ODOMETRY)
 
     testOdometry();
+
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_REV_TICK)
+
+    testImps_Revs();
+
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_SPEED_DISTANCE)
+
+    testSpeed_Distance ();
 
   #endif
 }

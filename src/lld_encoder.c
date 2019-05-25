@@ -43,7 +43,7 @@ int32_t max_ticks               = 0;
 int32_t periodCheckPoint        = 0;
 int32_t last_periodCheckPoint   = 0;
 int32_t FromTickToTickEncoder   = 0;
-int32_t TotalImps               = 0;
+int32_t EncImps               = 0;
 int32_t timeSum                 = 0;
 int8_t  ScanCnt                 = 0;
 bool    SpeedState              = 0;
@@ -59,10 +59,10 @@ uint8_t ExtBcnt                         = 0;
 uint8_t ExtAtick                        = 0;
 uint8_t ExtBtick                        = 0;
 int8_t Direction                        = 0;
-int32_t Revolutions                     = false;
+int32_t IntRevolutions                     = 0;
 
 
-#define ImpsFor1Rev         500
+#define IMPSFOR1REV         500
 
 static float speed1ImpsTicksPerMin = 0;
 
@@ -109,7 +109,7 @@ void lldEncoderSensInit (void)
     
     int32_t Period_ticks = 1000.0 * period_50ms / gpt2cfg.frequency;
   
-    speed1ImpsTicksPerMin = 60 * gpt2cfg.frequency / ImpsFor1Rev;
+    speed1ImpsTicksPerMin = 60 * gpt2cfg.frequency / IMPSFOR1REV;
 
     maxOverflows = OverflowsInTimeDiap / Period_ticks;
   
@@ -131,54 +131,6 @@ static void gpt_callback (GPTDriver *gptd)
     }
 }
 
-
-/* EXT channel A (input A1) */
-//static void extcbA(EXTDriver *extp, expchannel_t channel)
-//{
-//    extp = extp; channel = channel;
-//
-//    ExtAtick = 1;
-//
-//    if (palReadPad(GPIOD, 5))
-//    {
-//    	Direction = -1;
-//    	TotalImps --;
-//    }
-//    else
-//    {
-//    	Direction = 1;
-//    	TotalImps ++;
-//    }
-//
-//    if (TotalImps >= 500)
-//    {
-//    	TotalImps = 0;
-//    	Revolutions++;
-//    	    }
-//    else if (TotalImps <= -500)
-//    	{
-//			TotalImps = 0;
-//			Revolutions--;
-//    	}
-//
-//    /*time between ticks*/
-//    FromTickToTickEncoder = 0;
-//    /* number of ticks from last overflow */
-//    periodCheckPoint = gptGetCounterX(Tim2);
-//	if ( drivingWheelsMoving )
-//	{
-//		FromTickToTickEncoder = total_ticks + periodCheckPoint - last_periodCheckPoint;
-//	}
-//    total_ticks = 0;
-//    last_periodCheckPoint = periodCheckPoint;
-//
-//    drivingWheelsMoving = true;
-//
-//    ExtAtick = 0;
-//    ExtBtick = 0;
-//}
-
-
 static void extcbA(EXTDriver *extp, expchannel_t channel)
 {
     extp = extp; channel = channel;
@@ -188,23 +140,23 @@ static void extcbA(EXTDriver *extp, expchannel_t channel)
     if (palReadPad(GPIOD, 5))
     {
     	Direction = -1;
-    	TotalImps --;
+    	EncImps --;
     }
     else
     {
     	Direction = 1;
-    	TotalImps ++;
+    	EncImps ++;
     }
 
-    if (TotalImps >= 500)
+    if (EncImps >= 500)
     {
-    	TotalImps = 0;
-    	Revolutions++;
+    	EncImps = 0;
+    	IntRevolutions++;
     	    }
-    else if (TotalImps <= -500)
+    else if (EncImps <= -500)
     	{
-			TotalImps = 0;
-			Revolutions--;
+    	    EncImps = 0;
+			IntRevolutions--;
     	}
 
     /*time between ticks*/
@@ -261,7 +213,7 @@ float lldEncoderGetRevolutions(void)
     }
     float Revs = 0;
     /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
-    Revs = (float)Revolutions + TotalImps / ImpsFor1Rev;
+    Revs = IntRevolutions + (float)EncImps / IMPSFOR1REV;
     return Revs ;
 }
 
@@ -270,14 +222,14 @@ float lldEncoderGetRevolutions(void)
  * @ return  >=0                       Current total quantity of encoder ticks
  *           -1                        Sensor is not initialized
  */
-uint32_t lldEncoderGetEncTicks(void)
+int32_t lldEncoderGetEncTicks(void)
 {
     if ( isInitialized == false )
     {
 	    return -1;
     }
     /*total ticks of the encoder from begining of movement*/
-    return TotalImps ;
+    return EncImps ;
 }
 
 /**
@@ -322,7 +274,7 @@ encValue_t lldEncoderGetSpeedRPM (void)
 void lldEncoderResetDistance (void)
 {
     /* Total distance is determined by all encoder ticks */
-    TotalImps = 0;
+    EncImps = 0;
 }
 
 /**
