@@ -59,9 +59,12 @@ void OdometryInit(void)
 {
 	if (IsInit)
 		return;
-	chVTObjectInit(&odom_vt);
+
     lldEncoderSensInit();
+
+    chVTObjectInit(&odom_vt);
     chVTSet(&odom_vt, MS2ST(VTPEDIOD), odom_cb, NULL);
+
     IsInit = true;
 }
 

@@ -7,7 +7,7 @@
 
 //#define DEBUG
 //#define TERMINAL
-#define MATLAB
+//#define MATLAB
 
 
 float speedMPS = 0;
@@ -99,6 +99,7 @@ void testOdometry()
     }
 }
 
+#define MATLAB
 
 /*
  * TODO COMMETNS
@@ -106,62 +107,85 @@ void testOdometry()
 void testSpeed_Distance(void)
 {
 #ifdef TERMINAL
-    float DistTest    = 0;
+    float DistTest      = 0;
 #endif
-    float SpeedTest   = 0;
-    float FSpeedTest  = 0;
+#ifdef DEBUG
+    debug_stream_init();
+#endif
+    float SpeedTest     = 0;
+    float FSpeedTest    = 0;
 
-    bool permission      = false;
-	int16_t MLABSpeed = 0;
-	int16_t MLABFSpeed = 0;
+#ifdef MATLAB
+    uint8_t permission  = 0;
+	int16_t MLABSpeed   = 0;
+	int16_t MLABFSpeed  = 0;
+#endif
+	int32_t  cntr_speed  = 0;
 
 	serial_init();
 	OdometryInit();
     lldControlInit( );
 
 	systime_t time = chVTGetSystemTime(); // Current system time
-
-	while(1)
+	while( 1 )
 	{
-        char data = sdGetTimeout(&SD7, TIME_IMMEDIATE);
-
-        switch ( data )
+#ifdef DEBUG
+	    char rc_data = sdGetTimeout(&SD3, TIME_IMMEDIATE);
+#else
+        char rc_data = sdGetTimeout(&SD7, TIME_IMMEDIATE);
+#endif
+        switch( rc_data )
         {
-            case 'w':   // Positive speed
-              speed = 10;
+            case 'z':   // Positive speed
+              cntr_speed = 10;
               break;
 
             case 's':
-              speed = -10;
+              cntr_speed = -10;
               break;
 
             case ' ':
-              speed = 0;
+              cntr_speed = 0;
               break;
 
-            case 'q':
-              permission = true;
+#ifdef MATLAB
+            case 'a':
+              permission = 1;
               break;
 
+            case 'x':
+              permission = 0;
+              break;
+#endif
 
             default: ;
         }
 
-        speed = CLIP_VALUE( speed, -100, 100 );
-        lldControlSetDrivePower(speed);
+        cntr_speed = CLIP_VALUE( cntr_speed, -100, 100 );
+        lldControlSetDrivePower(cntr_speed);
+
 #ifdef TERMINAL
 		DistTest = OdometryGetDistance();
 #endif
-		SpeedTest = OdometryGetSpeedSmPS();
-		FSpeedTest = OdometryGetLPFSpeedSmPS();
+		SpeedTest   = OdometryGetSpeedSmPS();
+		FSpeedTest  = OdometryGetLPFSpeedSmPS();
 
 #ifdef TERMINAL
 		chprintf((BaseSequentialStream *)&SD7, "dist:(%d)\tspeed:(%d)\tfspeed:(%d)\n\r",
 				(int)(DistTest), (int)SpeedTest, (int)FSpeedTest);
+
+		time = chThdSleepUntilWindowed(time, time + MS2ST(300));
+#endif
+
+#ifdef DEBUG
+		dbgprintf("SP:(%d)\tLPF:(%d)\tCNTR:(%d)\tdata:(%c)\n\r",
+		          (int)SpeedTest, (int)FSpeedTest, cntr_speed, rc_data);
+
+		time = chThdSleepUntilWindowed(time, time + MS2ST(300));
 #endif
 
 #ifdef MATLAB
-		if (permission)
+		if( permission == 1 )
 		{
 
 			MLABSpeed = (int)SpeedTest;
@@ -170,7 +194,8 @@ void testSpeed_Distance(void)
 			sdWrite(&SD7, (uint8_t*) &MLABSpeed, 2);
 	    	sdWrite(&SD7, (uint8_t*) &MLABFSpeed, 2);
 		}
-#endif
 		time = chThdSleepUntilWindowed(time, time + MS2ST(10));
+#endif
+//		time = chThdSleepUntilWindowed(time, time + MS2ST(10));
 	}
 }

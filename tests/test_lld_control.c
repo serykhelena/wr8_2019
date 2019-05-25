@@ -60,7 +60,8 @@ void testDriverControlRoutine( void )
 
 //    real_ang_str = lldSteeringControlGetAngle();
 
-    dbgprintf("\t Speed(%d) Steer(%d)\n\r ", speed, steer);
+    dbgprintf("Speed(%d)\tSteer(%d)\n\r ",
+              speed, steer);
 //              real_ang_str); Real(%d)
 
     time = chThdSleepUntilWindowed(time, time+ MS2ST(100));

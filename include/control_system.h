@@ -5,7 +5,7 @@ typedef int32_t controlValue_t;
 
 
 int32_t fetchAngle(controlValue_t ang_dgr);
-int32_t fetchRefSpeed(controlValue_t speed_ref);
+int32_t csSetRefSpeed(controlValue_t speed_ref);
 
 /**
  * @brief

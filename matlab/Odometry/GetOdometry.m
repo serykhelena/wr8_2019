@@ -1,31 +1,31 @@
 global dat
 delete(instrfind);
-dat = serial('COM15', 'BaudRate', 115200);
+dat = serial('COM11', 'BaudRate', 115200);
 dat.InputBufferSize = 4096;
 
 fopen(dat)
 set(dat, 'ByteOrder', 'littleEndian')
 disp 'Ok!'
 
-fwrite(dat,'q','char');
+fwrite(dat,'a','uint8');
 
  A = [];
  B = [];
 
-fwrite(dat,'w','char'); %go forward
+fwrite(dat,'z', 'uint8'); %go forward
 for i = 1:10
     A=fread(dat, [100,1], 'int16');
     B = [B; A];
 end
  
-fwrite(dat,'s','char');
+fwrite(dat,'s', 'uint8');
 for i = 1:10
     A=fread(dat, [100,1], 'int16');
     B = [B; A];
 end
 
-fwrite(dat,' ','char');
-
+fwrite(dat,' ', 'uint8');
+fwrite(dat,'x', 'uint8');
 fclose(dat);
 
 LPF = [];
@@ -40,5 +40,6 @@ end
 
 plot(LPF)
 hold on
+grid on
 plot(NO_LPF)
 disp 'Close'

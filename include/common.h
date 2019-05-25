@@ -18,7 +18,7 @@
 #define     PROGRAM_ROUTINE_TEST_REV_TICK               8
 #define     PROGRAM_ROUTINE_TEST_SPEED_DISTANCE         9
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_SPEED_DISTANCE
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM
 
 
 
