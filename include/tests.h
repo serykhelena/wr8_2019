@@ -41,15 +41,36 @@ void testChargeLevel (void);
  * @note    SD7 is used for testing (PE7, PE8)
  */
 
+
+/*
+ * TODO COMMENTS
+ */
 void testSteeringControl (void);
 
+/*
+ * TODO COMMENTS
+ */
 void testSteeringSystem (void);
 
+/*
+ * TODO COMMENTS
+ */
 void testDrivingSystem (void);
 
+/*
+ * TODO COMMENTS
+ */
 void testOdometry (void);
 
+/*
+ * TODO COMMENTS
+ */
 void testImps_Revs (void);
+
+/*
+ * TODO COMMENTS
+ */
+void testSpeed_Distance (void);
 
 /*************************/
 /*** Tests application ***/
@@ -91,6 +112,9 @@ static inline void testsRoutines( void )
 #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_REV_TICK)
 
     testImps_Revs();
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_SPEED_DISTANCE)
+
+    testSpeed_Distance ();
 
   #endif
 }

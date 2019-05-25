@@ -25,7 +25,13 @@ float OdometryGetSpeedMPS (void);
  * @brief
  * @note
  */
-float OdometryGetSpeedMPS_lowpass (void);
+float OdometryGetSpeedSmPS (void);
+
+/**
+ * @brief
+ * @note
+ */
+float OdometryGetLPFSpeedSmPS (void);
 
 
 
@@ -36,7 +42,7 @@ int16_t OdometryGetSpeedKPH (void);
  * @ brief                             Gets current distance [metres]
  * @ return  >=0                       Current distance [metres]
  */
-int16_t OdometryGetDistance (void);
+float OdometryGetDistance (void);
 
 /*
  * @brief   Reset impulse quantity from the beginning of the movement

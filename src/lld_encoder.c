@@ -213,7 +213,7 @@ float lldEncoderGetRevolutions(void)
     }
     float Revs = 0;
     /*calculates the number of revolutions - ratio of total ticks of the encoder to ticks per revolution*/
-    Revs = (float)IntRevolutions + EncImps / IMPSFOR1REV;
+    Revs = IntRevolutions + (float)EncImps / IMPSFOR1REV;
     return Revs ;
 }
 

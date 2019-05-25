@@ -4,19 +4,63 @@
 #include <lld_encoder.h>
 
 
+#define VTPEDIOD	10
+#define LPFCOEF		(float)0.1
+
+static virtual_timer_t odom_vt;
+
+float OdomDistance    = 0;
+float OdomPrevDist    = 0;
+float OdomRawSpeed 	  = 0;
+
 static float   GearRatio         = 0.105;
-static float   circumference     = 0.2513; // 2 * pi * WheelRadius
+static float   circumference     = 25.13; // 2 * pi * WheelRadius [cm]
 
 
-static bool     firstLPval               = false;
-float LPAdcVal                           = 0;
-float lastLPAdcVal                       = 0;
+static bool     firstOdomLPFSpeed               = false;
+float OdomLPFSpeed                           	= 0;
+float lastOdomLPFSpeed                       	= 0;
 
+static bool IsInit = false;
+
+static void odom_cb(void *arg) {
+
+    float RevQuantity = 0;
+
+    RevQuantity = lldEncoderGetRevolutions();
+     /* distance for 1 revolution is wheel circumference in cm*/
+     /*  total distance is N revolutions( N wheel circumferences ) */
+     /* [S = 2 * pi * (distance for 1 revolution)] */
+    OdomDistance = circumference * RevQuantity * GearRatio;
+
+    OdomRawSpeed = (OdomDistance - OdomPrevDist) * 100; // ds/dt * 100 [cm/10 ms -> cm/sec]
+
+    if (firstOdomLPFSpeed == false)
+    {
+    	OdomLPFSpeed = OdomRawSpeed;
+    	firstOdomLPFSpeed = true;
+    }
+    else
+    {
+    	OdomLPFSpeed = LPFCOEF * OdomRawSpeed + lastOdomLPFSpeed * ((float)1 - LPFCOEF);
+    }
+    lastOdomLPFSpeed = OdomLPFSpeed;
+
+    OdomPrevDist = OdomDistance;
+
+	chSysLockFromISR();
+	chVTSetI(&odom_vt, MS2ST(VTPEDIOD), odom_cb, NULL);
+	chSysUnlockFromISR();
+}
 
 void OdometryInit(void)
 {
-
+	if (IsInit)
+		return;
+	chVTObjectInit(&odom_vt);
     lldEncoderSensInit();
+    chVTSet(&odom_vt, MS2ST(VTPEDIOD), odom_cb, NULL);
+    IsInit = true;
 }
 
 
@@ -38,24 +82,15 @@ float OdometryGetSpeedMPS (void)
     return MPS;
 }
 
-
-float OdometryGetSpeedMPS_lowpass (void)
+float OdometryGetSpeedSmPS (void)
 {
-    float LPcoef          = 0.1;
+    return OdomRawSpeed;
+}
 
 
-    if (firstLPval == false)
-    {
-    	LPAdcVal = OdometryGetSpeedMPS();
-    	firstLPval = true;
-    }
-    else
-    {
-    	LPAdcVal = LPcoef * OdometryGetSpeedMPS() + lastLPAdcVal * ((float)1 - LPcoef);
-    }
-    lastLPAdcVal = LPAdcVal;
-
-	return LPAdcVal;
+float OdometryGetLPFSpeedSmPS (void)
+{
+	return OdomLPFSpeed;
 }
 
 
@@ -68,18 +103,9 @@ int16_t OdometryGetSpeedKPH (void)
     return KPH;
 }
 
-int16_t OdometryGetDistance (void)
+float OdometryGetDistance (void)
 {
-    drvctrl_t distance    = 0;
-    drvctrl_t RevQuantity = 0;
-
-    RevQuantity = lldEncoderGetRevolutions();
-     /* distance for 1 revolution is wheel circumference in cm*/
-     /*  total distance is N revolutions( N wheel circumferences ) */
-     /* [S = 2 * pi * (distance for 1 revolution)] */
-    distance = circumference * RevQuantity * 100;
-
-     return distance;
+     return OdomDistance;
 }
 
 void OdometryResetDistance (void)

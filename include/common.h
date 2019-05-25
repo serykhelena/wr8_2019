@@ -16,8 +16,9 @@
 #define     PROGRAM_ROUTINE_TEST_DRIVING_SYSTEM         6
 #define     PROGRAM_ROUTINE_TEST_ODOMETRY               7
 #define     PROGRAM_ROUTINE_TEST_REV_TICK               8
+#define     PROGRAM_ROUTINE_TEST_SPEED_DISTANCE         9
 
-#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_REV_TICK
+#define     MAIN_PROGRAM_ROUTINE                        PROGRAM_ROUTINE_TEST_SPEED_DISTANCE
 
 
 #define CLIP_VALUE(x, min, max) ((x) < (min) ? (min) :      \
