@@ -49,6 +49,8 @@ void testDrivingSystem (void);
 
 void testOdometry (void);
 
+void testImps_Revs (void);
+
 /*************************/
 /*** Tests application ***/
 /*************************/
@@ -85,6 +87,10 @@ static inline void testsRoutines( void )
   #elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_ODOMETRY)
 
     testOdometry();
+
+#elif (MAIN_PROGRAM_ROUTINE == PROGRAM_ROUTINE_TEST_REV_TICK)
+
+    testImps_Revs();
 
   #endif
 }

@@ -85,8 +85,33 @@ void testEncoder (void)
         }
         else
         {
-        	dbgprintf("RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r", (int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
+        	dbgprintf("RPM: %d.%02d     MPS: %d.%02d      KPH: %d.%02d      Rev: %d      Ticks: %d\n\r",
+        			(int)SpeedRPM, (int)fPartRPM, (int)SpeedMPS, (int)fPartMPS, (int)SpeedKPH, (int)fPartKPH, Rev, Ticks);
         }
         time = chThdSleepUntilWindowed (time, time + MS2ST(300));
     }
+}
+
+
+void testImps_Revs (void)
+{
+	float 		RevTest 	= 0;
+	int32_t 	TickTest 	= 0;
+
+	sd_set();
+
+
+   lldEncoderSensInit();
+   systime_t time = chVTGetSystemTime();
+
+   while (1)
+   {
+	   TickTest = lldEncoderGetEncTicks();
+	   RevTest  = lldEncoderGetRevolutions();
+
+       chprintf((BaseSequentialStream *)&SD7, "Rev:(%d)\tTicks(%d)\n\r",
+    		   (int)(RevTest * 10), TickTest);
+
+	   time = chThdSleepUntilWindowed (time, time + MS2ST(300));
+   }
 }
